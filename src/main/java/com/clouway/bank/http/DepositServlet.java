@@ -2,6 +2,7 @@ package com.clouway.bank.http;
 
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.Amount;
+import com.clouway.bank.core.SessionProvider;
 import com.clouway.bank.core.TransactionValidator;
 import com.clouway.utility.Template;
 
@@ -21,6 +22,7 @@ public class DepositServlet extends HttpServlet {
   private AccountRepository accountRepository;
   private Template template;
   private TransactionValidator validator;
+  private SessionProvider sessionProvider;
 
 
   /**
@@ -29,10 +31,11 @@ public class DepositServlet extends HttpServlet {
    * @param accountRepository account repository storing the account data
    * @param template          template for manipulating strings
    */
-  public DepositServlet(AccountRepository accountRepository, Template template, TransactionValidator validator) {
+  public DepositServlet(AccountRepository accountRepository, Template template, TransactionValidator validator, SessionProvider sessionProvider) {
     this.accountRepository = accountRepository;
     this.template = template;
     this.validator = validator;
+    this.sessionProvider = sessionProvider;
   }
 
   /**
@@ -44,7 +47,6 @@ public class DepositServlet extends HttpServlet {
   @Override
   public void init() throws ServletException {
     template.loadFromFile("web/WEB-INF/pages/Deposit.html");
-    template.put("message", "");
   }
 
   /**
@@ -57,13 +59,15 @@ public class DepositServlet extends HttpServlet {
    */
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    String username = "Stanislava";
+    String username = sessionProvider.get().userId;
     Double balance = accountRepository.getCurrentBalance(username);
     String message = req.getParameter("message");
-    template.put("username", username);
+    template.put("userId", username);
     template.put("balance", balance.toString());
     if (message != null) {
       template.put("message", message);
+    } else {
+      template.put("message", "");
     }
 
     PrintWriter writer = resp.getWriter();
@@ -81,23 +85,23 @@ public class DepositServlet extends HttpServlet {
    */
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    String username = req.getParameter("username");
+    String username = req.getParameter("userId");
     String amountParam = req.getParameter("amount");
     if (amountParam == null || amountParam.isEmpty()) {
       resp.sendRedirect("deposit?message=enter amount");
       return;
     }
-    String m = validator.validateAmount(amountParam);
+    String validationMessage = validator.validateAmount(amountParam);
 
-    if (!m.isEmpty()) {
-      resp.sendRedirect("deposit?message=" + m);
+    if (!validationMessage.isEmpty()) {
+      resp.sendRedirect("deposit?message=" + validationMessage);
       return;
     }
 
     Double amount = Double.parseDouble(amountParam);
     accountRepository.deposit(new Amount(username, amount));
 
-    resp.sendRedirect("deposit?message=Susscesful deposit: " + amount);
+    resp.sendRedirect("deposit?message=Successful deposit: " + amount);
   }
 
 }

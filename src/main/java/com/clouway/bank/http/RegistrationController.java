@@ -4,6 +4,7 @@ import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserRepository;
 import com.clouway.bank.core.UserValidator;
+import com.clouway.bank.core.ValidationException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,30 +29,35 @@ public class RegistrationController extends HttpServlet {
   }
 
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String username = request.getParameter("username");
+    String username = request.getParameter("userId");
     String password = request.getParameter("password");
     String confirmPassword = request.getParameter("confirmPassword");
     String state;
     String message;
-
     User user = new User(username, password);
+    try {
+      String validationMessage = validator.validate(user);
+      validationMessage += validator.passwordsMatch(user.password, confirmPassword);
 
-    String validationMessage = validator.validate(user);
-    validationMessage += validator.passwordsMatch(user.password, confirmPassword);
+      if (!"".equals(validationMessage)) {
+        state = "has-error";
+        message = validationMessage;
+        response.sendRedirect("register?state=" + state + "&registerMessage=" + message);
+        return;
+      } else {
+        userRepository.register(user);
+        state = "has-success";
+        message = "successful registration";
 
-    if (!"".equals(validationMessage)) {
-      state = "has-error";
-      message = validationMessage;
-    } else {
-      userRepository.register(user);
-      state = "has-success";
-      message = "success";
-
-      accountRepository.createAccount(username);
+        accountRepository.createAccount(username);
+        response.sendRedirect("login?message=" + message);
+        return;
+      }
+    } catch (ValidationException ex) {
+      response.sendRedirect("register?state=" + "has-error" + "&registerMessage=" + ex.getMessage());
+      return;
     }
 
-
-    response.sendRedirect("register?state=" + state + "&registerMessage=" + message);
 
   }
 }

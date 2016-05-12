@@ -2,6 +2,7 @@ package com.clouway.bank.http;
 
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.Amount;
+import com.clouway.bank.core.SessionProvider;
 import com.clouway.bank.core.TransactionValidator;
 import com.clouway.bank.core.ValidationException;
 import com.clouway.utility.Template;
@@ -35,11 +36,14 @@ public class WithdrawServletTest {
   HttpServletResponse response;
   @Mock
   TransactionValidator validator;
+  @Mock
+  SessionProvider sessionProvider;
+
   private WithdrawServlet withdrawServlet;
 
   @Before
   public void setUp() {
-    withdrawServlet = new WithdrawServlet(repository, template, validator);
+    withdrawServlet = new WithdrawServlet(repository, template, validator, sessionProvider);
   }
 
   @Test
@@ -47,7 +51,7 @@ public class WithdrawServletTest {
     context.checking(getInitializationExpectations());
 
     context.checking(new Expectations() {{
-      oneOf(request).getParameter("username");
+      oneOf(request).getParameter("userId");
       will(returnValue("John"));
 
       oneOf(request).getParameter("amount");
@@ -59,7 +63,7 @@ public class WithdrawServletTest {
       oneOf(repository).withdraw(new Amount("John", 0.5));
       will(returnValue(12.5d));
 
-      oneOf(response).sendRedirect("withdraw?message=Susscesful deposit: 0.5");
+      oneOf(response).sendRedirect("withdraw?message=Successful withdraw: 0.5");
     }});
 
     withdrawServlet.init();
@@ -71,7 +75,7 @@ public class WithdrawServletTest {
     context.checking(getInitializationExpectations());
 
     context.checking(new Expectations() {{
-      oneOf(request).getParameter("username");
+      oneOf(request).getParameter("userId");
       will(returnValue("John"));
 
       oneOf(request).getParameter("amount");
@@ -93,6 +97,30 @@ public class WithdrawServletTest {
       oneOf(template).loadFromFile("web/WEB-INF/pages/Withdraw.html");
       oneOf(template).put("message", "");
     }};
+  }
+
+  @Test
+  public void insufficientBalance() throws IOException, ServletException {
+    context.checking(getInitializationExpectations());
+
+    context.checking(new Expectations() {{
+      oneOf(request).getParameter("userId");
+      will(returnValue("John"));
+
+      oneOf(request).getParameter("amount");
+      will(returnValue("0.5"));
+
+      oneOf(validator).validateAmount("0.5");
+      will(returnValue(""));
+
+      oneOf(repository).withdraw(new Amount("John", 0.5));
+      will(throwException(new ValidationException("Insufficient balance")));
+
+      oneOf(response).sendRedirect("withdraw?message=Insufficient balance");
+    }});
+
+    withdrawServlet.init();
+    withdrawServlet.doPost(request, response);
   }
 
 }

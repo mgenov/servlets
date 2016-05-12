@@ -1,4 +1,4 @@
-package com.clouway.bank.validation;
+package com.clouway.bank.http.validation;
 
 import com.clouway.bank.core.TransactionValidator;
 

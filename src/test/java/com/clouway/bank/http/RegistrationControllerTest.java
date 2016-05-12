@@ -4,6 +4,7 @@ import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserRepository;
 import com.clouway.bank.core.UserValidator;
+import com.clouway.bank.core.ValidationException;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -45,7 +46,7 @@ public class RegistrationControllerTest {
 
     context.checking(new Expectations() {{
 
-      oneOf(request).getParameter("username");
+      oneOf(request).getParameter("userId");
       will(returnValue("Ivan"));
 
       oneOf(request).getParameter("password");
@@ -63,7 +64,7 @@ public class RegistrationControllerTest {
 
       oneOf(accountRepository).createAccount("Ivan");
 
-      oneOf(response).sendRedirect("register?state=has-success&registerMessage=success");
+      oneOf(response).sendRedirect("login?message=successful registration");
     }});
 
     register.init();
@@ -76,7 +77,7 @@ public class RegistrationControllerTest {
     User ivan = new User("Ivan", "123456");
 
     context.checking(new Expectations() {{
-      oneOf(request).getParameter("username");
+      oneOf(request).getParameter("userId");
       will(returnValue("Ivan"));
 
       oneOf(request).getParameter("password");
@@ -96,6 +97,64 @@ public class RegistrationControllerTest {
 
     register.init();
 
+    register.doPost(request, response);
+  }
+
+  @Test
+  public void passwordsNotMatching() throws IOException, ServletException {
+    User ivan = new User("Ivan", "1234567");
+
+    context.checking(new Expectations() {{
+
+      oneOf(request).getParameter("userId");
+      will(returnValue("Ivan"));
+
+      oneOf(request).getParameter("password");
+      will(returnValue("1234567"));
+
+      oneOf(request).getParameter("confirmPassword");
+      will(returnValue("123456"));
+
+      oneOf(validator).validate(ivan);
+      will(returnValue(""));
+
+      oneOf(validator).passwordsMatch("1234567", "123456");
+      will(returnValue("passwords dont match"));
+
+      oneOf(response).sendRedirect("register?state=has-error&registerMessage=passwords dont match");
+    }});
+
+    register.init();
+    register.doPost(request, response);
+  }
+
+  @Test
+  public void usernameTaken() throws IOException, ServletException {
+    User ivan = new User("Ivan", "123456");
+
+    context.checking(new Expectations() {{
+
+      oneOf(request).getParameter("userId");
+      will(returnValue("Ivan"));
+
+      oneOf(request).getParameter("password");
+      will(returnValue("123456"));
+
+      oneOf(request).getParameter("confirmPassword");
+      will(returnValue("123456"));
+
+      oneOf(validator).validate(ivan);
+      will(returnValue(""));
+
+      oneOf(validator).passwordsMatch("123456", "123456");
+
+      oneOf(userRepository).register(ivan);
+      will(throwException(new ValidationException("username is taken")));
+
+      oneOf(response).sendRedirect("register?state=has-error&registerMessage=username is taken");
+    }});
+
+    register.init();
     register.doPost(request, response);
   }
 }

@@ -1,4 +1,4 @@
-package com.clouway.bank.validation;
+package com.clouway.bank.http.validation;
 
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserValidator;
@@ -35,7 +35,7 @@ public class UserDataValidatorTest {
 
     String validationMessage = userValidator.validate(jack);
 
-    assertThat(validationMessage, is(equalTo("The username must be between 5 and 15 characters (alphabetic and numeric).")));
+    assertThat(validationMessage, is(equalTo("The userId must be between 5 and 15 characters (alphabetic and numeric).")));
   }
 
   @Test
@@ -44,7 +44,7 @@ public class UserDataValidatorTest {
 
     String validationMessage = userValidator.validate(jack);
 
-    assertThat(validationMessage, is(equalTo("The username must be between 5 and 15 characters (alphabetic and numeric).")));
+    assertThat(validationMessage, is(equalTo("The userId must be between 5 and 15 characters (alphabetic and numeric).")));
   }
 
   @Test
@@ -53,7 +53,7 @@ public class UserDataValidatorTest {
 
     String validationMessage = userValidator.validate(jack);
 
-    assertThat(validationMessage, is(equalTo("The username must be between 5 and 15 characters (alphabetic and numeric).")));
+    assertThat(validationMessage, is(equalTo("The userId must be between 5 and 15 characters (alphabetic and numeric).")));
   }
 
   @Test

@@ -104,7 +104,7 @@ public class PersistentAccountRepository implements AccountRepository {
   public void createAccount(String userId) {
     try {
       Connection connection = connectionProvider.get();
-      PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO account(username, balance) values(?, ?);");
+      PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO account(username, balance) VALUES(?, ?);");
       preparedStatement.setString(1, userId);
       preparedStatement.setDouble(2, 0d);
       preparedStatement.execute();

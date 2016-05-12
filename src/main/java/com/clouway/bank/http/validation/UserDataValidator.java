@@ -1,4 +1,4 @@
-package com.clouway.bank.validation;
+package com.clouway.bank.http.validation;
 
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserValidator;
@@ -19,7 +19,7 @@ public class UserDataValidator implements UserValidator {
    */
   @Override
   public String validate(User user) {
-    String message = validateUsername(user.username);
+    String message = validateUsername(user.id);
     message += validatePassword(user.password);
     return message;
   }
@@ -37,7 +37,7 @@ public class UserDataValidator implements UserValidator {
     if (matcher.matches()) {
       return "";
     } else {
-      return "The username must be between 5 and 15 characters (alphabetic and numeric).";
+      return "The userId must be between 5 and 15 characters (alphabetic and numeric).";
     }
   }
 

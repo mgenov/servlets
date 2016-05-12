@@ -2,7 +2,9 @@ package com.clouway.bank.http;
 
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.Amount;
+import com.clouway.bank.core.SessionProvider;
 import com.clouway.bank.core.TransactionValidator;
+import com.clouway.bank.core.ValidationException;
 import com.clouway.utility.Template;
 
 import javax.servlet.ServletException;
@@ -19,11 +21,13 @@ public class WithdrawServlet extends HttpServlet {
   private final AccountRepository accountRepository;
   private final Template template;
   private TransactionValidator validator;
+  private SessionProvider sessionProvider;
 
-  public WithdrawServlet(AccountRepository accountRepository, Template template, TransactionValidator validator) {
+  public WithdrawServlet(AccountRepository accountRepository, Template template, TransactionValidator validator, SessionProvider sessionProvider) {
     this.accountRepository = accountRepository;
     this.template = template;
     this.validator = validator;
+    this.sessionProvider = sessionProvider;
   }
 
   /**
@@ -48,14 +52,16 @@ public class WithdrawServlet extends HttpServlet {
    */
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    String username = "Stanislava";
+    String username = sessionProvider.get().userId;
     Double balance = accountRepository.getCurrentBalance(username);
     String message = req.getParameter("message");
 
-    template.put("username", username);
+    template.put("userId", username);
     template.put("balance", balance.toString());
     if (message != null) {
       template.put("message", message);
+    } else {
+      template.put("message", "");
     }
 
     PrintWriter writer = resp.getWriter();
@@ -73,7 +79,7 @@ public class WithdrawServlet extends HttpServlet {
    */
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    String username = req.getParameter("username");
+    String username = req.getParameter("userId");
     String amountParam = req.getParameter("amount");
     if (amountParam == null || amountParam.isEmpty()) {
       resp.sendRedirect("withdraw?message=enter amount");
@@ -86,10 +92,16 @@ public class WithdrawServlet extends HttpServlet {
       return;
     }
 
-    Double amount = Double.parseDouble(amountParam);
-    accountRepository.withdraw(new Amount(username, amount));
 
-    resp.sendRedirect("withdraw?message=Susscesful deposit: " + amount);
+    Double amount = Double.parseDouble(amountParam);
+    try {
+      accountRepository.withdraw(new Amount(username, amount));
+    } catch (ValidationException e) {
+      resp.sendRedirect("withdraw?message=" + e.getMessage());
+      return;
+    }
+
+    resp.sendRedirect("withdraw?message=Successful withdraw: " + amount);
   }
 
 }

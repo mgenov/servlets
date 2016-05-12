@@ -28,20 +28,21 @@ public class PersistentUserRepository implements UserRepository {
    */
   @Override
   public void register(User user) {
-    String query = "Insert into users(username, password) values(?, ?);";
+    String query = "INSERT INTO users(username, password) VALUES(?, ?);";
     Connection connection = connectionProvider.get();
 
-    if (getUserById(user.username) != null) {
+    if (getUserById(user.id) != null) {
       throw new ValidationException("username is taken");
     }
 
     try {
       PreparedStatement preparedStatement = connection.prepareStatement(query);
-      preparedStatement.setString(1, user.username);
+      preparedStatement.setString(1, user.id);
       preparedStatement.setString(2, user.password);
       preparedStatement.execute();
     } catch (SQLException e) {
       e.printStackTrace();
+
     }
   }
 
@@ -53,7 +54,7 @@ public class PersistentUserRepository implements UserRepository {
    * @return the user
    */
   public User getUserById(String userId) {
-    String query = "Select * from users where username = ?;";
+    String query = "SELECT * FROM users WHERE username = ?;";
     Connection connection = connectionProvider.get();
 
     try {

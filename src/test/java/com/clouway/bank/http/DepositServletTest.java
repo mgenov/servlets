@@ -2,6 +2,7 @@ package com.clouway.bank.http;
 
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.Amount;
+import com.clouway.bank.core.SessionProvider;
 import com.clouway.bank.core.TransactionValidator;
 import com.clouway.bank.core.ValidationException;
 import com.clouway.utility.Template;
@@ -34,12 +35,14 @@ public class DepositServletTest {
   HttpServletResponse response;
   @Mock
   TransactionValidator validator;
+  @Mock
+  SessionProvider sessionProvider;
 
   private DepositServlet depositServlet;
 
   @Before
   public void setUp() {
-    depositServlet = new DepositServlet(repository, template, validator);
+    depositServlet = new DepositServlet(repository, template, validator, sessionProvider);
   }
 
   @Test
@@ -47,7 +50,7 @@ public class DepositServletTest {
     context.checking(getInitializationExpectations());
 
     context.checking(new Expectations() {{
-      oneOf(request).getParameter("username");
+      oneOf(request).getParameter("userId");
       will(returnValue("John"));
 
       oneOf(request).getParameter("amount");
@@ -59,7 +62,7 @@ public class DepositServletTest {
       oneOf(repository).deposit(new Amount("John", 12.5));
       will(returnValue(12.5));
 
-      oneOf(response).sendRedirect("deposit?message=Susscesful deposit: 12.5");
+      oneOf(response).sendRedirect("deposit?message=Successful deposit: 12.5");
     }});
 
     depositServlet.init();
@@ -70,7 +73,6 @@ public class DepositServletTest {
     return new Expectations() {{
       //initializing servlet
       oneOf(template).loadFromFile("web/WEB-INF/pages/Deposit.html");
-      oneOf(template).put("message", "");
     }};
   }
 }

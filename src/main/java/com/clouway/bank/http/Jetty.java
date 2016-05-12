@@ -28,7 +28,6 @@ public class Jetty {
   public synchronized void start() {
     ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
     context.setContextPath("/");
-
     context.addEventListener(new BankEventListener(dbName));
 
     server.setHandler(context);
