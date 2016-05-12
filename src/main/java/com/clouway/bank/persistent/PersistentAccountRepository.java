@@ -1,6 +1,7 @@
 package com.clouway.bank.persistent;
 
 import com.clouway.bank.core.AccountRepository;
+import com.clouway.bank.core.Amount;
 import com.clouway.bank.core.ConnectionProvider;
 import com.clouway.bank.core.TransactionValidator;
 
@@ -34,23 +35,22 @@ public class PersistentAccountRepository implements AccountRepository {
   /**
    * Validates and deposits funds
    *
-   * @param username user identification
-   * @param amount   amount of funds to deposit
+   * @param amount   funds to deposit
    * @throws ValidationException
    */
   @Override
-  public Double deposit(String username, String amount) throws ValidationException {
-    String validationMessage = validator.validateAmount(amount);
+  public Double deposit(Amount amount) throws ValidationException {
+    String validationMessage = validator.validateAmount(amount.value);
     try {
       if ("".equals(validationMessage)) {
-        Double depositAmount = Double.parseDouble(amount);
+        Double depositAmount = Double.parseDouble(amount.value);
         Connection connection = connectionProvider.get();
 
         PreparedStatement preparedStatement = connection.prepareStatement("UPDATE account SET balance=balance+? WHERE username=?");
         preparedStatement.setDouble(1, depositAmount);
-        preparedStatement.setString(2, username);
+        preparedStatement.setString(2, amount.username);
         preparedStatement.executeUpdate();
-        return getCurrentBalance(username);
+        return getCurrentBalance(amount.username);
       } else {
         throw new ValidationException(validationMessage);
       }
@@ -59,8 +59,30 @@ public class PersistentAccountRepository implements AccountRepository {
     }
   }
 
+  @Override
+  public Double withdraw(Amount amount) throws ValidationException {
+    String validationMessage = validator.validateAmount(amount.value);
+    try {
+      if ("".equals(validationMessage)) {
+        Double withdrawAmount = Double.parseDouble(amount.value);
+        Connection connection = connectionProvider.get();
+
+        PreparedStatement preparedStatement = connection.prepareStatement("UPDATE account SET balance=balance-? WHERE username=?");
+        preparedStatement.setDouble(1, withdrawAmount);
+        preparedStatement.setString(2, amount.username);
+        preparedStatement.executeUpdate();
+        return getCurrentBalance(amount.username);
+      } else {
+        throw new ValidationException(validationMessage);
+      }
+    } catch (SQLException e) {
+      throw new ValidationException("no such user");
+    }
+  }
+
+
   /**
-   * Gets the current amount of funds in the balance
+   * Gets the current value of funds in the balance
    *
    * @param username user identification
    * @return

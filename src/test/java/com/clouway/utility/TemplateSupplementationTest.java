@@ -24,10 +24,10 @@ public class TemplateSupplementationTest {
   @Test
   public void manyVariables() {
     BracketsTemplate bracketsTemplate = new BracketsTemplate();
-    bracketsTemplate.setTemplate("Congrats ${name}, you won ${amount}!");
+    bracketsTemplate.setTemplate("Congrats ${name}, you won ${value}!");
 
     bracketsTemplate.put("name", "John");
-    bracketsTemplate.put("amount", "a million dollars");
+    bracketsTemplate.put("value", "a million dollars");
 
     assertThat(bracketsTemplate.evaluate(), is(equalTo("Congrats John, you won a million dollars!")));
   }

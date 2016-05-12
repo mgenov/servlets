@@ -4,7 +4,6 @@ import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.Amount;
 import com.clouway.utility.Template;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -17,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.ValidationException;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,22 +30,27 @@ import static org.hamcrest.core.IsEqual.equalTo;
 /**
  * @author Krasimir Raikov(raikov.krasimir@gmail.com)
  */
-public class DepositServletTest {
+public class WithdrawServletTest {
+
+  private WithdrawServlet withdrawServlet;
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
+
   @Mock
   AccountRepository repository;
+
   @Mock
   Template template;
+
   @Mock
   HttpServletRequest request;
+
   @Mock
   HttpServletResponse response;
-  private DepositServlet depositServlet;
 
   @Before
   public void setUp() {
-    depositServlet = new DepositServlet(repository, template);
+    withdrawServlet = new WithdrawServlet(repository, template);
   }
 
   @Test
@@ -60,9 +65,9 @@ public class DepositServletTest {
       will(returnValue("John"));
 
       oneOf(request).getParameter("value");
-      will(returnValue("12.5"));
+      will(returnValue("0.5"));
 
-      oneOf(repository).deposit(new Amount("John", "12.5"));
+      oneOf(repository).withdraw(new Amount("John", "0.5"));
       will(returnValue(12.5d));
 
       oneOf(template).put("errorMessage", "");
@@ -80,18 +85,17 @@ public class DepositServletTest {
       will(returnValue("OK"));
     }});
 
-    depositServlet.init();
-    depositServlet.doPost(request, response);
+    withdrawServlet.init();
+    withdrawServlet.doPost(request, response);
 
     writer.flush();
     assertThat(out.toString(), is(equalTo("OK")));
   }
 
   @Test
-  public void invalidDeposit() throws IOException, ValidationException, ServletException {
+  public void invalidWithdraw() throws IOException, ValidationException, ServletException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     PrintWriter writer = new PrintWriter(out);
-
     context.checking(getInitializationExpectations());
 
     context.checking(new Expectations() {{
@@ -101,7 +105,7 @@ public class DepositServletTest {
       oneOf(request).getParameter("value");
       will(returnValue("12.5e"));
 
-      oneOf(repository).deposit(new Amount("John", "12.5e"));
+      oneOf(repository).withdraw(new Amount("John", "12.5e"));
       will(throwException(new ValidationException("invalid value")));
 
       oneOf(template).put("errorMessage", "invalid value<br>");
@@ -115,8 +119,8 @@ public class DepositServletTest {
       will(returnValue("OK"));
     }});
 
-    depositServlet.init();
-    depositServlet.doPost(request, response);
+    withdrawServlet.init();
+    withdrawServlet.doPost(request, response);
 
     writer.flush();
     assertThat(out.toString(), is(equalTo("OK")));
@@ -125,7 +129,7 @@ public class DepositServletTest {
   private ExpectationBuilder getInitializationExpectations() throws IOException {
     return new Expectations() {{
       //initializing servlet
-      oneOf(template).setTemplate(readFile("web/WEB-INF/pages/Deposit.html"));
+      oneOf(template).setTemplate(readFile("web/WEB-INF/pages/Withdraw.html"));
       oneOf(template).put("errorMessage", "");
       oneOf(template).put("username", "no user yet");
       oneOf(template).put("balance", "not available");

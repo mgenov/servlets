@@ -37,6 +37,7 @@ public class BankEventListener implements ServletContextListener {
 
     servletContext.addFilter("ConnectionFilter", new ConnectionFilter(dbName)).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
     servletContext.addServlet("DepositServlet", new DepositServlet(new PersistentAccountRepository(new PerRequestConnectionProvider(), new BankTransactionValidator()), new BracketsTemplate())).addMapping("/deposit");
+    servletContext.addServlet("WithdrawServlet", new WithdrawServlet(new PersistentAccountRepository(new PerRequestConnectionProvider(), new BankTransactionValidator()), new BracketsTemplate())).addMapping("/withdraw");
   }
 
   /**

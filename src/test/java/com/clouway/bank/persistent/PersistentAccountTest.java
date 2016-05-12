@@ -1,6 +1,7 @@
 package com.clouway.bank.persistent;
 
 import com.clouway.bank.core.AccountRepository;
+import com.clouway.bank.core.Amount;
 import com.clouway.bank.core.ConnectionProvider;
 import com.clouway.bank.core.TransactionValidator;
 import com.clouway.bank.utils.AccountRepositoryUtility;
@@ -90,9 +91,37 @@ public class PersistentAccountTest {
     }});
     Double originalAmount = accountRepository.getCurrentBalance(username);
 
-    accountRepository.deposit(username, amount);
+    accountRepository.deposit(new Amount(username, amount));
     Double depositedAmount = accountRepository.getCurrentBalance(username) - originalAmount;
 
     assertThat(depositedAmount, is(equalTo(Double.parseDouble(amount))));
+  }
+
+  @Test
+  public void withdrawFunds() throws ValidationException {
+    Double withdrawAmount = Double.parseDouble(amount) - 2.32;
+    context.checking(new Expectations() {{
+      oneOf(validator).validateAmount(amount);
+      will(returnValue(""));
+
+      allowing(connectionProvider).get();
+      will(returnValue(connection));
+
+      oneOf(validator).validateAmount(withdrawAmount.toString());
+      will(returnValue(""));
+
+      allowing(connectionProvider).get();
+      will(returnValue(connection));
+    }});
+    Double originalAmount = accountRepository.getCurrentBalance(username);
+
+    accountRepository.deposit(new Amount(username, amount));
+    Double depositedAmount = accountRepository.getCurrentBalance(username) - originalAmount;
+
+    accountRepository.withdraw(new Amount(username, withdrawAmount.toString()));
+    Double withdrawnAmount = (originalAmount+depositedAmount)-accountRepository.getCurrentBalance(username);
+
+    assertThat(depositedAmount, is(equalTo(Double.parseDouble(amount))));
+    assertThat(withdrawnAmount, is(equalTo(Double.parseDouble(withdrawAmount.toString()))));
   }
 }

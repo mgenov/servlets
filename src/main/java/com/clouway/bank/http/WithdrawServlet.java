@@ -17,22 +17,13 @@ import java.io.PrintWriter;
 import java.net.URL;
 
 /**
- * Servlet for the deposit, displaying the html and handling requests for deposit
- *
  * @author Krasimir Raikov(raikov.krasimir@gmail.com)
  */
-public class DepositServlet extends HttpServlet {
-  private AccountRepository accountRepository;
-  private Template template;
+public class WithdrawServlet extends HttpServlet {
+  private final AccountRepository accountRepository;
+  private final Template template;
 
-
-  /**
-   * Constructor for the deposit setting the AccountRepository and Template
-   *
-   * @param accountRepository account repository storing the account data
-   * @param template          template for manipulating strings
-   */
-  public DepositServlet(AccountRepository accountRepository, Template template) {
+  public WithdrawServlet(AccountRepository accountRepository, Template template) {
     this.accountRepository = accountRepository;
     this.template = template;
   }
@@ -45,7 +36,7 @@ public class DepositServlet extends HttpServlet {
    */
   @Override
   public void init() throws ServletException {
-    template.setTemplate(getHtml("web/WEB-INF/pages/Deposit.html"));
+    template.setTemplate(getHtml("web/WEB-INF/pages/Withdraw.html"));
     template.put("errorMessage", "");
     template.put("username", "no user yet");
     template.put("balance", "not available");
@@ -77,7 +68,7 @@ public class DepositServlet extends HttpServlet {
   }
 
   /**
-   * Handling the POST request, about depositing funds
+   * Handling the POST request, about withdrawing funds
    *
    * @param req  http request
    * @param resp http response
@@ -87,16 +78,17 @@ public class DepositServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String username = req.getParameter("username");
-    Double doubleAmount = null;
+    Double balance = null;
     String amount = req.getParameter("amount");
     try {
-      doubleAmount = accountRepository.deposit(new Amount(username, amount));
+      balance = accountRepository.withdraw(new Amount(username, amount));
       template.put("errorMessage", "");
       template.put("username", username);
-      template.put("balance", doubleAmount.toString());
+      template.put("balance", balance.toString());
     } catch (ValidationException e) {
       template.put("errorMessage", e.getMessage() + "<br>");
     }
+
     PrintWriter writer = resp.getWriter();
     resp.setContentType("text/html");
     writer.write(template.evaluate());
@@ -122,6 +114,4 @@ public class DepositServlet extends HttpServlet {
     }
 
   }
-
-
 }

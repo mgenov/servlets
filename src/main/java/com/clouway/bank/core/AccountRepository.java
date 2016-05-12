@@ -12,12 +12,18 @@ public interface AccountRepository {
   /**
    * deposits funds
    *
-   * @param username user identification
-   * @param amount   amount of funds to deposit
+   * @param amount funds to deposit
    * @throws ValidationException
    */
-  Double deposit(String username, String amount) throws ValidationException;
+  Double deposit(Amount amount) throws ValidationException;
 
+  /**
+   * withdraw funds
+   *
+   * @param amount funds to withdraw
+   * @throws ValidationException
+   */
+  Double withdraw(Amount amount) throws ValidationException;
 
   /**
    * will return the current state of the balance
@@ -26,4 +32,5 @@ public interface AccountRepository {
    * @return the balance for the given user
    */
   Double getCurrentBalance(String username) throws ValidationException;
+
 }

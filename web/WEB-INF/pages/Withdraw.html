@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Deposit</title>
+    <title>Withdraw</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 </head>
@@ -14,17 +14,17 @@
              style="margin-top: 10px; border: 1px solid; border-radius: 12px">
 
 
-            <form action="deposit" method="post" style="margin-top: 10px;">
+            <form action="withdraw" method="post" style="margin-top: 10px;">
                 <div class="form-group">
                     <label for="username">Username:</label>
                     <input type="text" placeholder="name" id="username" name="username" value="${username}" readonly="readonly" style="border: none;"><br>
                     <p><b>current balance: ${balance}</b></p>
-                    <label for="value">Amount to deposit</label>
+                    <label for="value">Amount to withdraw</label>
                     <input type="number" min="0" max="10000" class="form-control" step="0.01" placeholder="Amount"
                            name="value" id="value" aria-describedby="amountMessage"><br>
                     <span id="amountMessage" class="help-block"><p class="text-danger">${errorMessage}</p></span>
 
-                    <input type="submit" value="Deposit" class="btn btn-default">
+                    <input type="submit" value="Withdraw" class="btn btn-default">
                 </div>
             </form>
 

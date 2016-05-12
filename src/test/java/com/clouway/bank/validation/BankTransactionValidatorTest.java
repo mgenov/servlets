@@ -29,12 +29,12 @@ public class BankTransactionValidatorTest {
   @Test
   public void noAmount() {
     String validationMessage = transactionValidator.validateAmount("e");
-    assertThat(validationMessage, is(equalTo("incorrect amount, has to have a positive number '.' and at least one digit afterwards")));
+    assertThat(validationMessage, is(equalTo("incorrect value, has to have a positive number '.' and one or two digits afterwards")));
   }
 
   @Test
   public void notADouble() {
     String validationMessage = transactionValidator.validateAmount("5");
-    assertThat(validationMessage, is(equalTo("incorrect amount, has to have a positive number '.' and at least one digit afterwards")));
+    assertThat(validationMessage, is(equalTo("incorrect value, has to have a positive number '.' and one or two digits afterwards")));
   }
 }

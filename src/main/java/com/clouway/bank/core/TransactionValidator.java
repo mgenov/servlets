@@ -8,7 +8,7 @@ package com.clouway.bank.core;
 public interface TransactionValidator {
 
   /**
-   * Validates the amount
+   * Validates the value
    *
    * @param amount to be validated
    * @return validation message
