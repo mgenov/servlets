@@ -6,7 +6,7 @@
   <display-name>Archetype Created Web Application</display-name>
   <servlet>
     <servlet-name>PageRecognizer</servlet-name>
-    <servlet-class>RecognizerServlet</servlet-class>
+    <servlet-class>com.clouway.RecognizerServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>

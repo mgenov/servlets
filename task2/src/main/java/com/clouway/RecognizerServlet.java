@@ -1,3 +1,5 @@
+package com.clouway;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -7,7 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * Created by clouway on 13.05.16.
+ * Created by com.clouway on 13.05.16.
  */
 
 public class RecognizerServlet extends HttpServlet {
@@ -25,10 +27,11 @@ public class RecognizerServlet extends HttpServlet {
     out.println("<title>Session Test Servlet</title></head><body>");
     out.println("<h2 style=\"color:blue;\">Request from: " + requestURL + " </h2>");
     out.println("</body></html>");
+    out.flush();
   }
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    doGet(req,resp);
+    doGet(req, resp);
   }
 }
