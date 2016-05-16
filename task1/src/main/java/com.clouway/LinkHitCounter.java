@@ -1,5 +1,10 @@
 package com.clouway;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -18,9 +23,14 @@ public class LinkHitCounter extends HttpServlet {
 
     Integer accessCount = (Integer) session.getAttribute(paramValue);
 
+    if(paramValue==null){
+      session.setAttribute("first",0);
+      session.setAttribute("second",0);
+      session.setAttribute("third",0);
+    }
 
     if (accessCount == null) {
-      accessCount = 1;
+      accessCount = 0;
     } else {
       accessCount += 1;
     }

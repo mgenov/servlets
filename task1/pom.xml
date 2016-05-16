@@ -1,13 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <artifactId>servlets</artifactId>
-    <groupId>com.clouway</groupId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
   <modelVersion>4.0.0</modelVersion>
+  <groupId>com.clouway</groupId>
   <artifactId>task1</artifactId>
   <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
   <name>task1 Maven Webapp</name>
   <url>http://maven.apache.org</url>
 
@@ -46,7 +43,6 @@
       <version>8.1.8.v20121106</version>
     </dependency>
   </dependencies>
-
 
 
   <build>
