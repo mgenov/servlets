@@ -15,7 +15,7 @@ public class RecognizerServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     resp.setContentType("text/html");
 
-    String pageName = req.getParameter("page");
+    String requestURL = req.getHeader("Referer");
 
     PrintWriter out = resp.getWriter();
 
@@ -23,7 +23,7 @@ public class RecognizerServlet extends HttpServlet {
     out.println("<html>");
     out.println("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
     out.println("<title>Session Test Servlet</title></head><body>");
-    out.println("<h2 style=\"color:blue;\">Request from: " + pageName + " page </h2>");
+    out.println("<h2 style=\"color:blue;\">Request from: " + requestURL + " </h2>");
     out.println("</body></html>");
   }
 
