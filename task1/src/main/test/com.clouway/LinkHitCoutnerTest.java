@@ -14,6 +14,8 @@ import javax.servlet.http.HttpSession;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,28 +52,23 @@ public class LinkHitCoutnerTest {
   @Test
   public void happyPath() throws Exception {
     LinkHitCounter linkhitcounter = new LinkHitCounter();
+    final Map<String, Integer> counter = new HashMap<String, Integer>();
+    counter.put("first", 0);
+    counter.put("second", 0);
+    counter.put("third", 0);
 
     context.checking(new Expectations() {
       {
         oneOf(request).getSession();
         will(returnValue(session));
-        ;
         oneOf(request).getParameter("link");
         will(returnValue(null));
-        oneOf(session).getAttribute(null);
+        oneOf(session).getAttribute("links");
         will(returnValue(null));
-        oneOf(session).setAttribute("first", 0);
-        oneOf(session).setAttribute("second", 0);
-        oneOf(session).setAttribute("third", 0);
-        oneOf(response).setContentType("text/html;charset=UTF-8");
+        oneOf(session).setAttribute("links", counter);
         oneOf(response).getWriter();
         will(returnValue(new PrintWriter(outputStream)));
-        oneOf(session).getAttribute("first");
-        will(returnValue(0));
-        oneOf(session).getAttribute("second");
-        will(returnValue(0));
-        oneOf(session).getAttribute("third");
-        will(returnValue(0));
+
       }
     });
 
