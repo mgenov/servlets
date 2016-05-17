@@ -4,4 +4,21 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
+  <servlet>
+    <servlet-name>First</servlet-name>
+    <servlet-class>com.clouway.link.trace.First</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>First</servlet-name>
+    <url-pattern>/first</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>RequestTracer</servlet-name>
+    <servlet-class>com.clouway.link.trace.RequestTracer</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RequestTracer</servlet-name>
+    <url-pattern>/tracer</url-pattern>
+  </servlet-mapping>
 </web-app>
