@@ -1,6 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea/
-out/
-target/
 META-INF/
 lib/
+out/
+target/
+web/index.jsp
