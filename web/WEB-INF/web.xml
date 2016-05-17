@@ -5,26 +5,8 @@
          version="3.1">
 
   <servlet>
-    <servlet-name>Counter</servlet-name>
-    <servlet-class>com.clouway.links.Counter</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Counter</servlet-name>
-    <url-pattern>/counter</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>RadioMenu</servlet-name>
-    <servlet-class>com.clouway.radio.buttons.RadioMenu</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>RadioMenu</servlet-name>
-    <url-pattern>/menu</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
     <servlet-name>First</servlet-name>
-    <servlet-class>com.clouway.radio.buttons.First</servlet-class>
+    <servlet-class>com.clouway.link.trace.First</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>First</servlet-name>
@@ -33,7 +15,7 @@
 
   <servlet>
     <servlet-name>Second</servlet-name>
-    <servlet-class>com.clouway.radio.buttons.Second</servlet-class>
+    <servlet-class>com.clouway.link.trace.Second</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>Second</servlet-name>
@@ -42,11 +24,28 @@
 
   <servlet>
     <servlet-name>Third</servlet-name>
-    <servlet-class>com.clouway.radio.buttons.Third</servlet-class>
+    <servlet-class>com.clouway.link.trace.Third</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>Third</servlet-name>
     <url-pattern>/third</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>RequestTracer</servlet-name>
+    <servlet-class>com.clouway.link.trace.RequestTracer</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RequestTracer</servlet-name>
+    <url-pattern>/tracer</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Display</servlet-name>
+    <servlet-class>com.clouway.link.trace.Display</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Display</servlet-name>
+    <url-pattern>/display</url-pattern>
+  </servlet-mapping>
 </web-app>

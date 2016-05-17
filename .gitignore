@@ -1,7 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea/
-META-INF/
-lib/
 out/
+lib/
 target/
+META-INF/
+>>>>>>> the second task about tracing which servlet calls the forth, and displaying it through the fifth.
 web/index.jsp
