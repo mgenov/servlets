@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 /**
  * @author Krasimir Raikov(raikov.krasimir@gmail.com)
  */
-@WebServlet(name = "Display")
 public class Display extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 

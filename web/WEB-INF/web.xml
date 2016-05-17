@@ -5,24 +5,6 @@
          version="3.1">
 
   <servlet>
-    <servlet-name>First</servlet-name>
-    <servlet-class>com.clouway.link.trace.First</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>First</servlet-name>
-    <url-pattern>/first</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>Second</servlet-name>
-    <servlet-class>com.clouway.link.trace.Second</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Second</servlet-name>
-    <url-pattern>/second</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
     <servlet-name>Third</servlet-name>
     <servlet-class>com.clouway.link.trace.Third</servlet-class>
   </servlet>

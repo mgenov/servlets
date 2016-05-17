@@ -11,7 +11,6 @@ import java.io.IOException;
 /**
  * @author Krasimir Raikov(raikov.krasimir@gmail.com)
  */
-@WebServlet(name = "RequestTracer")
 public class RequestTracer extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -19,6 +18,6 @@ public class RequestTracer extends HttpServlet {
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/display");
-    dispatcher.include(request, response);
+    dispatcher.forward(request, response);
   }
 }
