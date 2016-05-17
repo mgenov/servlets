@@ -83,15 +83,17 @@ public class YahooServletTest {
     }});
 
     yahoo.doGet(request, response);
+    String expected = out.toString();
+    assertThat(expected, containsString("<h1>Welcome! You visited Yahoo post service for the first time!</h1>"));
     yahoo.doGet(request, response);
 
-    String expected = out.toString();
+    String expected1 = out.toString();
 
-    assertThat(expected, containsString("<!DOCTYPE html>"));
-    assertThat(expected, containsString("<html>"));
-    assertThat(expected, containsString("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>"));
-    assertThat(expected, containsString("<title>Yahoo post service</title></head><body>"));
-    assertThat(expected, containsString("<h1></h1>"));
-    assertThat(expected, containsString("</body></html>"));
+    assertThat(expected1, containsString("<!DOCTYPE html>"));
+    assertThat(expected1, containsString("<html>"));
+    assertThat(expected1, containsString("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>"));
+    assertThat(expected1, containsString("<title>Yahoo post service</title></head><body>"));
+    assertThat(expected1, containsString("<h1></h1>"));
+    assertThat(expected1, containsString("</body></html>"));
   }
 }

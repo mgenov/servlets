@@ -24,16 +24,16 @@ public class DispatcherTest {
 
   @Test
   public void happyPath() throws Exception {
-    final String page="http://localhost:8080/abv.html";
+    final String page = "http://localhost:8080/abv.html";
     Dispatcher dispatecher = new Dispatcher();
-    context.checking(new Expectations(){{
+    context.checking(new Expectations() {{
       oneOf(request).getParameter("button");
       will(returnValue(page));
       oneOf(response).setContentType("text/html;charset=UTF-8");
       oneOf(response).sendRedirect(page);
     }});
 
-    dispatecher.doGet(request,response);
+    dispatecher.doGet(request, response);
 
   }
 }

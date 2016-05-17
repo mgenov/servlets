@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 @WebServlet(name = "Gmail")
 public class Gmail extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    doGet(request,response);
+    doGet(request, response);
   }
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
