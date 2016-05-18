@@ -92,44 +92,32 @@ public class LinkHitCoutnerTest {
   @Test
   public void clickOnlyFirstLink() throws Exception {
     LinkHitCounter linkhitcounter = new LinkHitCounter();
+    final Map<String, Integer> counter = new HashMap<String, Integer>();
+    counter.put("first", 0);
+    counter.put("second", 0);
+    counter.put("third", 0);
+
     context.checking(new Expectations() {
       {
         oneOf(request).getSession();
         will(returnValue(session));
-        ;
         oneOf(request).getParameter("link");
         will(returnValue(null));
-        oneOf(session).getAttribute(null);
+        oneOf(session).getAttribute("links");
         will(returnValue(null));
-        oneOf(session).setAttribute("first", 0);
-        oneOf(session).setAttribute("second", 0);
-        oneOf(session).setAttribute("third", 0);
-        oneOf(response).setContentType("text/html;charset=UTF-8");
+        oneOf(session).setAttribute("links", counter);
         oneOf(response).getWriter();
         will(returnValue(new PrintWriter(outputStream)));
-        oneOf(session).getAttribute("first");
-        will(returnValue(0));
-        oneOf(session).getAttribute("second");
-        will(returnValue(0));
-        oneOf(session).getAttribute("third");
-        will(returnValue(0));
 
         oneOf(request).getSession();
         will(returnValue(session));
         oneOf(request).getParameter("link");
         will(returnValue("first"));
-        oneOf(response).setContentType("text/html;charset=UTF-8");
+        oneOf(session).getAttribute("links");
+        will(returnValue(counter));
+        oneOf(session).setAttribute("links", counter);
         oneOf(response).getWriter();
         will(returnValue(new PrintWriter(outputStream)));
-        oneOf(session).getAttribute("first");
-        will(returnValue(0));
-        oneOf(session).setAttribute("first", 1);
-        oneOf(session).getAttribute("first");
-        will(returnValue(1));
-        oneOf(session).getAttribute("second");
-        will(returnValue(0));
-        oneOf(session).getAttribute("third");
-        will(returnValue(0));
       }
     });
 
@@ -149,6 +137,5 @@ public class LinkHitCoutnerTest {
     assertThat(expected, containsString("<p><a  href=\"linkhitcounter?link=third\">YAHOO</a>"));
     assertThat(expected, containsString("<h2 style=\"color:blue;\">You have accessed this link 0 times.</h2>"));
     assertThat(expected, containsString("</body></html>"));
-
   }
 }
