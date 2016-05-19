@@ -36,7 +36,6 @@ public class LinkHitCounter extends HttpServlet {
       session.setAttribute("links", accessCount);
     }
 
-
     PrintWriter out = resp.getWriter();
     try {
       out.println("<!DOCTYPE html>");
