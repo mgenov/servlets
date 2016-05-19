@@ -42,7 +42,7 @@ public class RecognizerTest {
     recognizerServlet.doGet(request,response);
 
     String actual = out.toString();
-    System.out.println(actual);
+
     assertThat(actual, containsString(expected));
 
   }
