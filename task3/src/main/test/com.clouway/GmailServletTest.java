@@ -35,13 +35,14 @@ public class GmailServletTest {
   public void firstTimePageLoad() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     Gmail gmail = new Gmail();
+    final String atr="Gmail";
 
     context.checking(new Expectations() {{
       oneOf(request).getSession();
       will(returnValue(session));
-      oneOf(session).getAttribute("gmailVisited");
+      oneOf(session).getAttribute(atr);
       will(returnValue(null));
-      oneOf(session).setAttribute("gmailVisited", "true");
+      oneOf(session).setAttribute(atr, "visited");
       oneOf(response).getWriter();
       will(returnValue(new PrintWriter(out)));
     }});
@@ -62,21 +63,22 @@ public class GmailServletTest {
   public void secondOrMoreTimePageLoad() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     Gmail gmail = new Gmail();
+    final String atr="Gmail";
 
     context.checking(new Expectations() {{
       oneOf(request).getSession();
       will(returnValue(session));
-      oneOf(session).getAttribute("gmailVisited");
+      oneOf(session).getAttribute(atr);
       will(returnValue(null));
-      oneOf(session).setAttribute("gmailVisited", "true");
+      oneOf(session).setAttribute(atr, "visited");
       oneOf(response).getWriter();
       will(returnValue(new PrintWriter(out)));
 
       oneOf(request).getSession();
       will(returnValue(session));
-      oneOf(session).getAttribute("gmailVisited");
-      will(returnValue("true"));
-      oneOf(session).setAttribute("gmailVisited", "true");
+      oneOf(session).getAttribute(atr);
+      will(returnValue("visited"));
+      oneOf(session).setAttribute(atr, "visited");
       oneOf(response).getWriter();
       will(returnValue(new PrintWriter(out)));
 

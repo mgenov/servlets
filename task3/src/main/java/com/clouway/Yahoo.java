@@ -20,20 +20,21 @@ public class Yahoo extends HttpServlet {
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     HttpSession session = request.getSession();
-    String yahooVisited = (String) session.getAttribute("yahooVisited");
+    String atr = "Yahoo";
+    String visited = (String) session.getAttribute(atr);
     String helloMessage = "";
 
-    if (yahooVisited == null) {
-      helloMessage = "Welcome! You visited Yahoo post service for the first time!";
+    if (visited == null) {
+      helloMessage = "Welcome! You visited "+atr+" post service for the first time!";
     }
 
-    session.setAttribute("yahooVisited", "true");
+    session.setAttribute(atr, "visited");
 
     PrintWriter out = response.getWriter();
     out.println("<!DOCTYPE html>");
     out.println("<html>");
     out.println("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
-    out.println("<title>Yahoo post service</title></head><body>");
+    out.println("<title>"+atr+" post service</title></head><body>");
     out.println("<h1>" + helloMessage + "</h1>");
     out.println("</body></html>");
     out.flush();

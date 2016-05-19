@@ -21,7 +21,7 @@
 
   <servlet-mapping>
     <servlet-name>Abv</servlet-name>
-    <url-pattern>/abv.html</url-pattern>
+    <url-pattern>/Abv</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -31,7 +31,7 @@
 
   <servlet-mapping>
     <servlet-name>Yahoo</servlet-name>
-    <url-pattern>/yahoo.html</url-pattern>
+    <url-pattern>/Yahoo</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -41,6 +41,6 @@
 
   <servlet-mapping>
     <servlet-name>Gmail</servlet-name>
-    <url-pattern>/gmail.html</url-pattern>
+    <url-pattern>/Gmail</url-pattern>
   </servlet-mapping>
 </web-app>

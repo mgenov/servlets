@@ -36,13 +36,14 @@ public class AbvServletTest {
   public void firstTimeLoad() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     Abv abv = new Abv();
+    final String atr="Abv";
 
     context.checking(new Expectations(){{
       oneOf(request).getSession();
       will(returnValue(session));
-      oneOf(session).getAttribute("abvVisited");
+      oneOf(session).getAttribute(atr);
       will(returnValue(null));
-      oneOf(session).setAttribute("abvVisited","true");
+      oneOf(session).setAttribute(atr,"visited");
       oneOf(response).getWriter();
       will(returnValue(new PrintWriter(out)));
     }});
@@ -63,21 +64,22 @@ public class AbvServletTest {
   public void secondOrMoreTimePageLoad() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     Abv abv = new Abv();
+    final String atr="Abv";
 
     context.checking(new Expectations(){{
       oneOf(request).getSession();
       will(returnValue(session));
-      oneOf(session).getAttribute("abvVisited");
+      oneOf(session).getAttribute(atr);
       will(returnValue(null));
-      oneOf(session).setAttribute("abvVisited","true");
+      oneOf(session).setAttribute(atr,"visited");
       oneOf(response).getWriter();
       will(returnValue(new PrintWriter(out)));
 
       oneOf(request).getSession();
       will(returnValue(session));
-      oneOf(session).getAttribute("abvVisited");
-      will(returnValue("true"));
-      oneOf(session).setAttribute("abvVisited","true");
+      oneOf(session).getAttribute(atr);
+      will(returnValue("visited"));
+      oneOf(session).setAttribute(atr,"visited");
       oneOf(response).getWriter();
       will(returnValue(new PrintWriter(out)));
 

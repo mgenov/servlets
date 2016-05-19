@@ -35,13 +35,14 @@ public class YahooServletTest {
   public void firstTimePageLoad() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     Yahoo yahoo = new Yahoo();
+    final String atr="Yahoo";
 
     context.checking(new Expectations() {{
       oneOf(request).getSession();
       will(returnValue(session));
-      oneOf(session).getAttribute("yahooVisited");
+      oneOf(session).getAttribute(atr);
       will(returnValue(null));
-      oneOf(session).setAttribute("yahooVisited", "true");
+      oneOf(session).setAttribute(atr, "visited");
       oneOf(response).getWriter();
       will(returnValue(new PrintWriter(out)));
     }});
@@ -62,21 +63,22 @@ public class YahooServletTest {
   public void secondOrMoreTimePageLoad() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     Yahoo yahoo = new Yahoo();
+    final String atr="Yahoo";
 
     context.checking(new Expectations() {{
       oneOf(request).getSession();
       will(returnValue(session));
-      oneOf(session).getAttribute("yahooVisited");
+      oneOf(session).getAttribute(atr);
       will(returnValue(null));
-      oneOf(session).setAttribute("yahooVisited", "true");
+      oneOf(session).setAttribute(atr, "visited");
       oneOf(response).getWriter();
       will(returnValue(new PrintWriter(out)));
 
       oneOf(request).getSession();
       will(returnValue(session));
-      oneOf(session).getAttribute("yahooVisited");
-      will(returnValue("true"));
-      oneOf(session).setAttribute("yahooVisited", "true");
+      oneOf(session).getAttribute(atr);
+      will(returnValue("visited"));
+      oneOf(session).setAttribute(atr, "visited");
       oneOf(response).getWriter();
       will(returnValue(new PrintWriter(out)));
 

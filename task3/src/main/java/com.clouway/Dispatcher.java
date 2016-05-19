@@ -13,9 +13,9 @@ import java.io.PrintWriter;
 public class Dispatcher extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    String page = req.getParameter("button");
+    String page = req.getParameter("page");
     resp.setContentType("text/html;charset=UTF-8");
-    resp.sendRedirect(page);
+    resp.sendRedirect("http://localhost:8080/"+page);
   }
 
   @Override
