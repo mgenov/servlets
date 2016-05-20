@@ -50,7 +50,7 @@ public class DisplayTest {
   public void tracesRequestOrigin() throws Exception {
     context.checking(new Expectations() {{
       oneOf(request).getHeader("referer");
-      will(returnValue("page"));
+      will(returnValue("firstPage"));
 
       oneOf(response).setContentType("text/html");
 
@@ -62,6 +62,6 @@ public class DisplayTest {
     printWriter.flush();
 
     String result = outputStream.toString();
-    assertThat(result, containsString("<h1>page</h1>"));
+    assertThat(result, containsString("<h1>firstPage</h1>"));
   }
 }
