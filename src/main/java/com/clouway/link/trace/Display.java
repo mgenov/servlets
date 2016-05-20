@@ -18,12 +18,17 @@ public class Display extends HttpServlet {
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String referer = request.getHeader("referer");
+
     response.setContentType("text/html");
     PrintWriter out = response.getWriter();
     out.println("<html>");
     out.println("<body>");
-    out.println("<h1>" + referer + "</h1>");
-    out.println("<h2>visited the link</h2>");
+    if(referer==null){
+      out.println("<h1>directly accessed</h1>");
+    }else {
+      out.println("<h1>" + referer + "</h1>");
+      out.println("<h2>visited the link</h2>");
+    }
     out.println("</body>");
     out.println("</html>");
   }
