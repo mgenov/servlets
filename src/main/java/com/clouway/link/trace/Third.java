@@ -12,13 +12,11 @@ import java.io.PrintWriter;
  * @author Krasimir Raikov(raikov.krasimir@gmail.com)
  */
 public class Third extends HttpServlet {
-  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-  }
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     response.setContentType("text/html");
     PrintWriter out = response.getWriter();
+
     out.println("<html>");
     out.println("<body>");
     out.println("<a href='tracer'>link</a>");

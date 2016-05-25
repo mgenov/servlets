@@ -12,9 +12,6 @@ import java.io.PrintWriter;
  * @author Krasimir Raikov(raikov.krasimir@gmail.com)
  */
 public class Display extends HttpServlet {
-  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-  }
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String referer = request.getHeader("referer");
@@ -23,12 +20,16 @@ public class Display extends HttpServlet {
     PrintWriter out = response.getWriter();
     out.println("<html>");
     out.println("<body>");
+
     if(referer==null){
       out.println("<h1>directly accessed</h1>");
-    }else {
+    }
+
+    else {
       out.println("<h1>" + referer + "</h1>");
       out.println("<h2>visited the link</h2>");
     }
+    
     out.println("</body>");
     out.println("</html>");
   }
