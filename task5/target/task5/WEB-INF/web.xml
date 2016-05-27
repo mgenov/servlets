@@ -34,11 +34,20 @@
   
   <servlet>
     <servlet-name>Register</servlet-name>
-    <servlet-class>com.clouway.Register</servlet-class>
+    <servlet-class>com.clouway.RegisterPage</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>Register</servlet-name>
     <url-pattern>/register</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>RegisterServlet</servlet-name>
+    <servlet-class>com.clouway.RegisterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RegisterServlet</servlet-name>
+    <url-pattern>/registerservlet</url-pattern>
   </servlet-mapping>
 
 </web-app>
