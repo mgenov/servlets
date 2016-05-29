@@ -6,7 +6,7 @@
 
   <servlet>
     <servlet-name>Third</servlet-name>
-    <servlet-class>com.clouway.link.trace.Third</servlet-class>
+    <servlet-class>com.clouway.link.trace.ThirdPage</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>Third</servlet-name>

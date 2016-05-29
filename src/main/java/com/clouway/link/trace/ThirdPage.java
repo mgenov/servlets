@@ -11,8 +11,7 @@ import java.io.PrintWriter;
 /**
  * @author Krasimir Raikov(raikov.krasimir@gmail.com)
  */
-@WebServlet(name = "Second", urlPatterns = {"/second"})
-public class Second extends HttpServlet {
+public class ThirdPage extends HttpServlet {
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     response.setContentType("text/html");
