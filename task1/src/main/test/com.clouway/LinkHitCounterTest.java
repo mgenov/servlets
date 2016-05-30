@@ -24,7 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Created by clouway on 16.05.16.
  */
-public class LinkHitCoutnerTest {
+public class LinkHitCounterTest {
   private ByteArrayOutputStream outputStream;
 
   @Mock
