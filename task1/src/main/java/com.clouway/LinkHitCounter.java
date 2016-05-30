@@ -55,17 +55,13 @@ public class LinkHitCounter extends HttpServlet {
     out.println("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
     out.println("<title>Session Test Servlet</title></head><body>");
     out.println("<p><a  href=\"linkhitcounter?link=first\">ABV</a>");
-    if (visitedPages.containsKey("first")) {
-      out.println("<h2 style=\"color:blue;\">You have accessed this link " + visitedPages.get("first") + " times.</h2>");
+    out.println("<p><a  href=\"linkhitcounter?link=second\">Yahoo</a>");
+    out.println("<p><a  href=\"linkhitcounter?link=third\">Gmail</a>");
+
+    for (String pageKey : visitedPages.keySet()) {
+      out.println("<h2 style=\"color:blue;\">You have accessed this link " + visitedPages.get(pageKey) + " times.</h2>");
     }
-    out.println("<p><a  href=\"linkhitcounter?link=second\">GMAIL</a>");
-    if (visitedPages.containsKey("second")) {
-      out.println("<h2 style=\"color:blue;\">You have accessed this link " + visitedPages.get("second") + " times.</h2>");
-    }
-    out.println("<p><a  href=\"linkhitcounter?link=third\">YAHOO</a>");
-    if (visitedPages.containsKey("third")) {
-      out.println("<h2 style=\"color:blue;\">You have accessed this link " + visitedPages.get("third") + " times.</h2>");
-    }
+
     out.println("</body></html>");
     out.close();
   }
