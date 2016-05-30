@@ -12,7 +12,7 @@ import static org.hamcrest.core.Is.is;
 /**
  * Created by com.clouway on 16.05.16.
  */
-public class RecognizerServletTest {
+public class ServletRecognizerTest {
 
   private FakeRequest fakeRequest;
   private FakeResponse fakeResponse;
@@ -27,7 +27,7 @@ public class RecognizerServletTest {
   }
 
   @Test
-  public void abvRequestHappyPath() throws Exception {
+  public void recognizeAbv() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     fakeRequest.setHeader("Referer","http://localhost:8080/pages/abv.html");
@@ -40,7 +40,7 @@ public class RecognizerServletTest {
   }
 
   @Test
-  public void yahooRequestHappyPath() throws Exception {
+  public void recognizeYahoo() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     fakeRequest.setHeader("Referer","http://localhost:8080/pages/yahoo.html");
@@ -53,7 +53,7 @@ public class RecognizerServletTest {
   }
 
   @Test
-  public void gmailRequestHappyPath() throws Exception {
+  public void recognizeGmail() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     fakeRequest.setHeader("Referer","http://localhost:8080/pages/gmail.html");

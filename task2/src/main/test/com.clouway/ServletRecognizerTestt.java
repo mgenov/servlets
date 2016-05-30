@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Created by clouway on 17.05.16.
  */
-public class RecognizerTest {
+public class ServletRecognizerTestt {
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
