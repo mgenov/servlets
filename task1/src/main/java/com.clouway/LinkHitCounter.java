@@ -18,45 +18,46 @@ import java.util.Map;
 public class LinkHitCounter extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    PrintWriter out = resp.getWriter();
 
     HttpSession session = req.getSession();
 
     String paramValue = req.getParameter("link");
 
-    Map<String, Integer> accessCount = (Map<String, Integer>) session.getAttribute("links");
+    Map<String, Integer> visitedPages = (Map<String, Integer>) session.getAttribute("links");
+
     if (paramValue == null) {
-      accessCount = new HashMap<String, Integer>();
-      accessCount.put("first", 0);
-      accessCount.put("second", 0);
-      accessCount.put("third", 0);
-      session.setAttribute("links", accessCount);
+      visitedPages = new HashMap<String, Integer>();
+      session.setAttribute("links", visitedPages);
+    } else if (!visitedPages.containsKey(paramValue)) {
+      visitedPages.put(paramValue, 1);
     } else {
-      Integer num = accessCount.get(paramValue);
-      accessCount.put(paramValue, num + 1);
-      session.setAttribute("links", accessCount);
+      Integer num = visitedPages.get(paramValue);
+      visitedPages.put(paramValue, num + 1);
     }
 
-    PrintWriter out = resp.getWriter();
-    try {
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
-      out.println("<title>Session Test Servlet</title></head><body>");
-      out.println("<p><a  href=\"linkhitcounter?link=first\">ABV</a>");
-      out.println("<h2 style=\"color:blue;\">You have accessed this link " + accessCount.get("first") + " times.</h2>");
-      out.println("<p><a  href=\"linkhitcounter?link=second\">GMAIL</a>");
-      out.println("<h2 style=\"color:blue;\">You have accessed this link " + accessCount.get("second") + " times.</h2>");
-      out.println("<p><a  href=\"linkhitcounter?link=third\">YAHOO</a>");
-      out.println("<h2 style=\"color:blue;\">You have accessed this link " + accessCount.get("third") + " times.</h2>");
-      out.println("</body></html>");
-
-    } finally {
-      out.close();
-    }
+    printPage(out, visitedPages);
   }
 
-  @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    doGet(req, resp);
+
+  public void printPage(PrintWriter out, Map<String, Integer> visitedPages) {
+    out.println("<!DOCTYPE html>");
+    out.println("<html>");
+    out.println("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
+    out.println("<title>Session Test Servlet</title></head><body>");
+    out.println("<p><a  href=\"linkhitcounter?link=first\">ABV</a>");
+    if (visitedPages.containsKey("first")) {
+      out.println("<h2 style=\"color:blue;\">You have accessed this link " + visitedPages.get("first") + " times.</h2>");
+    }
+    out.println("<p><a  href=\"linkhitcounter?link=second\">GMAIL</a>");
+    if (visitedPages.containsKey("second")) {
+      out.println("<h2 style=\"color:blue;\">You have accessed this link " + visitedPages.get("second") + " times.</h2>");
+    }
+    out.println("<p><a  href=\"linkhitcounter?link=third\">YAHOO</a>");
+    if (visitedPages.containsKey("third")) {
+      out.println("<h2 style=\"color:blue;\">You have accessed this link " + visitedPages.get("third") + " times.</h2>");
+    }
+    out.println("</body></html>");
+    out.close();
   }
 }
