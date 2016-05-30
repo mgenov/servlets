@@ -16,27 +16,36 @@ import java.util.Map;
 
 
 public class LinkHitCounter extends HttpServlet {
-  @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     PrintWriter out = resp.getWriter();
-
     HttpSession session = req.getSession();
 
     String paramValue = req.getParameter("link");
+    if (paramValue == null) {
+      printPage(out, new HashMap<String, Integer>());
+      return;
+    }
+
 
     Map<String, Integer> visitedPages = (Map<String, Integer>) session.getAttribute("links");
 
-    if (paramValue == null) {
+    if (visitedPages == null) {
       visitedPages = new HashMap<String, Integer>();
       session.setAttribute("links", visitedPages);
-    } else if (!visitedPages.containsKey(paramValue)) {
-      visitedPages.put(paramValue, 1);
-    } else {
-      Integer num = visitedPages.get(paramValue);
-      visitedPages.put(paramValue, num + 1);
+      printPage(out, visitedPages);
+      return;
     }
 
-    printPage(out, visitedPages);
+    if (visitedPages.containsKey(paramValue)) {
+      Integer num = visitedPages.get(paramValue);
+      visitedPages.put(paramValue, num + 1);
+      session.setAttribute("links", visitedPages);
+      printPage(out, visitedPages);
+    } else {
+      visitedPages.put(paramValue, 1);
+      session.setAttribute("links", visitedPages);
+      printPage(out, visitedPages);
+    }
   }
 
 
