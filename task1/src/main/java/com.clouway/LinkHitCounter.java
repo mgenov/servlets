@@ -11,23 +11,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by clouway on 13.05.16.
+ * Created by Kristiyan Petkov  <kristiqn.l.petkov@gmail.com> on 31.05.16.
  */
-
-
 public class LinkHitCounter extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     PrintWriter out = resp.getWriter();
     HttpSession session = req.getSession();
-
+    Map<String, Integer> visitedPages = (Map<String, Integer>) session.getAttribute("links");
     String paramValue = req.getParameter("link");
+
     if (paramValue == null) {
       printPage(out, new HashMap<String, Integer>());
-      return;
     }
-
-
-    Map<String, Integer> visitedPages = (Map<String, Integer>) session.getAttribute("links");
 
     if (visitedPages == null) {
       visitedPages = new HashMap<String, Integer>();
@@ -37,8 +32,8 @@ public class LinkHitCounter extends HttpServlet {
     }
 
     if (visitedPages.containsKey(paramValue)) {
-      Integer num = visitedPages.get(paramValue);
-      visitedPages.put(paramValue, num + 1);
+      Integer counter = visitedPages.get(paramValue);
+      visitedPages.put(paramValue, counter + 1);
       session.setAttribute("links", visitedPages);
       printPage(out, visitedPages);
     } else {
@@ -49,7 +44,7 @@ public class LinkHitCounter extends HttpServlet {
   }
 
 
-  public void printPage(PrintWriter out, Map<String, Integer> visitedPages) {
+  private void printPage(PrintWriter out, Map<String, Integer> visitedPages) {
     out.println("<!DOCTYPE html>");
     out.println("<html>");
     out.println("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");

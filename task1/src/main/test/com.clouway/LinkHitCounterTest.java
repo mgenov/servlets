@@ -1,127 +1,90 @@
 package com.clouway;
 
-import org.jmock.Expectations;
-import org.jmock.auto.Mock;
-import org.jmock.integration.junit4.JUnitRuleMockery;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import sun.awt.image.ImageWatched.Link;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * Created by clouway on 16.05.16.
+ * Created by Kristiyan Petkov  <kristiqn.l.petkov@gmail.com> on 31.05.16.
  */
 public class LinkHitCounterTest {
-  private ByteArrayOutputStream outputStream;
+  private FakeRequest fakeRequest;
+  private FakeResponse fakeResponse;
+  private FakeHttpSession fakeHttpSession;
+  private LinkHitCounter linkHitCounter;
 
-  @Mock
-  HttpServletRequest request;
-
-  @Mock
-  HttpServletResponse response;
-
-  @Mock
-  HttpSession session;
-
-  @Rule
-  public JUnitRuleMockery context = new JUnitRuleMockery();
 
   @Before
   public void setUp() {
-    outputStream = new ByteArrayOutputStream();
-  }
-
-  @After
-  public void cleanUp() throws IOException {
-    outputStream.close();
-  }
-
-
-  @Test
-  public void loadPage() throws Exception {
-    LinkHitCounter linkhitcounter = new LinkHitCounter();
-
-    context.checking(new Expectations() {{
-      oneOf(response).getWriter();
-      will(returnValue(new PrintWriter(outputStream)));
-      oneOf(request).getSession();
-      will(returnValue(session));
-      oneOf(request).getParameter("link");
-      will(returnValue(null));
-
-    }});
-
-    linkhitcounter.doGet(request, response);
+    fakeHttpSession = new FakeHttpSession();
+    fakeRequest = new FakeRequest(fakeHttpSession);
+    fakeResponse = new FakeResponse();
+    linkHitCounter = new LinkHitCounter();
   }
 
   @Test
-  public void visitFirstLink() throws Exception {
-    LinkHitCounter linkHitCounter = new LinkHitCounter();
-    final Map<String, Integer> visitedPages = new HashMap<String, Integer>();
+  public void hitFirstLinkOnce() throws Exception {
+    final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    context.checking(new Expectations() {{
-      oneOf(response).getWriter();
-      will(returnValue(new PrintWriter(outputStream)));
-      oneOf(request).getSession();
-      will(returnValue(session));
-      oneOf(request).getParameter("link");
-      will(returnValue("first"));
-      oneOf(session).getAttribute("links");
-      will(returnValue(visitedPages));
-      oneOf(session).setAttribute("links", visitedPages);
-    }});
+    fakeResponse.setOutputStream(out);
+    linkHitCounter.doGet(fakeRequest, fakeResponse);
 
-    linkHitCounter.doGet(request, response);
+    fakeRequest.setParameter("link", "first");
+    linkHitCounter.doGet(fakeRequest, fakeResponse);
 
-    String expected = outputStream.toString();
+    String expected = out.toString();
     assertThat(expected, containsString("You have accessed this link 1 times."));
-
   }
 
   @Test
-  public void visitSecondLinkTwice() throws Exception {
-    LinkHitCounter linkHitCounter = new LinkHitCounter();
-    final Map<String, Integer> visitedPages = new HashMap<String, Integer>();
+  public void hitFirstLinkTwice() throws Exception {
+    final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    context.checking(new Expectations() {{
-      oneOf(response).getWriter();
-      will(returnValue(new PrintWriter(outputStream)));
-      oneOf(request).getSession();
-      will(returnValue(session));
-      oneOf(request).getParameter("link");
-      will(returnValue("second"));
-      oneOf(session).getAttribute("links");
-      will(returnValue(visitedPages));
-      oneOf(session).setAttribute("links", visitedPages);
+    fakeResponse.setOutputStream(out);
+    linkHitCounter.doGet(fakeRequest, fakeResponse);
 
-      oneOf(response).getWriter();
-      will(returnValue(new PrintWriter(outputStream)));
-      oneOf(request).getSession();
-      will(returnValue(session));
-      oneOf(request).getParameter("link");
-      will(returnValue("second"));
-      oneOf(session).getAttribute("links");
-      will(returnValue(visitedPages));
-      oneOf(session).setAttribute("links", visitedPages);
-    }});
+    fakeRequest.setParameter("link", "first");
+    linkHitCounter.doGet(fakeRequest, fakeResponse);
 
-    linkHitCounter.doGet(request, response);
-    linkHitCounter.doGet(request, response);
+    fakeRequest.setParameter("link", "first");
+    linkHitCounter.doGet(fakeRequest, fakeResponse);
 
-    String expected = outputStream.toString();
+    String expected = out.toString();
     assertThat(expected, containsString("You have accessed this link 2 times."));
+  }
+
+  @Test
+  public void hitEachLinkDifferentTimes() throws Exception {
+    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+    fakeResponse.setOutputStream(out);
+    linkHitCounter.doGet(fakeRequest, fakeResponse);
+
+    fakeRequest.setParameter("link", "first");
+    linkHitCounter.doGet(fakeRequest, fakeResponse);
+
+    fakeRequest.setParameter("link", "second");
+    linkHitCounter.doGet(fakeRequest, fakeResponse);
+
+    fakeRequest.setParameter("link", "second");
+    linkHitCounter.doGet(fakeRequest, fakeResponse);
+
+    fakeRequest.setParameter("link", "third");
+    linkHitCounter.doGet(fakeRequest, fakeResponse);
+
+    fakeRequest.setParameter("link", "third");
+    linkHitCounter.doGet(fakeRequest, fakeResponse);
+
+    fakeRequest.setParameter("link", "third");
+    linkHitCounter.doGet(fakeRequest, fakeResponse);
+
+    String expected = out.toString();
+    assertThat(expected, containsString("You have accessed this link 1 times."));
+    assertThat(expected, containsString("You have accessed this link 2 times."));
+    assertThat(expected, containsString("You have accessed this link 3 times."));
   }
 }
