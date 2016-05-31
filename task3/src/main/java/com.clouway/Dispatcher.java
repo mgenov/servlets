@@ -17,7 +17,6 @@ public class Dispatcher extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String page = req.getParameter("page");
     resp.setContentType("text/html;charset=UTF-8");
-    int port = req.getServerPort();
     resp.sendRedirect(page);
   }
 }

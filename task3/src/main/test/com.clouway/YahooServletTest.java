@@ -69,24 +69,12 @@ public class YahooServletTest {
       oneOf(request).getSession();
       will(returnValue(session));
       oneOf(session).getAttribute(atr);
-      will(returnValue(null));
-      oneOf(session).setAttribute(atr, "visited");
-      oneOf(response).getWriter();
-      will(returnValue(new PrintWriter(out)));
-
-      oneOf(request).getSession();
-      will(returnValue(session));
-      oneOf(session).getAttribute(atr);
       will(returnValue("visited"));
       oneOf(session).setAttribute(atr, "visited");
       oneOf(response).getWriter();
       will(returnValue(new PrintWriter(out)));
-
     }});
 
-    yahoo.doGet(request, response);
-    String expected = out.toString();
-    assertThat(expected, containsString("<h1>Welcome! You visited Yahoo post service for the first time!</h1>"));
     yahoo.doGet(request, response);
 
     String expected1 = out.toString();

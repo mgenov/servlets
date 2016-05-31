@@ -25,13 +25,12 @@ public class DispatcherTest {
   @Test
   public void happyPath() throws Exception {
     final String page = "abv";
-    final int port = request.getServerPort();
     Dispatcher dispatecher = new Dispatcher();
     context.checking(new Expectations() {{
       oneOf(request).getParameter("page");
       will(returnValue(page));
       oneOf(response).setContentType("text/html;charset=UTF-8");
-      oneOf(response).sendRedirect("http://localhost:" + port + "/" + page);
+      oneOf(response).sendRedirect(page);
     }});
 
     dispatecher.doGet(request, response);
