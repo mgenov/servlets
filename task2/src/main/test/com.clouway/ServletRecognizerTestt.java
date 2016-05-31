@@ -28,7 +28,7 @@ public class ServletRecognizerTestt {
   HttpServletResponse response;
 
   @Test
-  public void checkIfRequestIsFromAbv() throws Exception {
+  public void checkRequest() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     RecognizerServlet recognizerServlet = new RecognizerServlet();

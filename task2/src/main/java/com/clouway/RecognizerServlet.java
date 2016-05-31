@@ -26,5 +26,6 @@ public class RecognizerServlet extends HttpServlet {
     out.println("<h2 style=\"color:blue;\">Request from: " + requestURL + " </h2>");
     out.println("</body></html>");
     out.flush();
+    out.close();
   }
 }

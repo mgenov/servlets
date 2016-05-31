@@ -27,7 +27,7 @@ public class ServletRecognizerTest {
   }
 
   @Test
-  public void checkIfRequestIsFromAbv() throws Exception {
+  public void checkRequest() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     fakeRequest.setHeader("Referer","http://localhost:8080/pages/abv.html");
@@ -37,31 +37,5 @@ public class ServletRecognizerTest {
     String expected = out.toString();
 
     assertThat(expected.contains("http://localhost:8080/pages/abv.html"),is(true));
-  }
-
-  @Test
-  public void checkIfRequestIsFromYahoo() throws Exception {
-    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-    fakeRequest.setHeader("Referer","http://localhost:8080/pages/yahoo.html");
-    fakeResponse.setOutputStream(out);
-    recognizerServlet.doGet(fakeRequest,fakeResponse);
-
-    String expected = out.toString();
-
-    assertThat(expected.contains("http://localhost:8080/pages/yahoo.html"),is(true));
-  }
-
-  @Test
-  public void checkIfRequestIsFromGmail() throws Exception {
-    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-    fakeRequest.setHeader("Referer","http://localhost:8080/pages/gmail.html");
-    fakeResponse.setOutputStream(out);
-    recognizerServlet.doGet(fakeRequest,fakeResponse);
-
-    String expected = out.toString();
-
-    assertThat(expected.contains("http://localhost:8080/pages/gmail.html"),is(true));
   }
 }
