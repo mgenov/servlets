@@ -28,10 +28,13 @@ public class ServletRecognizerTestt {
   HttpServletResponse response;
 
   @Test
-  public void happyPath() throws Exception {
+  public void checkIfRequestIsFromAbv() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
     RecognizerServlet recognizerServlet = new RecognizerServlet();
+
     final String expected="http://localhost:8080/pages/abv.html";
+
     context.checking(new Expectations() {{
       oneOf(request).getHeader("Referer");
       will(returnValue(expected));
@@ -44,6 +47,5 @@ public class ServletRecognizerTestt {
     String actual = out.toString();
 
     assertThat(actual, containsString(expected));
-
   }
 }

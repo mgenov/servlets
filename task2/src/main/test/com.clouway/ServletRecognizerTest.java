@@ -27,7 +27,7 @@ public class ServletRecognizerTest {
   }
 
   @Test
-  public void recognizeAbv() throws Exception {
+  public void checkIfRequestIsFromAbv() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     fakeRequest.setHeader("Referer","http://localhost:8080/pages/abv.html");
@@ -40,7 +40,7 @@ public class ServletRecognizerTest {
   }
 
   @Test
-  public void recognizeYahoo() throws Exception {
+  public void checkIfRequestIsFromYahoo() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     fakeRequest.setHeader("Referer","http://localhost:8080/pages/yahoo.html");
@@ -53,7 +53,7 @@ public class ServletRecognizerTest {
   }
 
   @Test
-  public void recognizeGmail() throws Exception {
+  public void checkIfRequestIsFromGmail() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     fakeRequest.setHeader("Referer","http://localhost:8080/pages/gmail.html");
