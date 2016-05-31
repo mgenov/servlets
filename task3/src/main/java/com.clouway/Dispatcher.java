@@ -18,6 +18,6 @@ public class Dispatcher extends HttpServlet {
     String page = req.getParameter("page");
     resp.setContentType("text/html;charset=UTF-8");
     int port = req.getServerPort();
-    resp.sendRedirect("http://localhost:" + port + "/" + page);
+    resp.sendRedirect(page);
   }
 }
