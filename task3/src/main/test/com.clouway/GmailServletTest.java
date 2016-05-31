@@ -35,7 +35,7 @@ public class GmailServletTest {
   public void firstTimePageLoad() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     Gmail gmail = new Gmail();
-    final String atr="Gmail";
+    final String atr = "Gmail";
 
     context.checking(new Expectations() {{
       oneOf(request).getSession();
@@ -63,7 +63,7 @@ public class GmailServletTest {
   public void secondOrMoreTimePageLoad() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     Gmail gmail = new Gmail();
-    final String atr="Gmail";
+    final String atr = "Gmail";
 
     context.checking(new Expectations() {{
       oneOf(request).getSession();
@@ -95,7 +95,6 @@ public class GmailServletTest {
     assertThat(expected1, containsString("<html>"));
     assertThat(expected1, containsString("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>"));
     assertThat(expected1, containsString("<title>Gmail post service</title></head><body>"));
-    assertThat(expected1, containsString("<h1></h1>"));
     assertThat(expected1, containsString("</body></html>"));
   }
 }

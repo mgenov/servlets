@@ -15,9 +15,6 @@ import java.util.Date;
  */
 @WebServlet(name = "Abv")
 public class Abv extends HttpServlet {
-  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    doGet(request,response);
-  }
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     HttpSession session = request.getSession();
@@ -26,7 +23,7 @@ public class Abv extends HttpServlet {
     String helloMessage = "";
 
     if (visited == null) {
-      helloMessage = "Welcome! You visited "+atr+" post service for the first time!";
+      helloMessage = "<h1>Welcome! You visited " + atr + " post service for the first time!</h1>";
     }
 
     session.setAttribute(atr, "visited");
@@ -36,7 +33,7 @@ public class Abv extends HttpServlet {
     out.println("<html>");
     out.println("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
     out.println("<title>"+atr+" post service</title></head><body>");
-    out.println("<h1>" + helloMessage + "</h1>");
+    out.println(helloMessage);
     out.println("</body></html>");
     out.flush();
     out.close();

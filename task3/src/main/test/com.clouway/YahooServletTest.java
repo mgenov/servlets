@@ -35,7 +35,7 @@ public class YahooServletTest {
   public void firstTimePageLoad() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     Yahoo yahoo = new Yahoo();
-    final String atr="Yahoo";
+    final String atr = "Yahoo";
 
     context.checking(new Expectations() {{
       oneOf(request).getSession();
@@ -63,7 +63,7 @@ public class YahooServletTest {
   public void secondOrMoreTimePageLoad() throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     Yahoo yahoo = new Yahoo();
-    final String atr="Yahoo";
+    final String atr = "Yahoo";
 
     context.checking(new Expectations() {{
       oneOf(request).getSession();
@@ -95,7 +95,6 @@ public class YahooServletTest {
     assertThat(expected1, containsString("<html>"));
     assertThat(expected1, containsString("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>"));
     assertThat(expected1, containsString("<title>Yahoo post service</title></head><body>"));
-    assertThat(expected1, containsString("<h1></h1>"));
     assertThat(expected1, containsString("</body></html>"));
   }
 }
