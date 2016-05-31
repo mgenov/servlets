@@ -37,7 +37,7 @@ public class DisplayTest {
       oneOf(response).getWriter();
       will(returnValue(new PrintWriter(out)));
 
-      oneOf(request).getAttribute("servletName");
+      oneOf(request).getParameter("servletName");
       will(returnValue("first"));
 
     }});

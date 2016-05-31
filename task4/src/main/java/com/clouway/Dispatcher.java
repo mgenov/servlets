@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by clouway on 18.05.16.
@@ -15,14 +17,16 @@ import java.io.PrintWriter;
 public class Dispatcher extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    String servletName= req.getParameter("servletName");
-    req.setAttribute("servletName",servletName);
-    RequestDispatcher requestDispatcher = req.getRequestDispatcher("/display");
-    requestDispatcher.forward(req, resp);
-  }
+    Set<String> trustedPages = new HashSet<String>();
+    trustedPages.add("first");
+    trustedPages.add("second");
+    trustedPages.add("third");
 
-  @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    doGet(req, resp);
+    if (trustedPages.contains(req.getParameter("servletName"))) {
+      RequestDispatcher requestDispatcher = req.getRequestDispatcher("/display");
+      requestDispatcher.forward(req, resp);
+    } else {
+      req.setAttribute("errorMsg", "Request from unknown servlet!");
+    }
   }
 }
