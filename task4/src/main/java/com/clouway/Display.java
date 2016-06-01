@@ -16,8 +16,10 @@ public class  Display extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     PrintWriter out = resp.getWriter();
     String name = req.getParameter("servletName");
-    if (req.getAttribute("errorMsg") != null) {
-      out.println("<h1 style=\"color:red\">"+req.getAttribute("errorMsg")+"</h1>");
+    String errorMsg = (String) req.getAttribute("errorMsg");
+
+    if (errorMsg != null) {
+      out.println("<h1 style=\"color:red\">"+errorMsg+"</h1>");
       out.flush();
       out.close();
     } else {

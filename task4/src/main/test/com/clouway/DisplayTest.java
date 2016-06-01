@@ -36,10 +36,10 @@ public class DisplayTest {
     context.checking(new Expectations() {{
       oneOf(response).getWriter();
       will(returnValue(new PrintWriter(out)));
-
       oneOf(request).getParameter("servletName");
       will(returnValue("first"));
-
+      oneOf(request).getAttribute("errorMsg");
+      will(returnValue(null));
     }});
 
     display.doGet(request, response);
@@ -47,5 +47,27 @@ public class DisplayTest {
     String expected = out.toString();
 
     assertThat(expected, containsString("first"));
+  }
+
+  @Test
+  public void requestFromUntrustedPage() throws Exception {
+    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+    Display display = new Display();
+
+    context.checking(new Expectations() {{
+      oneOf(response).getWriter();
+      will(returnValue(new PrintWriter(out)));
+      oneOf(request).getParameter("servletName");
+      will(returnValue("blabla"));
+      oneOf(request).getAttribute("errorMsg");
+      will(returnValue("Request from unknown servlet!"));
+    }});
+
+    display.doGet(request, response);
+
+    String expected = out.toString();
+
+    assertThat(expected, containsString("Request from unknown servlet!"));
+
   }
 }

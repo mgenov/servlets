@@ -17,16 +17,17 @@ import java.util.Set;
 public class Dispatcher extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    RequestDispatcher requestDispatcher = req.getRequestDispatcher("/display");
     Set<String> trustedPages = new HashSet<String>();
     trustedPages.add("first");
     trustedPages.add("second");
     trustedPages.add("third");
 
     if (trustedPages.contains(req.getParameter("servletName"))) {
-      RequestDispatcher requestDispatcher = req.getRequestDispatcher("/display");
       requestDispatcher.forward(req, resp);
     } else {
       req.setAttribute("errorMsg", "Request from unknown servlet!");
+      requestDispatcher.forward(req, resp);
     }
   }
 }
