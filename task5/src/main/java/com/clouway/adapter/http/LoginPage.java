@@ -17,15 +17,11 @@ import java.io.PrintWriter;
 public class LoginPage extends HttpServlet {
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String errorMessage = "";
-
-    if (request.getParameter("errorMsg") != null) {
-      errorMessage = request.getParameter("errorMsg");
-    }
+    String errorMessage = request.getParameter("errorMsg");
     printPage(response.getWriter(), errorMessage);
   }
 
-  private void printPage(PrintWriter out, String errMsg) {
+  private void printPage(PrintWriter out, String errorMsg) {
     out.println("<!DOCTYPE html>");
     out.println("<html>");
     out.println("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
@@ -35,10 +31,10 @@ public class LoginPage extends HttpServlet {
     out.println("Password:<input type=\"password\" name=\"password\"/><br/>");
     out.println("<input type=\"submit\" value=\"login\">");
     out.println("</form>");
-    out.print("<form action=\"/register\" method=\"findByEmail\">");
-    out.print("<input type=\"submit\" value=\"register\">");
-    out.println("</form>");
-    out.println(errMsg);
+    out.print("<a href=\"/register\">Register</a>");
+    if (errorMsg != null) {
+      out.println("<h2 style='color:red'>" + errorMsg + "</h2>");
+    }
     out.println("</body></html>");
     out.flush();
     out.close();

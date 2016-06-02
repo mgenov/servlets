@@ -7,6 +7,7 @@ public class Session {
   public final String email;
   public final String sessionId;
 
+
   public Session(String email, String sessionId) {
     this.email = email;
     this.sessionId = sessionId;

@@ -19,13 +19,14 @@ public class PersistentSessionRepository implements SessionRepository {
     this.connectionProvider = connectionProvider;
   }
 
-  public void createSession(Session session) {
+  public void create(Session session) {
     Connection connection = connectionProvider.get();
     PreparedStatement statement = null;
     try {
-      statement = connection.prepareStatement("INSERT INTO session (email,sessionID) VALUES (?,?)");
+      statement = connection.prepareStatement("INSERT INTO session (email,sessionID,expirationTime) VALUES (?,?,?)");
       statement.setString(1, session.email);
       statement.setString(2, session.sessionId);
+      statement.setLong(3, System.currentTimeMillis() + 5 * 60 * 1000);
       statement.execute();
     } catch (SQLException sqlExc) {
       sqlExc.printStackTrace();
@@ -38,7 +39,7 @@ public class PersistentSessionRepository implements SessionRepository {
     }
   }
 
-  public Session getSession(String sessionID) {
+  public Session get(String sessionID) {
     Session session = null;
     Connection connection = connectionProvider.get();
     PreparedStatement statement = null;
@@ -62,16 +63,69 @@ public class PersistentSessionRepository implements SessionRepository {
     return session;
   }
 
-  public void deleteSession(String sessionID) {
+  public void delete(String sessionID) {
     Connection connection = connectionProvider.get();
     PreparedStatement statement = null;
-    try{
-      statement=connection.prepareStatement("DELETE FROM session WHERE sessionID=?");
-      statement.setString(1,sessionID);
+    try {
+      statement = connection.prepareStatement("DELETE FROM session WHERE sessionID=?");
+      statement.setString(1, sessionID);
       statement.execute();
     } catch (SQLException e) {
       e.printStackTrace();
-    }finally {
+    } finally {
+      try {
+        statement.close();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  public void deleteAll() {
+    Connection connection = connectionProvider.get();
+    PreparedStatement statement = null;
+    try {
+      statement = connection.prepareStatement("DELETE FROM session");
+      statement.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        statement.close();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  public void cleanExpired() {
+    Connection connection = connectionProvider.get();
+    PreparedStatement statement = null;
+    try {
+      statement = connection.prepareStatement("DELETE FROM session WHERE expirationTime < " + System.currentTimeMillis());
+      statement.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        statement.close();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  public void refreshSessionTime(Session session) {
+    Connection connection = connectionProvider.get();
+    PreparedStatement statement = null;
+    try {
+      statement = connection.prepareStatement("UPDATE session SET expirationTime=" + System.currentTimeMillis() + 5 * 60 * 1000 + " WHERE email=? AND sessionID=?");
+      statement.setString(1, session.email);
+      statement.setString(2, session.sessionId);
+      statement.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
       try {
         statement.close();
       } catch (SQLException e) {

@@ -2,9 +2,8 @@ package com.clouway.adapter.http;
 
 import com.clouway.core.User;
 import com.clouway.core.UserRepository;
-import com.clouway.core.UserValidator;
+import com.clouway.core.Validator;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,38 +17,36 @@ import java.io.IOException;
 @WebServlet(name = "RegisterController")
 public class RegisterController extends HttpServlet {
   private UserRepository userRepository;
-  private RequestDispatcher rd;
+  private Validator userValidator;
 
-  public RegisterController(UserRepository userRepository) {
+  public RegisterController(UserRepository userRepository, Validator userValidator) {
     this.userRepository = userRepository;
+    this.userValidator = userValidator;
   }
 
-  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    UserValidator userValidator = new UserValidator();
-    rd = request.getRequestDispatcher("/register");
-
-    String userName = request.getParameter("regname");
-    String password = request.getParameter("regpassword");
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    String userName = request.getParameter("username");
+    String password = request.getParameter("password");
     String email = request.getParameter("email");
 
-    if (userValidator.isValid(userName, password, email)) {
-      if (checkIfExist(email)) {
-        response.sendRedirect("/register?errorMsg=<h2 style='color:red'>Username with such an email already exist!</h2>");
-      } else {
-        userRepository.register(new User(userName, password, email));
-        response.sendRedirect("/login?errorMsg=<h2 style='color:green'>Registration successfull!</h2>");
-      }
-    } else {
-      response.sendRedirect("/register?errorMsg=<h3style='color:red'>Input data is not in a valid format! Username and password should be between 6-16 characters and can contain only letters and digits.</h3>");
+    boolean valid = userValidator.isValid(userName, password, email);
+    if (!valid) {
+      response.sendRedirect("/register?errorMsg=Input data is not in a valid format! Username and password should be between 6-16 characters and can contain only letters and digits.");
+      return;
     }
+
+    if (checkIfExist(email)) {
+      response.sendRedirect("/register?errorMsg=Username with such an email already exist!");
+      return;
+    }
+
+    userRepository.register(new User(userName, password, email));
+    response.sendRedirect("/login?errorMsg=Registration successfull!");
+
   }
 
   private boolean checkIfExist(String email) {
     User user = userRepository.findByEmail(email);
-    if (user != null) {
-      return true;
-    } else {
-      return false;
-    }
+    return user != null;
   }
 }

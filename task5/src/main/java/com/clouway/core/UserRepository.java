@@ -9,5 +9,7 @@ public interface UserRepository {
 
   User findByEmail(String email);
 
-  boolean authorize(String email, String password);
+  boolean authenticate(String email, String password);
+
+  void deleteAll();
 }

@@ -27,7 +27,7 @@ public class UserAccount extends HttpServlet {
     out.println("<html>");
     out.println("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
     out.println("<title>LoginPage Form</title></head><body>");
-    out.println("<h1> Welcome to our bank! </h1>");
+    out.println("<h1> Welcome! </h1>");
     out.print("<form action=\"/logoutcontroller\" method=\"post\">");
     out.print("<input type=\"submit\" value=\"Logout\">");
     out.println("</body></html>");

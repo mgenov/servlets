@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Kristiyan Petkov  <kristiqn.l.petkov@gmail.com> on 27.05.16.
  */
-public class UserValidator implements Validator {
+public class DataValidator implements Validator {
   public boolean isValid(String email, String password) {
     boolean result = false;
     String emailPattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";

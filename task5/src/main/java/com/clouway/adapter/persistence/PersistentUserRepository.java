@@ -14,9 +14,14 @@ import java.sql.SQLException;
  */
 public class PersistentUserRepository implements UserRepository {
   private ConnectionProvider connectionProvider;
+  private Connection connection;
 
   public PersistentUserRepository(ConnectionProvider connectionProvider) {
     this.connectionProvider = connectionProvider;
+  }
+
+  public PersistentUserRepository(Connection connection) {
+    this.connection = connection;
   }
 
   public void register(User user) {
@@ -32,7 +37,9 @@ public class PersistentUserRepository implements UserRepository {
       sql.printStackTrace();
     } finally {
       try {
-        statement.close();
+        if (statement != null) {
+          statement.close();
+        }
       } catch (SQLException e) {
         e.printStackTrace();
       }
@@ -55,7 +62,9 @@ public class PersistentUserRepository implements UserRepository {
       sql.printStackTrace();
     } finally {
       try {
-        statement.close();
+        if (statement != null) {
+          statement.close();
+        }
       } catch (SQLException e) {
         e.printStackTrace();
       }
@@ -63,7 +72,7 @@ public class PersistentUserRepository implements UserRepository {
     return user;
   }
 
-  public boolean authorize(String email, String password) {
+  public boolean authenticate(String email, String password) {
     Connection connection = connectionProvider.get();
     boolean result = false;
     PreparedStatement statement = null;
@@ -78,9 +87,11 @@ public class PersistentUserRepository implements UserRepository {
       resultSet.close();
     } catch (SQLException e) {
       e.printStackTrace();
-    }finally {
+    } finally {
       try {
-        statement.close();
+        if (statement != null) {
+          statement.close();
+        }
       } catch (SQLException e) {
         e.printStackTrace();
       }
@@ -88,6 +99,23 @@ public class PersistentUserRepository implements UserRepository {
     return result;
   }
 
-
+  public void deleteAll() {
+    Connection connection = connectionProvider.get();
+    PreparedStatement statement = null;
+    try {
+      statement = connection.prepareStatement("DELETE FROM users");
+      statement.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        if (statement != null) {
+          statement.close();
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
+  }
 }
 
