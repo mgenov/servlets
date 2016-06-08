@@ -37,4 +37,15 @@ public class DataValidator implements Validator {
     }
     return result;
   }
+
+  public boolean isValid(String amount) {
+    boolean result = false;
+    String amounPattern = "^(0|0?[1-9]\\d*)\\.\\d\\d$";
+    Pattern aPattern = Pattern.compile(amounPattern);
+    Matcher aMatcher = aPattern.matcher(amount);
+    if (aMatcher.matches()) {
+      result = true;
+    }
+    return result;
+  }
 }

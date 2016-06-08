@@ -35,6 +35,7 @@ public class LoginFilter implements Filter {
   public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) resp;
+    sessionRepository.cleanExpired();
     Cookie cookie=null;
     Cookie[] cookies = request.getCookies();
     if(cookies!=null) {

@@ -26,7 +26,7 @@ public class PersistentSessionRepository implements SessionRepository {
       statement = connection.prepareStatement("INSERT INTO session (email,sessionID,expirationTime) VALUES (?,?,?)");
       statement.setString(1, session.email);
       statement.setString(2, session.sessionId);
-      statement.setLong(3, System.currentTimeMillis() + 5 * 60 * 1000);
+      statement.setLong(3, System.currentTimeMillis()+5*60*1000);
       statement.execute();
     } catch (SQLException sqlExc) {
       sqlExc.printStackTrace();
@@ -119,9 +119,10 @@ public class PersistentSessionRepository implements SessionRepository {
     Connection connection = connectionProvider.get();
     PreparedStatement statement = null;
     try {
-      statement = connection.prepareStatement("UPDATE session SET expirationTime=" + System.currentTimeMillis() + 5 * 60 * 1000 + " WHERE email=? AND sessionID=?");
-      statement.setString(1, session.email);
-      statement.setString(2, session.sessionId);
+      statement = connection.prepareStatement("UPDATE session SET expirationTime=? WHERE email=? AND sessionID=?");
+      statement.setLong(1, System.currentTimeMillis() + 5 * 60 * 1000 );
+      statement.setString(2, session.email);
+      statement.setString(3, session.sessionId);
       statement.execute();
     } catch (SQLException e) {
       e.printStackTrace();
@@ -149,5 +150,22 @@ public class PersistentSessionRepository implements SessionRepository {
       e.printStackTrace();
     }
     return counter;
+  }
+
+  public String getCurrentUserEmail(String sessionId) {
+    Connection connection = connectionProvider.get();
+    PreparedStatement statement = null;
+    String email = null;
+    try {
+      statement = connection.prepareStatement("SELECT email FROM session WHERE sessionID=?");
+      statement.setString(1, sessionId);
+      ResultSet resultSet = statement.executeQuery();
+      while (resultSet.next()) {
+        email = resultSet.getString("email");
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return email;
   }
 }

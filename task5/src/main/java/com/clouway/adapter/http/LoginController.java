@@ -35,6 +35,7 @@ public class LoginController extends HttpServlet {
 
     String email = request.getParameter("email");
     String password = request.getParameter("password");
+    sessionRepository.cleanExpired();
 
     boolean valid = userValidator.isValid(email, password);
     if (!valid) {

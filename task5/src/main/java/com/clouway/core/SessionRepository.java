@@ -17,6 +17,8 @@ public interface SessionRepository {
 
   void refreshSessionTime(Session session);
 
+  String getCurrentUserEmail(String sessionId);
+
   Integer getActiveSessions();
 
 }

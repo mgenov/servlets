@@ -7,4 +7,6 @@ public interface Validator {
   boolean isValid(String email, String password);
 
   boolean isValid(String username, String password, String email);
+
+  boolean isValid(String amount);
 }

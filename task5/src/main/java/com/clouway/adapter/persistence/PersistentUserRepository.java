@@ -14,14 +14,9 @@ import java.sql.SQLException;
  */
 public class PersistentUserRepository implements UserRepository {
   private ConnectionProvider connectionProvider;
-  private Connection connection;
 
   public PersistentUserRepository(ConnectionProvider connectionProvider) {
     this.connectionProvider = connectionProvider;
-  }
-
-  public PersistentUserRepository(Connection connection) {
-    this.connection = connection;
   }
 
   public void register(User user) {
