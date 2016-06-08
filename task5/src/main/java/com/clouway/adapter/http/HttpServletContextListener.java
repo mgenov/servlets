@@ -20,7 +20,7 @@ public class HttpServletContextListener implements ServletContextListener {
     ServletContext servletContext = servletContextEvent.getServletContext();
     servletContext.addFilter("ConnectionFilter", new ConnectionFilter()).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
     servletContext.addFilter("SecurityFilter", new SecurityFilter(new PersistentSessionRepository(new PerRequestConnectionProvider()), new CookieFinderImpl())).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/useraccount");
-    servletContext.addServlet("login", new LoginPage()).addMapping("/login");
+    servletContext.addServlet("login", new LoginPage(new PersistentSessionRepository(new PerRequestConnectionProvider()))).addMapping("/login");
     servletContext.addServlet("register", new RegisterPage()).addMapping("/register");
     servletContext.addServlet("useraccount", new UserAccount()).addMapping("/useraccount");
     servletContext.addServlet("logincontroller", new LoginController(new PersistentUserRepository(new PerRequestConnectionProvider()), new PersistentSessionRepository(new PerRequestConnectionProvider()), new DataValidator(), new RandomGeneratorImpl())).addMapping("/logincontroller");

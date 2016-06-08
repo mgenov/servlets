@@ -133,4 +133,21 @@ public class PersistentSessionRepository implements SessionRepository {
       }
     }
   }
+
+  public Integer getActiveSessions() {
+    Connection connection = connectionProvider.get();
+    ResultSet resultSet = null;
+    PreparedStatement statement;
+    Integer counter = null;
+    try{
+      statement = connection.prepareStatement("SELECT COUNT(*) FROM session");
+      resultSet = statement.executeQuery();
+      while (resultSet.next()){
+        counter=resultSet.getInt(1);
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return counter;
+  }
 }
