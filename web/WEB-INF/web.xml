@@ -30,4 +30,15 @@
     <servlet-name>Display</servlet-name>
     <url-pattern>/display</url-pattern>
   </servlet-mapping>
+
+
+  <servlet>
+    <servlet-name>Register</servlet-name>
+    <servlet-class>com.clouway.bank.Register</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Register</servlet-name>
+    <url-pattern>/register</url-pattern>
+  </servlet-mapping>
+
 </web-app>
