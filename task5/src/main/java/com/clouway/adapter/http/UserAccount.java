@@ -52,7 +52,8 @@ public class UserAccount extends HttpServlet {
     out.print("<input type=\"submit\" name=\"operation\" value=\"Withdraw\">");
     out.println("</form>");
     out.print("<form action=\"/logoutcontroller\" method=\"post\">");
-    out.print("<input type=\"submit\" value=\"Logout\">");
+    out.println("<input type=\"submit\" value=\"Logout\">");
+    out.println("<a href=\"/history\">History of Transactions</a>");
     out.println("<h3>Total amount: " + fundsRepository.getBalance(email) + "</h3>");
     if (message != null) {
       out.println("<h3>" + message + "</h3>");

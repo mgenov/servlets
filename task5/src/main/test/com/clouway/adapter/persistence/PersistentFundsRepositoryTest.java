@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
  * Created by Kristiyan Petkov  <kristiqn.l.petkov@gmail.com> on 09.06.16.
  */
 public class PersistentFundsRepositoryTest {
+
   private ConnectionProvider connectionProvider = new FakeJdbcConnectionProvider();
   private PersistentFundsRepository fundsRepository = new PersistentFundsRepository(connectionProvider);
   private final String email = "admin@abv.bg";

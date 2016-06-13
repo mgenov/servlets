@@ -42,6 +42,7 @@ public class BankOperationHandler extends HttpServlet {
       response.sendRedirect("/login?errorMsg=Session expired! Please log in again!");
       return;
     }
+
     String sessionId = cookie.getValue();
     String email = sessionRepository.getCurrentUserEmail(sessionId);
     String operation = request.getParameter("operation");

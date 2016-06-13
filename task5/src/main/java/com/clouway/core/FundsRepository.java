@@ -1,6 +1,6 @@
 package com.clouway.core;
 
-import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Kristiyan Petkov  <kristiqn.l.petkov@gmail.com> on 09.06.16.
@@ -14,4 +14,8 @@ public interface FundsRepository {
   double getBalance(String email);
 
   void updateHistory(String date, String email, String operation, Double amount);
+
+  List<Transaction> getHistory(Integer limit, Integer offset);
+
+  Integer getNumberOfID();
 }

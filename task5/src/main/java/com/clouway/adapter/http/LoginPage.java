@@ -25,7 +25,6 @@ public class LoginPage extends HttpServlet {
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String errorMessage = request.getParameter("errorMsg");
-    sessionRepository.cleanExpired();
     Integer usersOnline = sessionRepository.getActiveSessions();
     printPage(response.getWriter(), errorMessage, usersOnline);
   }
