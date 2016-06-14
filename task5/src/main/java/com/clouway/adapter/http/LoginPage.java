@@ -33,17 +33,25 @@ public class LoginPage extends HttpServlet {
     out.println("<!DOCTYPE html>");
     out.println("<html>");
     out.println("<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
+    out.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+    out.println("<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css\" integrity=\"sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7\" crossorigin=\"anonymous\">");
     out.println("<title>LoginPage Form</title></head><body>");
-    out.println("<form action=\"/logincontroller\" method=\"post\">");
-    out.println("Email:<input type=\"text\" name=\"email\"/><br/>");
-    out.println("Password:<input type=\"password\" name=\"password\"/><br/>");
-    out.println("<input type=\"submit\" value=\"login\">");
-    out.println("</form>");
+    out.println("<div class=\"container\">");
+    out.println("<form class=\"form-signin\" action=\"/logincontroller\" method=\"post\">");
+    out.println("<h1 style='color:#3366BB'  class=\"form-signin-heading text-center\">Please login</h1>");
+    out.println("<div class=\"container\">");
+    out.println("<label for=\"inputEmail\" class=\"sr-only\">Email address</label>");
+    out.println("<input type=\"email\" name=\"email\" id=\"inputEmail\" class=\"form-control\" placeholder=\"Email address\" required autofocus>");
+    out.println("<label for=\"inputPassword\" class=\"sr-only\">Password</label>");
+    out.println("<input type=\"password\" name=\"password\" id=\"inputPassword\" class=\"form-control\" placeholder=\"Password\" required>");
     out.print("<a href=\"/register\">Register</a>");
-    out.println("<h4>Total users online: "+usersOnline+"</h4>");
+    out.println("<button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Sign in</button>");
+    out.println("</form>");
+    out.println("<h3 style='color:#3366BB'>Total users online: " + usersOnline + "</h3>");
     if (errorMsg != null) {
-      out.println("<h2 style='color:red'>" + errorMsg + "</h2>");
+      out.println("<h3 style='color:red'>" + errorMsg + "</h3>");
     }
+    out.println("</div");
     out.println("</body></html>");
     out.flush();
     out.close();
