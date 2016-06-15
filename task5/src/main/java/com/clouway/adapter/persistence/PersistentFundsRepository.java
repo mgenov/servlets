@@ -8,8 +8,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Kristiyan Petkov  <kristiqn.l.petkov@gmail.com> on 09.06.16.
@@ -93,15 +96,14 @@ public class PersistentFundsRepository implements FundsRepository {
     return succesfull;
   }
 
-  public void updateHistory(String date, String email, String operation, Double amount) {
+  public void updateHistory(String email, String operation, Double amount) {
     Connection connection = connectionProvider.get();
     PreparedStatement statement = null;
     try {
-      statement = connection.prepareStatement("INSERT INTO transactions (date, email, operation, amount) VALUES (?,?,?,?)");
-      statement.setString(1, date);
-      statement.setString(2, email);
-      statement.setString(3, operation);
-      statement.setDouble(4, amount);
+      statement = connection.prepareStatement("INSERT INTO transactions (date, email, operation, amount) VALUES ("+System.currentTimeMillis()+",?,?,?)");
+      statement.setString(1, email);
+      statement.setString(2, operation);
+      statement.setDouble(3, amount);
       statement.execute();
     } catch (SQLException e) {
       e.printStackTrace();
@@ -122,7 +124,8 @@ public class PersistentFundsRepository implements FundsRepository {
       statement = connection.prepareStatement("SELECT * FROM transactions LIMIT " + limit + " OFFSET " + offset + "");
       ResultSet resultSet = statement.executeQuery();
       while (resultSet.next()) {
-        transactions.add(new Transaction(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4), resultSet.getDouble(5)));
+        String date = DateFormat.getDateTimeInstance().format(new Date(resultSet.getLong(2)));
+        transactions.add(new Transaction(resultSet.getInt(1), date, resultSet.getString(3), resultSet.getString(4), resultSet.getDouble(5)));
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -134,22 +137,5 @@ public class PersistentFundsRepository implements FundsRepository {
       }
     }
     return transactions;
-  }
-
-  public Integer getNumberOfID() {
-    Connection connection = connectionProvider.get();
-    ResultSet resultSet = null;
-    PreparedStatement statement;
-    Integer counter = null;
-    try {
-      statement = connection.prepareStatement("SELECT COUNT(*) FROM transactions");
-      resultSet = statement.executeQuery();
-      while (resultSet.next()) {
-        counter = resultSet.getInt(1);
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-    return counter;
   }
 }

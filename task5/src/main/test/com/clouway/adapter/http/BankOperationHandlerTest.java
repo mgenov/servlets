@@ -82,6 +82,7 @@ public class BankOperationHandlerTest {
       will(returnValue(true));
 
       oneOf(fundsRepository).deposit(amountInDouble, email);
+      oneOf(fundsRepository).updateHistory(email,"Deposit",amountInDouble);
       oneOf(response).sendRedirect("/useraccount?message=Deposit successful!");
     }});
 
@@ -111,6 +112,7 @@ public class BankOperationHandlerTest {
 
       oneOf(fundsRepository).withdraw(amountInDouble, email);
       will(returnValue(true));
+      oneOf(fundsRepository).updateHistory(email,"Withdraw",amountInDouble);
       oneOf(response).sendRedirect("/useraccount?message=Withdraw successful!");
     }});
 

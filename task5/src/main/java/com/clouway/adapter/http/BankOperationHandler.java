@@ -3,7 +3,6 @@ package com.clouway.adapter.http;
 import com.clouway.core.CookieFinder;
 import com.clouway.core.FundsRepository;
 import com.clouway.core.SessionRepository;
-import com.clouway.core.UserRepository;
 import com.clouway.core.Validator;
 
 import javax.servlet.ServletException;
@@ -13,9 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by Kristiyan Petkov  <kristiqn.l.petkov@gmail.com> on 08.06.16.
@@ -38,17 +34,10 @@ public class BankOperationHandler extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     Cookie[] cookies = request.getCookies();
     Cookie cookie = cookieFinder.find(cookies);
-    if (cookie == null) {
-      response.sendRedirect("/login?errorMsg=Session expired! Please log in again!");
-      return;
-    }
-
     String sessionId = cookie.getValue();
     String email = sessionRepository.getCurrentUserEmail(sessionId);
     String operation = request.getParameter("operation");
     String amount = request.getParameter("amount");
-    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    Date date;
 
     if (amount.equalsIgnoreCase("")) {
       response.sendRedirect("/useraccount?message=No amount entered!");
@@ -64,8 +53,7 @@ public class BankOperationHandler extends HttpServlet {
 
     if (operation.equalsIgnoreCase("Deposit")) {
       fundsRepository.deposit(amountAsDouble, email);
-      date = new Date();
-      fundsRepository.updateHistory(dateFormat.format(date), email, operation, amountAsDouble);
+      fundsRepository.updateHistory(email, operation, amountAsDouble);
       response.sendRedirect("/useraccount?message=Deposit successful!");
       return;
     }
@@ -73,8 +61,7 @@ public class BankOperationHandler extends HttpServlet {
     boolean success = fundsRepository.withdraw(amountAsDouble, email);
 
     if (success) {
-      date = new Date();
-      fundsRepository.updateHistory(dateFormat.format(date), email, operation, amountAsDouble);
+      fundsRepository.updateHistory(email, operation, amountAsDouble);
       response.sendRedirect("/useraccount?message=Withdraw successful!");
       return;
     }

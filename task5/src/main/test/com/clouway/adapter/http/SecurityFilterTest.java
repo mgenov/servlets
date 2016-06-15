@@ -86,7 +86,7 @@ public class SecurityFilterTest {
       oneOf(sessionRepo).get(cookie.getValue());
       will(returnValue(null));
 
-      oneOf(response).sendRedirect("/login");
+      oneOf(response).sendRedirect("/login?errorMsg=Session expired! Please log in again!");
     }});
 
     securityFilter.doFilter(request, response, filterChain);

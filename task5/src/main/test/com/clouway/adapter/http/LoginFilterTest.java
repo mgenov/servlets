@@ -52,6 +52,7 @@ public class LoginFilterTest {
     final Session session = new Session("krisko@abv.bg", "3131-3344-6667-8843");
 
     context.checking(new Expectations() {{
+      oneOf(sessionRepository).cleanExpired();
       oneOf(request).getCookies();
       will(returnValue(cookies));
 
@@ -74,6 +75,7 @@ public class LoginFilterTest {
     final Cookie[] cookies = new Cookie[]{};
 
     context.checking(new Expectations() {{
+      oneOf(sessionRepository).cleanExpired();
       oneOf(request).getCookies();
       will(returnValue(cookies));
 
@@ -92,6 +94,7 @@ public class LoginFilterTest {
     final Cookie cookie = new Cookie("sessionId", "3131-3344-6667-8843");
 
     context.checking(new Expectations() {{
+      oneOf(sessionRepository).cleanExpired();
       oneOf(request).getCookies();
       will(returnValue(cookies));
 
