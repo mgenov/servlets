@@ -3,6 +3,7 @@ package com.clouway.templates;
 import com.clouway.links.ServletAccessCounter;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,16 +28,20 @@ public class ServletCounterTest {
 
   private HttpServletRequest request = context.mock(HttpServletRequest.class);
   private HttpServletResponse response = context.mock(HttpServletResponse.class);
+
   private PrintWriter writer;
   private ByteArrayOutputStream outputStream;
-
-  public ServletCounterTest() throws IOException {
-  }
 
   @Before
   public void setUp() throws Exception {
     outputStream = new ByteArrayOutputStream();
     writer = new PrintWriter(outputStream);
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    outputStream.close();
+    writer.close();
   }
 
   @Test
@@ -54,6 +59,7 @@ public class ServletCounterTest {
     }});
 
     counter.doGet(request, response);
+
     String actual = counter.getHtml("web/WEB-INF/links.html", writer);
 
     assertThat(actual, containsString(" This link is accessed: 1 times"));
