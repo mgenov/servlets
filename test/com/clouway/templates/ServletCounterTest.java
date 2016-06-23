@@ -66,7 +66,7 @@ public class ServletCounterTest {
   }
 
   @Test
-  public void MultipleLinkVisits() throws Exception {
+  public void multipleLinkVisits() throws Exception {
     ServletAccessCounter counter = new ServletAccessCounter();
 
     context.checking(new Expectations() {{
