@@ -1,44 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
   <servlet>
+    <servlet-name>Counter</servlet-name>
+    <servlet-class>com.clouway.links.Counter</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Counter</servlet-name>
+    <url-pattern>/counter</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>RadioMenu</servlet-name>
+    <servlet-class>com.clouway.radio.buttons.RadioMenu</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RadioMenu</servlet-name>
+    <url-pattern>/menu</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>First</servlet-name>
+    <servlet-class>com.clouway.radio.buttons.First</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>First</servlet-name>
+    <url-pattern>/first</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Second</servlet-name>
+    <servlet-class>com.clouway.radio.buttons.Second</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Second</servlet-name>
+    <url-pattern>/second</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>Third</servlet-name>
-    <servlet-class>com.clouway.link.trace.ThirdPage</servlet-class>
+    <servlet-class>com.clouway.radio.buttons.Third</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>Third</servlet-name>
     <url-pattern>/third</url-pattern>
   </servlet-mapping>
 
-  <servlet>
-    <servlet-name>RequestTracer</servlet-name>
-    <servlet-class>com.clouway.link.trace.RequestTracer</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>RequestTracer</servlet-name>
-    <url-pattern>/tracer</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>Display</servlet-name>
-    <servlet-class>com.clouway.link.trace.Display</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Display</servlet-name>
-    <url-pattern>/display</url-pattern>
-  </servlet-mapping>
-
-
-  <servlet>
-    <servlet-name>Register</servlet-name>
-    <servlet-class>com.clouway.bank.Register</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Register</servlet-name>
-    <url-pattern>/register</url-pattern>
-  </servlet-mapping>
 
 </web-app>
