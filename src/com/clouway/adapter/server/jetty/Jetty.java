@@ -8,7 +8,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-
 /**
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */

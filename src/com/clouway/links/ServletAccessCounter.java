@@ -20,11 +20,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServletAccessCounter extends HttpServlet {
   private Map<String, Integer> links = new ConcurrentHashMap<String, Integer>();
 
-
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String link = req.getParameter("link");
-    countAccess(link);
+    countLinkAccess(link);
 
     PrintWriter writer = resp.getWriter();
     resp.setContentType("text/html");
@@ -42,8 +41,11 @@ public class ServletAccessCounter extends HttpServlet {
         buffer.append(line);
       }
 
-      HtmlTemplate template = new HtmlTemplate(buffer.toString());
-      replace(template);
+      String html = buffer.toString();
+      HtmlTemplate template = new HtmlTemplate(html);
+      template.put("link1", links.get("https://github.com/clouway") + " times");
+      template.put("link2", links.get("http://tutorials.jenkov.com") + " times");
+      template.put("link3", links.get("http://www.tutorialspoint.com") + " times");
 
       String evaluationValue = template.evaluate();
       buffer.append(evaluationValue);
@@ -53,18 +55,11 @@ public class ServletAccessCounter extends HttpServlet {
 
       return buffer.toString();
     } catch (IOException e) {
-      return null;
+      return "";
     }
   }
 
-  private void replace(HtmlTemplate template) {
-    template.put("link1", links.get("https://github.com/clouway") + " times");
-    template.put("link2", links.get("http://tutorials.jenkov.com") + " times");
-    template.put("link3", links.get("http://www.tutorialspoint.com") + " times");
-  }
-
-
-  private void countAccess(String link) {
+  private void countLinkAccess(String link) {
     if (link != null) {
       if (!links.containsKey(link)) {
         links.put(link, 1);
