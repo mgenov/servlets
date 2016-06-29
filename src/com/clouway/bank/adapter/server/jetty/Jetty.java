@@ -1,9 +1,5 @@
 package com.clouway.bank.adapter.server.jetty;
 
-import com.clouway.bank.adapter.jdbc.ConnectionProvider;
-import com.clouway.bank.persistence.PersistentUserRepository;
-import com.clouway.bank.http.ConnectionFilter;
-import com.clouway.bank.http.RegisterServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
@@ -30,8 +26,8 @@ public class Jetty {
 
       public void contextInitialized(final ServletContextEvent servletContextEvent) {
         ServletContext servletContext = servletContextEvent.getServletContext();
-        servletContext.addFilter("connection", new ConnectionFilter()).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-        servletContext.addServlet("register", new RegisterServlet(new PersistentUserRepository(new ConnectionProvider()))).addMapping("/register");
+        //servletContext.addServlet();
+        //servletContext.addFilter();
       }
 
       public void contextDestroyed(ServletContextEvent servletContextEvent) {
