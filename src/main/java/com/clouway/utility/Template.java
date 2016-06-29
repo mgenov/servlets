@@ -16,6 +16,12 @@ public interface Template {
   void setTemplate(String template);
 
   /**
+   * uses reader to get a template
+   * @param url
+   */
+  void loadFromFile(String url);
+
+  /**
    * associates place holders with values to be substituted
    *
    * @param placeHolder place holder to be substituted

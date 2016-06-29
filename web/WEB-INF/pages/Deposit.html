@@ -19,10 +19,9 @@
                     <label for="username">Username:</label>
                     <input type="text" placeholder="name" id="username" name="username" value="${username}" readonly="readonly" style="border: none;"><br>
                     <p><b>current balance: ${balance}</b></p>
-                    <label for="value">Amount to deposit</label>
+                    <label for="amount">Amount to deposit</label>
                     <input type="number" min="0" max="10000" class="form-control" step="0.01" placeholder="Amount"
-                           name="value" id="value" aria-describedby="amountMessage"><br>
-                    <span id="amountMessage" class="help-block"><p class="text-danger">${errorMessage}</p></span>
+                           name="amount" id="amount" aria-describedby="amountMessage"><br>
 
                     <input type="submit" value="Deposit" class="btn btn-default">
                 </div>

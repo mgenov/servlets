@@ -63,6 +63,7 @@ public class ConnectionFilter implements Filter {
       Connection connection = connectionPool.getConnection();
       connections.set(connection);
       chain.doFilter(req, resp);
+      connection.close();
 
     } catch (SQLException e) {
       e.printStackTrace();

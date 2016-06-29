@@ -71,6 +71,7 @@ public class BankOperationsTest {
   @Test
   public void depositFunds() throws Exception {
     Double amount = 115.0d;
+
     String url = "http://localhost:8080/deposit?username=Stanislava&amount=" + amount;
 
     URL urlObj = new URL(url);

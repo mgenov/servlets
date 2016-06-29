@@ -12,6 +12,11 @@ import java.util.Map;
 public class BracketsTemplate implements Template {
   private final Map<String, String> placeHolderToValue = new LinkedHashMap<String, String>();
   private String template;
+  private Reader reader;
+
+  public BracketsTemplate(Reader reader) {
+    this.reader = reader;
+  }
 
   /**
    * setting the original string template value
@@ -20,6 +25,15 @@ public class BracketsTemplate implements Template {
    */
   public void setTemplate(String template) {
     this.template = template;
+  }
+
+  /**
+   * Uses Reader to get the template
+   * @param url
+   */
+  @Override
+  public void loadFromFile(String url) {
+    setTemplate(reader.read(url));
   }
 
   /**

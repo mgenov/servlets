@@ -33,8 +33,14 @@ public class BankTransactionValidatorTest {
   }
 
   @Test
-  public void notADouble() {
+  public void wholeNumber() {
     String validationMessage = transactionValidator.validateAmount("5");
+    assertThat(validationMessage, is(equalTo("")));
+  }
+
+  @Test
+  public void invalidNumber() {
+    String validationMessage = transactionValidator.validateAmount("12.523");
     assertThat(validationMessage, is(equalTo("incorrect value, has to have a positive number '.' and one or two digits afterwards")));
   }
 }

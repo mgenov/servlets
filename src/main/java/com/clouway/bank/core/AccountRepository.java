@@ -1,6 +1,5 @@
 package com.clouway.bank.core;
 
-import javax.xml.bind.ValidationException;
 
 /**
  * Will store and get the account data

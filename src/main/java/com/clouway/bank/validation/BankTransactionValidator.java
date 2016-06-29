@@ -20,7 +20,7 @@ public class BankTransactionValidator implements TransactionValidator {
    */
   @Override
   public String validateAmount(String amount) {
-    String amountRegex = "^([0-9]{1,10})\\.([0-9]{1,5})$";
+    String amountRegex = "^([0-9]{1,10})||(([0-9]{1,10})\\.([0-9]{1,2}))$";
     Pattern pattern = Pattern.compile(amountRegex);
     Matcher matcher = pattern.matcher(amount);
     if (matcher.matches()) {

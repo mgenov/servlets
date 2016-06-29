@@ -4,8 +4,9 @@ import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.Amount;
 import com.clouway.bank.core.ConnectionProvider;
 import com.clouway.bank.core.TransactionValidator;
+import com.clouway.bank.core.UserException;
+import com.clouway.bank.core.ValidationException;
 
-import javax.xml.bind.ValidationException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,7 +36,7 @@ public class PersistentAccountRepository implements AccountRepository {
   /**
    * Validates and deposits funds
    *
-   * @param amount   funds to deposit
+   * @param amount funds to deposit
    * @throws ValidationException
    */
   @Override
@@ -55,7 +56,7 @@ public class PersistentAccountRepository implements AccountRepository {
         throw new ValidationException(validationMessage);
       }
     } catch (SQLException e) {
-      throw new ValidationException("no such user");
+      throw new UserException("no such user");
     }
   }
 
@@ -64,7 +65,11 @@ public class PersistentAccountRepository implements AccountRepository {
     String validationMessage = validator.validateAmount(amount.value);
     try {
       if ("".equals(validationMessage)) {
+        Double currentBalance = getCurrentBalance(amount.username);
         Double withdrawAmount = Double.parseDouble(amount.value);
+        if (currentBalance < withdrawAmount) {
+          throw new ValidationException("Insufficient balance");
+        }
         Connection connection = connectionProvider.get();
 
         PreparedStatement preparedStatement = connection.prepareStatement("UPDATE account SET balance=balance-? WHERE username=?");
@@ -76,7 +81,7 @@ public class PersistentAccountRepository implements AccountRepository {
         throw new ValidationException(validationMessage);
       }
     } catch (SQLException e) {
-      throw new ValidationException("no such user");
+      throw new UserException("Sorry, can't find user with this name");
     }
   }
 
@@ -98,7 +103,7 @@ public class PersistentAccountRepository implements AccountRepository {
       Double balance = resultSet.getDouble("balance");
       return balance;
     } catch (SQLException e) {
-      throw new ValidationException("no such user!");
+      throw new UserException("Sorry, can't find user with this name");
     }
   }
 }

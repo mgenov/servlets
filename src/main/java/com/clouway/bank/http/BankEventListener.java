@@ -4,6 +4,7 @@ import com.clouway.bank.persistent.PerRequestConnectionProvider;
 import com.clouway.bank.persistent.PersistentAccountRepository;
 import com.clouway.bank.validation.BankTransactionValidator;
 import com.clouway.utility.BracketsTemplate;
+import com.clouway.utility.FileReader;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.ServletContext;
@@ -36,8 +37,10 @@ public class BankEventListener implements ServletContextListener {
     ServletContext servletContext = servletContextEvent.getServletContext();
 
     servletContext.addFilter("ConnectionFilter", new ConnectionFilter(dbName)).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-    servletContext.addServlet("DepositServlet", new DepositServlet(new PersistentAccountRepository(new PerRequestConnectionProvider(), new BankTransactionValidator()), new BracketsTemplate())).addMapping("/deposit");
-    servletContext.addServlet("WithdrawServlet", new WithdrawServlet(new PersistentAccountRepository(new PerRequestConnectionProvider(), new BankTransactionValidator()), new BracketsTemplate())).addMapping("/withdraw");
+    servletContext.addFilter("HttprequestErrorReporter", new HttprequestErrorReporter(new BracketsTemplate(new FileReader()))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+    servletContext.addServlet("DepositServlet", new DepositServlet(new PersistentAccountRepository(new PerRequestConnectionProvider(), new BankTransactionValidator()), new BracketsTemplate(new FileReader()))).addMapping("/deposit");
+    servletContext.addServlet("WithdrawServlet", new WithdrawServlet(new PersistentAccountRepository(new PerRequestConnectionProvider(), new BankTransactionValidator()), new BracketsTemplate(new FileReader()))).addMapping("/withdraw");
+
   }
 
   /**
