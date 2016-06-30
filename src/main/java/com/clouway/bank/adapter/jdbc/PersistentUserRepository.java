@@ -1,4 +1,4 @@
-package com.clouway.bank.adapter.server.jetty.jdbc;
+package com.clouway.bank.adapter.jdbc;
 
 import com.clouway.bank.core.UserRepository;
 
