@@ -1,4 +1,4 @@
-package http;
+package com.clouway.bank.http;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;

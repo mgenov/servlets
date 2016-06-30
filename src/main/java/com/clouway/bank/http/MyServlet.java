@@ -1,4 +1,4 @@
-package http;
+package com.clouway.bank.http;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

@@ -1,7 +1,7 @@
 package com.clouway.bank.adapter.server.jetty;
 
-import http.MyFilter;
-import http.MyServlet;
+import com.clouway.bank.http.MyFilter;
+import com.clouway.bank.http.MyServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
