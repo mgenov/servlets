@@ -1,5 +1,7 @@
 package com.clouway.bank.adapter.server.jetty;
 
+import http.MyFilter;
+import http.MyServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
@@ -26,8 +28,8 @@ public class Jetty {
 
       public void contextInitialized(final ServletContextEvent servletContextEvent) {
         ServletContext servletContext = servletContextEvent.getServletContext();
-        //servletContext.addServlet();
-        //servletContext.addFilter();
+        servletContext.addServlet("servlet", new MyServlet()).addMapping("/servlet");
+        servletContext.addFilter("filter", new MyFilter()).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
       }
 
       public void contextDestroyed(ServletContextEvent servletContextEvent) {

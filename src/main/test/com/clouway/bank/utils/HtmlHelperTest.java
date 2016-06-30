@@ -1,4 +1,4 @@
-package utils;
+package com.clouway.bank.utils;
 
 import com.clouway.bank.utils.HtmlHelper;
 import org.junit.Test;
