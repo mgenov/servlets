@@ -1,6 +1,5 @@
 package com.clouway.bank.utils;
 
-import com.clouway.bank.utils.HtmlTemplate;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <title>Title</title>
+</head>
+<body>
+<div id="login-overlay" class="modal-dialog">
+    <legend>Register</legend>
+    <div class="modal-body">
+        <div class="col-xs-6">
+            <div class="well">
+                <form method="post" action="/register">
+                    Name: <br>
+                    <input type="text" class="form-control" name="name" placeholder="Enter your name">
+                    Email: <br>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email">
+                    Password: <br>
+                    <input type="password" class="form-control" id="password" name="password"
+                           placeholder="Enter your password">
+                    Confirm password: <br>
+                    <input type="password" class="form-control" id="confirm" name="confirm"
+                           placeholder="Confirm your password">
+                    <br>
+                    <button type="submit" class="btn btn-success btn-block">Register</button>
+                    <div>
+                        {message}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
