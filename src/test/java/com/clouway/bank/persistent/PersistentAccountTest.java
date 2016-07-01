@@ -69,7 +69,6 @@ public class PersistentAccountTest {
     userRepositoryUtility = new UserRepositoryUtility(connection);
     userRepositoryUtility.clearUsersTable();
     userRepositoryUtility.registerUser("Stanislava", "123456");
-    accountRepositoryUtility.instantiateAccount("Stanislava");
   }
 
   @After
@@ -81,6 +80,7 @@ public class PersistentAccountTest {
 
   @Test
   public void depositFunds() throws ValidationException {
+    accountRepositoryUtility.instantiateAccount("Stanislava");
 
     context.checking(new Expectations() {{
       oneOf(validator).validateAmount(amount);
@@ -89,6 +89,8 @@ public class PersistentAccountTest {
       allowing(connectionProvider).get();
       will(returnValue(connection));
     }});
+    accountRepository.createAccount("Stanislava");
+
     Double originalAmount = accountRepository.getCurrentBalance(username);
 
     accountRepository.deposit(new Amount(username, amount));
@@ -99,6 +101,7 @@ public class PersistentAccountTest {
 
   @Test
   public void withdrawFunds() throws ValidationException {
+
     Double withdrawAmount = Double.parseDouble(amount) - 2.32;
     context.checking(new Expectations() {{
       oneOf(validator).validateAmount(amount);
@@ -113,13 +116,15 @@ public class PersistentAccountTest {
       allowing(connectionProvider).get();
       will(returnValue(connection));
     }});
+    accountRepository.createAccount("Stanislava");
+
     Double originalAmount = accountRepository.getCurrentBalance(username);
 
     accountRepository.deposit(new Amount(username, amount));
     Double depositedAmount = accountRepository.getCurrentBalance(username) - originalAmount;
 
     accountRepository.withdraw(new Amount(username, withdrawAmount.toString()));
-    Double withdrawnAmount = (originalAmount+depositedAmount)-accountRepository.getCurrentBalance(username);
+    Double withdrawnAmount = (originalAmount + depositedAmount) - accountRepository.getCurrentBalance(username);
 
     assertThat(depositedAmount, is(equalTo(Double.parseDouble(amount))));
     assertThat(withdrawnAmount, is(equalTo(Double.parseDouble(withdrawAmount.toString()))));

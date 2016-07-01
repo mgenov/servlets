@@ -89,19 +89,37 @@ public class PersistentAccountRepository implements AccountRepository {
   /**
    * Gets the current value of funds in the balance
    *
-   * @param username user identification
+   * @param userId user identification
    * @return
    */
   @Override
-  public Double getCurrentBalance(String username) throws ValidationException {
+  public Double getCurrentBalance(String userId) throws ValidationException {
     try {
       Connection connection = connectionProvider.get();
       PreparedStatement preparedStatement = connection.prepareStatement("SELECT balance FROM account WHERE username=?");
-      preparedStatement.setString(1, username);
+      preparedStatement.setString(1, userId);
       ResultSet resultSet = preparedStatement.executeQuery();
       resultSet.next();
       Double balance = resultSet.getDouble("balance");
       return balance;
+    } catch (SQLException e) {
+      throw new UserException("Sorry, can't find user with this name");
+    }
+  }
+
+  /**
+   * initiates empty account for the user
+   *
+   * @param userId the users unique name
+   */
+  @Override
+  public void createAccount(String userId) {
+    try {
+      Connection connection = connectionProvider.get();
+      PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO account(username, balance) values(?, ?);");
+      preparedStatement.setString(1, userId);
+      preparedStatement.setDouble(2, 0d);
+      preparedStatement.execute();
     } catch (SQLException e) {
       throw new UserException("Sorry, can't find user with this name");
     }

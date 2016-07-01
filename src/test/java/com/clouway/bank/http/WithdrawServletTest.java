@@ -28,21 +28,17 @@ import static org.hamcrest.core.IsEqual.equalTo;
  */
 public class WithdrawServletTest {
 
-  private WithdrawServlet withdrawServlet;
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
-
   @Mock
   AccountRepository repository;
-
   @Mock
   Template template;
-
   @Mock
   HttpServletRequest request;
-
   @Mock
   HttpServletResponse response;
+  private WithdrawServlet withdrawServlet;
 
   @Before
   public void setUp() {

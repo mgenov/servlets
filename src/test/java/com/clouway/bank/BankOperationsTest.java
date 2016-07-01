@@ -14,19 +14,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collection;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -56,14 +50,10 @@ public class BankOperationsTest {
     accountRepositoryUtility.clearAccountTable();
     userRepositoryUtility = new UserRepositoryUtility(connection);
     userRepositoryUtility.clearUsersTable();
-    userRepositoryUtility.registerUser("Stanislava", "123456");
-    accountRepositoryUtility.instantiateAccount("Stanislava");
   }
 
   @After
   public void TearDown() throws SQLException {
-    accountRepositoryUtility.clearAccountTable();
-    userRepositoryUtility.clearUsersTable();
     connection.close();
     jetty.stop();
   }
@@ -72,11 +62,21 @@ public class BankOperationsTest {
   public void depositFunds() throws Exception {
     Double amount = 115.0d;
 
+    String registrationUrlAddress = "http://localhost:8080/registercontroller?username=Stanislava&password=123456&confirmPassword=123456";
+
+    URL registrationUrl = new URL(registrationUrlAddress);
+
+    HttpURLConnection registrationConnection = (HttpURLConnection) registrationUrl.openConnection();
+    registrationConnection.setRequestMethod("POST");
+
+    InputStream registrationIn = registrationConnection.getInputStream();
+    String registrationResult = IOUtils.toString(registrationIn);
+
     String url = "http://localhost:8080/deposit?username=Stanislava&amount=" + amount;
 
     URL urlObj = new URL(url);
 
-    HttpURLConnection connection=(HttpURLConnection) urlObj.openConnection();
+    HttpURLConnection connection = (HttpURLConnection) urlObj.openConnection();
     connection.setRequestMethod("POST");
 
     InputStream postIn = connection.getInputStream();
@@ -89,11 +89,22 @@ public class BankOperationsTest {
   @Test
   public void withdrawSomeOfTheDepositedFunds() throws IOException {
     Double amount = 12.5d;
+
+    String registrationUrlAddress = "http://localhost:8080/registercontroller?username=Stanislava&password=123456&confirmPassword=123456";
+
+    URL registrationUrl = new URL(registrationUrlAddress);
+
+    HttpURLConnection registrationConnection = (HttpURLConnection) registrationUrl.openConnection();
+    registrationConnection.setRequestMethod("POST");
+
+    InputStream registrationIn = registrationConnection.getInputStream();
+    String registrationResult = IOUtils.toString(registrationIn);
+
     String depositUrlAddress = "http://localhost:8080/deposit?username=Stanislava&amount=" + amount;
 
-    Double withdrawAmount = amount-2.5;
+    Double withdrawAmount = amount - 2.5;
 
-    String withdrawUrlAddress = "http://localhost:8080/withdraw?username=Stanislava&amount="+withdrawAmount;
+    String withdrawUrlAddress = "http://localhost:8080/withdraw?username=Stanislava&amount=" + withdrawAmount;
 
 
     URL depositUrl = new URL(depositUrlAddress);

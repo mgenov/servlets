@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+</head>
+<body>
+<div class="col-md-4 col-md-offset-4">
+    <form action="registercontroller" method="post">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Username"
+                   pattern="^([A-Za-z0-9]){5,15}$"
+                   title="The username must be between 5 and 15 characters (alphabetic and numeric).">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password"
+                   pattern="^([A-Za-z0-9]){6,20}$"
+                   title="Password must be between 6 and 20 characters (alphabetic and numeric).">
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword">Confirm password</label>
+            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                   placeholder="Confirm Password" pattern="^([A-Za-z0-9]){6,20}$"
+                   title="Password must be between 6 and 20 characters (alphabetic and numeric).">
+        </div>
+        <div class="${state}">
+            <span id="helpBlock" class="help-block has-success">${registerMessage}</span>
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+</div>
+
+</body>
+</html>
