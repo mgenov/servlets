@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <scrip src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></scrip>
+    <title>Login</title>
+</head>
+<body>
+<div id="login-overlay" class="modal-dialog">
+    <legend>Login</legend>
+    <div class="modal-body">
+        <div class="col-xs-6">
+            <div class="well">
+                <form action="/loginController" method="post">
+                    Email:<br>
+                    <input type="text" class="form-control" name="email">
+                    Password:<br>
+                    <input type="password" class="form-control" name="password"><br>
+                    <button type="submit" class="btn btn-success">Login</button>
+                    <div>
+                        {message}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

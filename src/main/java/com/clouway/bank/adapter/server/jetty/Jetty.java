@@ -1,8 +1,8 @@
 package com.clouway.bank.adapter.server.jetty;
 
-import com.clouway.bank.adapter.http.LoginServlet;
-import com.clouway.bank.adapter.jdbc.ConnectionProvider;
+import com.clouway.bank.adapter.http.LoginPageServlet;
 import com.clouway.bank.adapter.http.RegisterServlet;
+import com.clouway.bank.adapter.jdbc.ConnectionProvider;
 import com.clouway.bank.adapter.jdbc.db.persistence.PersistentUserRepository;
 import com.clouway.bank.validator.UserValidator;
 import org.eclipse.jetty.server.Server;
@@ -30,7 +30,8 @@ public class Jetty {
       public void contextInitialized(final ServletContextEvent servletContextEvent) {
         ServletContext servletContext = servletContextEvent.getServletContext();
         servletContext.addServlet("register", new RegisterServlet(new PersistentUserRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new UserValidator())).addMapping("/register");
-        servletContext.addServlet("login", new LoginServlet()).addMapping("/login");
+        servletContext.addServlet("login", new LoginPageServlet()).addMapping("/login");
+        servletContext.addServlet("loginController", new LoginPageServlet()).addMapping("/loginController");
       }
 
       public void contextDestroyed(ServletContextEvent servletContextEvent) {
