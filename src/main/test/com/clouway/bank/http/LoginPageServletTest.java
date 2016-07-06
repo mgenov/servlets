@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringContains.containsString;
+
 /**
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
@@ -39,7 +42,32 @@ public class LoginPageServletTest {
     context.checking(new Expectations() {{
       oneOf(response).getWriter();
       will(returnValue(writer));
+
+      oneOf(request).getParameter("errorMessage");
+      will(returnValue(""));
     }});
     servlet.doGet(request, response);
+
+    String result = out.toString();
+
+    assertThat(result, containsString("<legend>Login</legend>"));
+  }
+
+  @Test
+  public void displayError() throws Exception {
+    LoginPageServlet pageServlet = new LoginPageServlet();
+
+    context.checking(new Expectations() {{
+      oneOf(response).getWriter();
+      will(returnValue(writer));
+
+      oneOf(request).getParameter("errorMessage");
+      will(returnValue("Error"));
+    }});
+    pageServlet.doGet(request, response);
+
+    String result = out.toString();
+
+    assertThat(result, containsString("Error"));
   }
 }

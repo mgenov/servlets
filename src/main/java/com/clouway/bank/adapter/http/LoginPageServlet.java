@@ -1,6 +1,7 @@
 package com.clouway.bank.adapter.http;
 
 import com.clouway.bank.utils.HtmlHelper;
+import com.clouway.bank.utils.HtmlTemplate;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,7 +19,17 @@ public class LoginPageServlet extends HttpServlet {
     HtmlHelper helper = new HtmlHelper("web/WEB-INF/login.html");
     String page = helper.loadResource();
 
+    HtmlTemplate template = new HtmlTemplate(page);
+    template.put("message", "");
+
+    String errors = req.getParameter("errorMessage");
+
+    if (errors != null) {
+      template.put("message", errors);
+    }
     PrintWriter writer = resp.getWriter();
-    writer.println(page);
+    writer.println(template.evaluate());
+
+    writer.flush();
   }
 }
