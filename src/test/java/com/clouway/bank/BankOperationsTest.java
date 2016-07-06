@@ -43,7 +43,7 @@ public class BankOperationsTest {
   @Before
   public void setUp() throws SQLException {
     jetty = new Jetty(8080, "bank_test");
-    accountRepository = new PersistentAccountRepository(new PerRequestConnectionProvider(), validator);
+    accountRepository = new PersistentAccountRepository(new PerRequestConnectionProvider());
     jetty.start();
     connection = connectionRule.getConnection();
     accountRepositoryUtility = new AccountRepositoryUtility(connection);
@@ -126,51 +126,4 @@ public class BankOperationsTest {
     assertThat(withdrawResult, containsString(expectedAmount.toString()));
   }
 
-  @Test
-  public void invalidAmount() throws IOException {
-    Double amount = 56.34;
-    String url = "http://localhost:8080/deposit?username=Stanislava&amount=e" + amount;
-
-    URL urlObj = new URL(url);
-
-    HttpURLConnection connection = (HttpURLConnection) urlObj.openConnection();
-    connection.setRequestMethod("POST");
-
-    InputStream input = connection.getInputStream();
-    String firstResponse = IOUtils.toString(input);
-    connection.disconnect();
-
-    HttpURLConnection secondConnection = (HttpURLConnection) urlObj.openConnection();
-    secondConnection.setRequestMethod("POST");
-
-    InputStream in = secondConnection.getInputStream();
-    String result = IOUtils.toString(in);
-    secondConnection.disconnect();
-
-    assertThat(result, containsString("incorrect value, has to have a positive number '.' and one or two digits afterwards"));
-  }
-
-  @Test
-  public void negativeDeposit() throws IOException {
-    Double amount = 634.20d;
-    String url = "http://localhost:8080/deposit?username=Stanislava&amount=-" + amount;
-
-    URL urlObj = new URL(url);
-
-    HttpURLConnection connection = (HttpURLConnection) urlObj.openConnection();
-    connection.setRequestMethod("POST");
-
-    InputStream input = connection.getInputStream();
-    String firstResponse = IOUtils.toString(input);
-    connection.disconnect();
-
-    HttpURLConnection secondConnection = (HttpURLConnection) urlObj.openConnection();
-    secondConnection.setRequestMethod("POST");
-
-    InputStream in = secondConnection.getInputStream();
-    String result = IOUtils.toString(in);
-    secondConnection.disconnect();
-
-    assertThat(result, containsString("incorrect value, has to have a positive number '.' and one or two digits afterwards"));
-  }
 }

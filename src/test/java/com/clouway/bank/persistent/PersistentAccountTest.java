@@ -3,7 +3,6 @@ package com.clouway.bank.persistent;
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.Amount;
 import com.clouway.bank.core.ConnectionProvider;
-import com.clouway.bank.core.TransactionValidator;
 import com.clouway.bank.utils.AccountRepositoryUtility;
 import com.clouway.bank.utils.DatabaseConnectionRule;
 import com.clouway.bank.utils.UserRepositoryUtility;
@@ -39,30 +38,28 @@ public class PersistentAccountTest {
   public DatabaseConnectionRule connectionRule = new DatabaseConnectionRule("bank_test");
   @Mock
   ConnectionProvider connectionProvider;
-  @Mock
-  TransactionValidator validator;
 
   private AccountRepository accountRepository;
   private Connection connection;
   private AccountRepositoryUtility accountRepositoryUtility;
   private UserRepositoryUtility userRepositoryUtility;
   private String username = "Stanislava";
-  private String amount;
+  private Double amount;
 
-  public PersistentAccountTest(String amount) {
+  public PersistentAccountTest(Double amount) {
     this.amount = amount;
   }
 
   @Parameters
   public static Collection<Object[]> data() {
     return Arrays.asList(new Object[][]{
-            {"10.0"}, {"110.0"}, {"243.0"}, {"315.0"}, {"46.0"}, {"520.0"}, {"63.0"}
+            {10.0}, {110.0}, {243.0}, {315.0}, {46.0}, {520.0}, {63.0}
     });
   }
 
   @Before
   public void setUp() {
-    accountRepository = new PersistentAccountRepository(connectionProvider, validator);
+    accountRepository = new PersistentAccountRepository(connectionProvider);
     connection = connectionRule.getConnection();
     accountRepositoryUtility = new AccountRepositoryUtility(connection);
     accountRepositoryUtility.clearAccountTable();
@@ -83,9 +80,6 @@ public class PersistentAccountTest {
     accountRepositoryUtility.instantiateAccount("Stanislava");
 
     context.checking(new Expectations() {{
-      oneOf(validator).validateAmount(amount);
-      will(returnValue(""));
-
       allowing(connectionProvider).get();
       will(returnValue(connection));
     }});
@@ -96,22 +90,16 @@ public class PersistentAccountTest {
     accountRepository.deposit(new Amount(username, amount));
     Double depositedAmount = accountRepository.getCurrentBalance(username) - originalAmount;
 
-    assertThat(depositedAmount, is(equalTo(Double.parseDouble(amount))));
+    assertThat(depositedAmount, is(equalTo(amount)));
   }
 
   @Test
   public void withdrawFunds() throws ValidationException {
 
-    Double withdrawAmount = Double.parseDouble(amount) - 2.32;
+    Double withdrawAmount = amount - 2.32;
     context.checking(new Expectations() {{
-      oneOf(validator).validateAmount(amount);
-      will(returnValue(""));
-
       allowing(connectionProvider).get();
       will(returnValue(connection));
-
-      oneOf(validator).validateAmount(withdrawAmount.toString());
-      will(returnValue(""));
 
       allowing(connectionProvider).get();
       will(returnValue(connection));
@@ -123,10 +111,10 @@ public class PersistentAccountTest {
     accountRepository.deposit(new Amount(username, amount));
     Double depositedAmount = accountRepository.getCurrentBalance(username) - originalAmount;
 
-    accountRepository.withdraw(new Amount(username, withdrawAmount.toString()));
+    accountRepository.withdraw(new Amount(username, withdrawAmount));
     Double withdrawnAmount = (originalAmount + depositedAmount) - accountRepository.getCurrentBalance(username);
 
-    assertThat(depositedAmount, is(equalTo(Double.parseDouble(amount))));
-    assertThat(withdrawnAmount, is(equalTo(Double.parseDouble(withdrawAmount.toString()))));
+    assertThat(depositedAmount, is(equalTo(amount)));
+    assertThat(withdrawnAmount, is(equalTo(withdrawAmount)));
   }
 }

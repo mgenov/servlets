@@ -8,10 +8,9 @@ public interface UserRepository {
   /**
    * Registers user in the repository
    *
-   * @param user            the user object
-   * @param confirmPassword confirming the password
+   * @param user the user object
    */
-  void register(User user, String confirmPassword);
+  void register(User user);
 
   /**
    * finds the user by name

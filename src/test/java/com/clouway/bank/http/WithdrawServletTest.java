@@ -2,6 +2,7 @@ package com.clouway.bank.http;
 
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.Amount;
+import com.clouway.bank.core.TransactionValidator;
 import com.clouway.bank.core.ValidationException;
 import com.clouway.utility.Template;
 import org.jmock.Expectations;
@@ -15,13 +16,7 @@ import org.junit.Test;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * @author Krasimir Raikov(raikov.krasimir@gmail.com)
@@ -38,18 +33,17 @@ public class WithdrawServletTest {
   HttpServletRequest request;
   @Mock
   HttpServletResponse response;
+  @Mock
+  TransactionValidator validator;
   private WithdrawServlet withdrawServlet;
 
   @Before
   public void setUp() {
-    withdrawServlet = new WithdrawServlet(repository, template);
+    withdrawServlet = new WithdrawServlet(repository, template, validator);
   }
 
   @Test
-  public void depositFunds() throws ServletException, IOException, ValidationException {
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    PrintWriter writer = new PrintWriter(out);
-
+  public void withdrawFunds() throws ServletException, IOException, ValidationException {
     context.checking(getInitializationExpectations());
 
     context.checking(new Expectations() {{
@@ -59,30 +53,20 @@ public class WithdrawServletTest {
       oneOf(request).getParameter("amount");
       will(returnValue("0.5"));
 
-      oneOf(repository).withdraw(new Amount("John", "0.5"));
+      oneOf(validator).validateAmount("0.5");
+      will(returnValue(""));
+
+      oneOf(repository).withdraw(new Amount("John", 0.5));
       will(returnValue(12.5d));
 
-      oneOf(template).put("username", "John");
-
-      oneOf(template).put("balance", "12.5");
-
-      oneOf(response).getWriter();
-      will(returnValue(writer));
-
-      oneOf(response).setContentType("text/html");
-
-      oneOf(template).evaluate();
-      will(returnValue("OK"));
+      oneOf(response).sendRedirect("withdraw?message=Susscesful deposit: 0.5");
     }});
 
     withdrawServlet.init();
     withdrawServlet.doPost(request, response);
-
-    writer.flush();
-    assertThat(out.toString(), is(equalTo("OK")));
   }
 
-  @Test(expected = ValidationException.class)
+  @Test
   public void invalidWithdraw() throws IOException, ValidationException, ServletException {
     context.checking(getInitializationExpectations());
 
@@ -93,8 +77,10 @@ public class WithdrawServletTest {
       oneOf(request).getParameter("amount");
       will(returnValue("12.5e"));
 
-      oneOf(repository).withdraw(new Amount("John", "12.5e"));
-      will(throwException(new ValidationException("invalid value")));
+      oneOf(validator).validateAmount("12.5e");
+      will(returnValue("unacceptable number format"));
+
+      oneOf(response).sendRedirect("withdraw?message=unacceptable number format");
     }});
 
     withdrawServlet.init();
@@ -105,8 +91,7 @@ public class WithdrawServletTest {
     return new Expectations() {{
       //initializing servlet
       oneOf(template).loadFromFile("web/WEB-INF/pages/Withdraw.html");
-      oneOf(template).put("username", "no user yet");
-      oneOf(template).put("balance", "not available");
+      oneOf(template).put("message", "");
     }};
   }
 

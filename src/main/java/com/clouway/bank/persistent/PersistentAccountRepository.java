@@ -3,7 +3,6 @@ package com.clouway.bank.persistent;
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.Amount;
 import com.clouway.bank.core.ConnectionProvider;
-import com.clouway.bank.core.TransactionValidator;
 import com.clouway.bank.core.UserException;
 import com.clouway.bank.core.ValidationException;
 
@@ -19,42 +18,35 @@ import java.sql.SQLException;
  */
 public class PersistentAccountRepository implements AccountRepository {
   private ConnectionProvider connectionProvider;
-  private TransactionValidator validator;
 
   /**
    * constructor setting the ConnectionProvider and the TransactionValidator
    *
    * @param connectionProvider ConnectionProvider
-   * @param validator          TransactionValidator
    */
-  public PersistentAccountRepository(ConnectionProvider connectionProvider, TransactionValidator validator) {
+  public PersistentAccountRepository(ConnectionProvider connectionProvider) {
     this.connectionProvider = connectionProvider;
-    this.validator = validator;
   }
 
 
   /**
-   * Validates and deposits funds
+   * Deposits funds
    *
    * @param amount funds to deposit
-   * @throws ValidationException
+   * @throws UserException
    */
   @Override
   public Double deposit(Amount amount) throws ValidationException {
-    String validationMessage = validator.validateAmount(amount.value);
-    try {
-      if ("".equals(validationMessage)) {
-        Double depositAmount = Double.parseDouble(amount.value);
-        Connection connection = connectionProvider.get();
 
-        PreparedStatement preparedStatement = connection.prepareStatement("UPDATE account SET balance=balance+? WHERE username=?");
-        preparedStatement.setDouble(1, depositAmount);
-        preparedStatement.setString(2, amount.username);
-        preparedStatement.executeUpdate();
-        return getCurrentBalance(amount.username);
-      } else {
-        throw new ValidationException(validationMessage);
-      }
+    try {
+      Double depositAmount = amount.value;
+      Connection connection = connectionProvider.get();
+
+      PreparedStatement preparedStatement = connection.prepareStatement("UPDATE account SET balance=balance+? WHERE username=?");
+      preparedStatement.setDouble(1, depositAmount);
+      preparedStatement.setString(2, amount.username);
+      preparedStatement.executeUpdate();
+      return getCurrentBalance(amount.username);
     } catch (SQLException e) {
       throw new UserException("no such user");
     }
@@ -62,24 +54,20 @@ public class PersistentAccountRepository implements AccountRepository {
 
   @Override
   public Double withdraw(Amount amount) throws ValidationException {
-    String validationMessage = validator.validateAmount(amount.value);
-    try {
-      if ("".equals(validationMessage)) {
-        Double currentBalance = getCurrentBalance(amount.username);
-        Double withdrawAmount = Double.parseDouble(amount.value);
-        if (currentBalance < withdrawAmount) {
-          throw new ValidationException("Insufficient balance");
-        }
-        Connection connection = connectionProvider.get();
 
-        PreparedStatement preparedStatement = connection.prepareStatement("UPDATE account SET balance=balance-? WHERE username=?");
-        preparedStatement.setDouble(1, withdrawAmount);
-        preparedStatement.setString(2, amount.username);
-        preparedStatement.executeUpdate();
-        return getCurrentBalance(amount.username);
-      } else {
-        throw new ValidationException(validationMessage);
+    try {
+      Double currentBalance = getCurrentBalance(amount.username);
+      Double withdrawAmount = amount.value;
+      if (currentBalance < withdrawAmount) {
+        throw new ValidationException("Insufficient balance");
       }
+      Connection connection = connectionProvider.get();
+
+      PreparedStatement preparedStatement = connection.prepareStatement("UPDATE account SET balance=balance-? WHERE username=?");
+      preparedStatement.setDouble(1, withdrawAmount);
+      preparedStatement.setString(2, amount.username);
+      preparedStatement.executeUpdate();
+      return getCurrentBalance(amount.username);
     } catch (SQLException e) {
       throw new UserException("Sorry, can't find user with this name");
     }

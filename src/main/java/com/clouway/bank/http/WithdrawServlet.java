@@ -2,6 +2,7 @@ package com.clouway.bank.http;
 
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.Amount;
+import com.clouway.bank.core.TransactionValidator;
 import com.clouway.utility.Template;
 
 import javax.servlet.ServletException;
@@ -17,10 +18,12 @@ import java.io.PrintWriter;
 public class WithdrawServlet extends HttpServlet {
   private final AccountRepository accountRepository;
   private final Template template;
+  private TransactionValidator validator;
 
-  public WithdrawServlet(AccountRepository accountRepository, Template template) {
+  public WithdrawServlet(AccountRepository accountRepository, Template template, TransactionValidator validator) {
     this.accountRepository = accountRepository;
     this.template = template;
+    this.validator = validator;
   }
 
   /**
@@ -32,8 +35,7 @@ public class WithdrawServlet extends HttpServlet {
   @Override
   public void init() throws ServletException {
     template.loadFromFile("web/WEB-INF/pages/Withdraw.html");
-    template.put("username", "no user yet");
-    template.put("balance", "not available");
+    template.put("message", "");
   }
 
   /**
@@ -48,9 +50,14 @@ public class WithdrawServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String username = "Stanislava";
     Double balance = accountRepository.getCurrentBalance(username);
+    String message = req.getParameter("message");
 
     template.put("username", username);
     template.put("balance", balance.toString());
+    if (message != null) {
+      template.put("message", message);
+    }
+
     PrintWriter writer = resp.getWriter();
     resp.setContentType("text/html");
     writer.write(template.evaluate());
@@ -67,16 +74,22 @@ public class WithdrawServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String username = req.getParameter("username");
-    String amount = req.getParameter("amount");
+    String amountParam = req.getParameter("amount");
+    if (amountParam == null || amountParam.isEmpty()) {
+      resp.sendRedirect("withdraw?message=enter amount");
+      return;
+    }
+    String validationMessage = validator.validateAmount(amountParam);
 
-    Double balance = accountRepository.withdraw(new Amount(username, amount));
-    template.put("username", username);
-    template.put("balance", balance.toString());
+    if (!validationMessage.isEmpty()) {
+      resp.sendRedirect("withdraw?message=" + validationMessage);
+      return;
+    }
 
+    Double amount = Double.parseDouble(amountParam);
+    accountRepository.withdraw(new Amount(username, amount));
 
-    PrintWriter writer = resp.getWriter();
-    resp.setContentType("text/html");
-    writer.write(template.evaluate());
+    resp.sendRedirect("withdraw?message=Susscesful deposit: " + amount);
   }
 
 }

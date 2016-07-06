@@ -6,9 +6,9 @@ package com.clouway.bank.core;
 public class Amount {
 
   public final String username;
-  public final String value;
+  public final Double value;
 
-  public Amount(String username, String value) {
+  public Amount(String username, Double value) {
     this.username = username;
     this.value = value;
   }
@@ -18,10 +18,10 @@ public class Amount {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    Amount amount1 = (Amount) o;
+    Amount amount = (Amount) o;
 
-    if (username != null ? !username.equals(amount1.username) : amount1.username != null) return false;
-    return !(value != null ? !value.equals(amount1.value) : amount1.value != null);
+    if (username != null ? !username.equals(amount.username) : amount.username != null) return false;
+    return !(value != null ? !value.equals(amount.value) : amount.value != null);
 
   }
 

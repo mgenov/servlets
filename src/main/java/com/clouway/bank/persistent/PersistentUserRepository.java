@@ -3,7 +3,6 @@ package com.clouway.bank.persistent;
 import com.clouway.bank.core.ConnectionProvider;
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserRepository;
-import com.clouway.bank.core.UserValidator;
 import com.clouway.bank.core.ValidationException;
 
 import java.sql.Connection;
@@ -17,32 +16,22 @@ import java.sql.SQLException;
 public class PersistentUserRepository implements UserRepository {
 
   private ConnectionProvider connectionProvider;
-  private UserValidator validator;
 
-  public PersistentUserRepository(ConnectionProvider connectionProvider, UserValidator validator) {
+  public PersistentUserRepository(ConnectionProvider connectionProvider) {
     this.connectionProvider = connectionProvider;
-    this.validator = validator;
   }
 
   /**
    * Registers the user
    *
-   * @param user            the user object
-   * @param confirmPassword confirming the password
+   * @param user the user object
    */
   @Override
-  public void register(User user, String confirmPassword) {
+  public void register(User user) {
     String query = "Insert into users(username, password) values(?, ?);";
     Connection connection = connectionProvider.get();
 
-    String validationMessage = validator.validate(user);
-    validationMessage += validator.passwordsMatch(user.password, confirmPassword);
-
-    if (!("".equals(validationMessage))) {
-      throw new  ValidationException(validationMessage);
-    }
-
-    if(getUserById(user.username) != null ){
+    if (getUserById(user.username) != null) {
       throw new ValidationException("username is taken");
     }
 

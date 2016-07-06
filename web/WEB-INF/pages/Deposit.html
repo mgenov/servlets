@@ -21,8 +21,8 @@
                     <p><b>current balance: ${balance}</b></p>
                     <label for="amount">Amount to deposit</label>
                     <input type="number" min="0" max="10000" class="form-control" step="0.01" placeholder="Amount"
-                           name="amount" id="amount" aria-describedby="amountMessage"><br>
-
+                           name="amount" id="amount" aria-describedby="message"><br>
+                    <span id="message" class="help-block">${message}</span>
                     <input type="submit" value="Deposit" class="btn btn-default">
                 </div>
             </form>

@@ -2,9 +2,6 @@ package com.clouway.bank.http;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler.JspConfig;
-
-import javax.servlet.jsp.JspContext;
 
 /**
  * @author Krasimir Raikov(raikov.krasimir@gmail.com)

@@ -3,7 +3,7 @@ package com.clouway.bank.http;
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserRepository;
-import com.clouway.bank.core.ValidationException;
+import com.clouway.bank.core.UserValidator;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -30,15 +30,19 @@ public class RegistrationControllerTest {
   UserRepository userRepository;
   @Mock
   AccountRepository accountRepository;
+  @Mock
+  UserValidator validator;
   private RegistrationController register;
 
   @Before
   public void setUp() {
-    register = new RegistrationController(userRepository, accountRepository);
+    register = new RegistrationController(userRepository, accountRepository, validator);
   }
 
   @Test
   public void registerUser() throws ServletException, IOException {
+    User ivan = new User("Ivan", "123456");
+
     context.checking(new Expectations() {{
 
       oneOf(request).getParameter("username");
@@ -50,7 +54,12 @@ public class RegistrationControllerTest {
       oneOf(request).getParameter("confirmPassword");
       will(returnValue("123456"));
 
-      oneOf(userRepository).register(new User("Ivan", "123456"), "123456");
+      oneOf(validator).validate(ivan);
+      will(returnValue(""));
+
+      oneOf(validator).passwordsMatch("123456", "123456");
+
+      oneOf(userRepository).register(ivan);
 
       oneOf(accountRepository).createAccount("Ivan");
 
@@ -64,6 +73,7 @@ public class RegistrationControllerTest {
   @Test
   public void invalidUsername() throws ServletException, IOException {
     String exceptionMessage = "username too short, needs to be at least 5 characters";
+    User ivan = new User("Ivan", "123456");
 
     context.checking(new Expectations() {{
       oneOf(request).getParameter("username");
@@ -75,8 +85,11 @@ public class RegistrationControllerTest {
       oneOf(request).getParameter("confirmPassword");
       will(returnValue("123456"));
 
-      oneOf(userRepository).register(new User("Ivan", "123456"), "123456");
-      will(throwException(new ValidationException("username too short, needs to be at least 5 characters")));
+      oneOf(validator).validate(ivan);
+      will(returnValue(exceptionMessage));
+
+      oneOf(validator).passwordsMatch("123456", "123456");
+      will(returnValue(""));
 
       oneOf(response).sendRedirect("register?state=has-error&registerMessage=" + exceptionMessage);
     }});

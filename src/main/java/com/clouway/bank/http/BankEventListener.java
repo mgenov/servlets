@@ -41,9 +41,9 @@ public class BankEventListener implements ServletContextListener {
     servletContext.addFilter("ConnectionFilter", new ConnectionFilter(dbName)).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
     servletContext.addFilter("HttprequestErrorReporter", new HttprequestErrorReporter(new BracketsTemplate(new FileReader()))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
     servletContext.addServlet("RegistrationPage", new RegistrationPage(new BracketsTemplate(new FileReader()))).addMapping("/register");
-    servletContext.addServlet("RegisterControllerServlet", new RegistrationController(new PersistentUserRepository(new PerRequestConnectionProvider(), new UserDataValidator()), new PersistentAccountRepository(new PerRequestConnectionProvider(), new BankTransactionValidator()))).addMapping("/registercontroller");
-    servletContext.addServlet("DepositServlet", new DepositServlet(new PersistentAccountRepository(new PerRequestConnectionProvider(), new BankTransactionValidator()), new BracketsTemplate(new FileReader()))).addMapping("/deposit");
-    servletContext.addServlet("WithdrawServlet", new WithdrawServlet(new PersistentAccountRepository(new PerRequestConnectionProvider(), new BankTransactionValidator()), new BracketsTemplate(new FileReader()))).addMapping("/withdraw");
+    servletContext.addServlet("RegisterControllerServlet", new RegistrationController(new PersistentUserRepository(new PerRequestConnectionProvider()), new PersistentAccountRepository(new PerRequestConnectionProvider()), new UserDataValidator())).addMapping("/registercontroller");
+    servletContext.addServlet("DepositServlet", new DepositServlet(new PersistentAccountRepository(new PerRequestConnectionProvider()), new BracketsTemplate(new FileReader()), new BankTransactionValidator())).addMapping("/deposit");
+    servletContext.addServlet("WithdrawServlet", new WithdrawServlet(new PersistentAccountRepository(new PerRequestConnectionProvider()), new BracketsTemplate(new FileReader()), new BankTransactionValidator())).addMapping("/withdraw");
   }
 
   /**

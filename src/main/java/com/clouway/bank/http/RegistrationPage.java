@@ -28,7 +28,7 @@ public class RegistrationPage extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String state = request.getParameter("state");
     String message = request.getParameter("registerMessage");
-    if (state != null && message!=null) {
+    if (state != null && message != null) {
       template.put("state", state);
       template.put("registerMessage", message);
     }

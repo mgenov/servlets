@@ -2,6 +2,7 @@ package com.clouway.bank.http;
 
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.Amount;
+import com.clouway.bank.core.TransactionValidator;
 import com.clouway.utility.Template;
 
 import javax.servlet.ServletException;
@@ -19,6 +20,7 @@ import java.io.PrintWriter;
 public class DepositServlet extends HttpServlet {
   private AccountRepository accountRepository;
   private Template template;
+  private TransactionValidator validator;
 
 
   /**
@@ -27,9 +29,10 @@ public class DepositServlet extends HttpServlet {
    * @param accountRepository account repository storing the account data
    * @param template          template for manipulating strings
    */
-  public DepositServlet(AccountRepository accountRepository, Template template) {
+  public DepositServlet(AccountRepository accountRepository, Template template, TransactionValidator validator) {
     this.accountRepository = accountRepository;
     this.template = template;
+    this.validator = validator;
   }
 
   /**
@@ -41,8 +44,7 @@ public class DepositServlet extends HttpServlet {
   @Override
   public void init() throws ServletException {
     template.loadFromFile("web/WEB-INF/pages/Deposit.html");
-    template.put("username", "no user yet");
-    template.put("balance", "not available");
+    template.put("message", "");
   }
 
   /**
@@ -57,8 +59,13 @@ public class DepositServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String username = "Stanislava";
     Double balance = accountRepository.getCurrentBalance(username);
+    String message = req.getParameter("message");
     template.put("username", username);
     template.put("balance", balance.toString());
+    if (message != null) {
+      template.put("message", message);
+    }
+
     PrintWriter writer = resp.getWriter();
     resp.setContentType("text/html");
     writer.write(template.evaluate());
@@ -75,15 +82,22 @@ public class DepositServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String username = req.getParameter("username");
-    String amount = req.getParameter("amount");
+    String amountParam = req.getParameter("amount");
+    if (amountParam == null || amountParam.isEmpty()) {
+      resp.sendRedirect("deposit?message=enter amount");
+      return;
+    }
+    String m = validator.validateAmount(amountParam);
 
-    Double depositedAmount = accountRepository.deposit(new Amount(username, amount));
-    template.put("username", username);
-    template.put("balance", depositedAmount.toString());
+    if (!m.isEmpty()) {
+      resp.sendRedirect("deposit?message=" + m);
+      return;
+    }
 
-    PrintWriter writer = resp.getWriter();
-    resp.setContentType("text/html");
-    writer.write(template.evaluate());
+    Double amount = Double.parseDouble(amountParam);
+    accountRepository.deposit(new Amount(username, amount));
+
+    resp.sendRedirect("deposit?message=Susscesful deposit: " + amount);
   }
 
 }

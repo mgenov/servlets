@@ -3,7 +3,7 @@ package com.clouway.bank.http;
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserRepository;
-import com.clouway.bank.core.ValidationException;
+import com.clouway.bank.core.UserValidator;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,12 +17,14 @@ import java.io.IOException;
 public class RegistrationController extends HttpServlet {
   private UserRepository userRepository;
   private AccountRepository accountRepository;
+  private UserValidator validator;
 
 
-  public RegistrationController(UserRepository userRepository, AccountRepository accountRepository) {
+  public RegistrationController(UserRepository userRepository, AccountRepository accountRepository, UserValidator validator) {
     this.userRepository = userRepository;
     this.accountRepository = accountRepository;
 
+    this.validator = validator;
   }
 
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -32,16 +34,23 @@ public class RegistrationController extends HttpServlet {
     String state;
     String message;
 
-    try {
-      userRepository.register(new User(username, password), confirmPassword);
+    User user = new User(username, password);
+
+    String validationMessage = validator.validate(user);
+    validationMessage += validator.passwordsMatch(user.password, confirmPassword);
+
+    if (!"".equals(validationMessage)) {
+      state = "has-error";
+      message = validationMessage;
+    } else {
+      userRepository.register(user);
       state = "has-success";
       message = "success";
 
       accountRepository.createAccount(username);
-    } catch (ValidationException e) {
-      state = "has-error";
-      message = e.getMessage();
     }
+
+
     response.sendRedirect("register?state=" + state + "&registerMessage=" + message);
 
   }
