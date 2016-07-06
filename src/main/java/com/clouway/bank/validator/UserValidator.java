@@ -29,6 +29,18 @@ public class UserValidator implements Validator<User> {
     return message.toString();
   }
 
+  @Override
+  public String validate(String email, String password) {
+    Matcher userEmail = emailPattern.matcher(email);
+    Matcher userPassword = passPattern.matcher(password);
+
+    StringBuilder message = new StringBuilder();
+    message.append(validateMatching(userEmail, "The email or password is wrong"));
+    message.append(validateMatching(userPassword, "The email or password is wrong"));
+
+    return message.toString();
+  }
+
   private String validateMatching(Matcher matcher, String errorMessage) {
     if (!matcher.matches()) {
       return errorMessage;

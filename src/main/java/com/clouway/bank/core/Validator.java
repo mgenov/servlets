@@ -13,4 +13,13 @@ public interface Validator<T> {
    * @return result message from validation
    */
   String validate(T object);
+
+  /**
+   * Will check the emails and passwords
+   *
+   * @param email    checked email
+   * @param password checked password
+   * @return report from validation
+   */
+  String validate(String email, String password);
 }
