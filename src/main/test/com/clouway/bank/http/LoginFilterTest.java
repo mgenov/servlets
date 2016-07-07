@@ -21,38 +21,49 @@ import java.util.Date;
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
 public class LoginFilterTest {
-  @Rule
-  public JUnitRuleMockery context = new JUnitRuleMockery();
+    @Rule
+    public JUnitRuleMockery context = new JUnitRuleMockery();
 
-  private HttpServletRequest request = context.mock(HttpServletRequest.class);
-  private HttpServletResponse response = context.mock(HttpServletResponse.class);
-  private FilterChain filterChain = context.mock(FilterChain.class);
+    private HttpServletRequest request = context.mock(HttpServletRequest.class);
+    private HttpServletResponse response = context.mock(HttpServletResponse.class);
+    private FilterChain filterChain = context.mock(FilterChain.class);
 
-  private SessionRepository sessionRepository = context.mock(SessionRepository.class);
-  private Time time = context.mock(Time.class);
+    private SessionRepository sessionRepository = context.mock(SessionRepository.class);
+    private Time time = context.mock(Time.class);
 
-  @Test
-  public void happyPath() throws Exception {
-    LoginFilter filter = new LoginFilter(sessionRepository, time);
-    final Session session = new Session("sessionId", "user@abv.bg", getTime("12:12:0000"));
-    final Cookie cookie = new Cookie("id", "value");
+    @Test
+    public void happyPath() throws Exception {
+        LoginFilter filter = new LoginFilter(sessionRepository, time);
+        final Session session = new Session("sessionId", "user@abv.bg", getTime("12:12:0000"));
+        final Cookie cookie = new Cookie("id", "sessionId");
+        final Cookie[] cookies = new Cookie[]{cookie};
 
-    context.checking(new Expectations() {{
-      oneOf(request).getCookies();
+        context.checking(new Expectations() {{
+            oneOf(request).getCookies();
+            will(returnValue(cookies));
 
-    }});
+            oneOf(sessionRepository).findSessionById(session.sessionId);
+            will(returnValue(session));
 
-    filter.doFilter(request, response, filterChain);
-  }
+            oneOf(time).getCurrentTime();
+            will(returnValue(getTime("13:13:1313")));
 
-  private Long getTime(String dateAsString) {
-    SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ssss");
-    Date date = null;
-    try {
-      date = dateFormat.parse(dateAsString);
-    } catch (ParseException e) {
-      e.printStackTrace();
+            oneOf(filterChain).doFilter(request, response);
+
+            oneOf(response).sendRedirect("/login");
+        }});
+
+        filter.doFilter(request, response, filterChain);
     }
-    return date.getTime();
-  }
+
+    private Long getTime(String dateAsString) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ssss");
+        Date date = null;
+        try {
+            date = dateFormat.parse(dateAsString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date.getTime();
+    }
 }
