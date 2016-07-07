@@ -37,6 +37,7 @@ public class LoginFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
+        sessionRepository.remove();
         Cookie[] cookies = request.getCookies();
         Cookie sessionId = find(cookies);
 

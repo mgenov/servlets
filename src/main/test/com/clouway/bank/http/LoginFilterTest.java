@@ -39,6 +39,8 @@ public class LoginFilterTest {
         final Cookie[] cookies = new Cookie[]{cookie};
 
         context.checking(new Expectations() {{
+            oneOf(sessionRepository).remove();
+
             oneOf(request).getCookies();
             will(returnValue(cookies));
 
