@@ -16,6 +16,7 @@ import java.sql.SQLException;
 public class PersistentSessionRepository implements SessionRepository {
   private final Provider<Connection> provider;
 
+
   public PersistentSessionRepository(Provider<Connection> provider) {
     this.provider = provider;
   }
@@ -25,7 +26,7 @@ public class PersistentSessionRepository implements SessionRepository {
     try (PreparedStatement statement = provider.get().prepareStatement("INSERT into sessions VALUES (?,?,?)")) {
       statement.setString(1, session.sessionId);
       statement.setString(2, session.email);
-      statement.setLong(3, session.time);
+      statement.setLong(3, session.timeForLife);
 
       statement.executeUpdate();
     } catch (SQLException e) {
@@ -34,17 +35,17 @@ public class PersistentSessionRepository implements SessionRepository {
   }
 
   @Override
-  public Session findSession(String email) {
-    try (PreparedStatement statement = provider.get().prepareStatement("SELECT * FROM sessions WHERE email=?")) {
-      statement.setString(1, email);
+  public Session findSessionById(String id) {
+    try (PreparedStatement statement = provider.get().prepareStatement("SELECT * FROM sessions WHERE id=?")) {
+      statement.setString(1, id);
 
       ResultSet resultSet = statement.executeQuery();
 
       while (resultSet.next()) {
-        String id = resultSet.getString("id");
-        long time = resultSet.getLong("time");
+        String email = resultSet.getString("email");
+        long timeout = resultSet.getLong("time");
 
-        return new Session(id, email, time);
+        return new Session(id, email, timeout);
       }
     } catch (SQLException e) {
       throw new ConnectionException("Cannot connect to database");

@@ -9,8 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
@@ -52,24 +50,6 @@ public class PersistentUserRepository implements UserRepository {
       throw new ConnectionException("Cannot connect to database");
     }
     return null;
-  }
-
-  @Override
-  public Map<String, String> findAll(String email) {
-    Map<String, String> users = new HashMap<>();
-    try (PreparedStatement statement = connectionProvider.get().prepareStatement("SELECT * FROM users WHERE email=?")) {
-      statement.setString(1, email);
-
-      ResultSet resultSet = statement.executeQuery();
-      while (resultSet.next()) {
-        String password = resultSet.getString("password");
-
-        users.put(email, password);
-      }
-      return users;
-    } catch (SQLException e) {
-      throw new ConnectionException("Cannot connect to database");
-    }
   }
 }
 

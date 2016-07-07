@@ -16,8 +16,8 @@ public interface SessionRepository {
   /**
    * find session by email to user
    *
-   * @param email user email
+   * @param id session id
    * @return session
    */
-  Session findSession(String email);
+  Session findSessionById(String id);
 }

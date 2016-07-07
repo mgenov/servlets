@@ -2,12 +2,14 @@ package com.clouway.bank.adapter.server.jetty;
 
 import com.clouway.bank.adapter.http.HomePageServlet;
 import com.clouway.bank.adapter.http.LoginControllerServlet;
+import com.clouway.bank.adapter.http.LoginFilter;
 import com.clouway.bank.adapter.http.LoginPageServlet;
 import com.clouway.bank.adapter.http.RegisterServlet;
 import com.clouway.bank.adapter.jdbc.ConnectionProvider;
-import com.clouway.bank.adapter.jdbc.db.persistence.AuthenticationFilter;
 import com.clouway.bank.adapter.jdbc.db.persistence.PersistentSessionRepository;
 import com.clouway.bank.adapter.jdbc.db.persistence.PersistentUserRepository;
+import com.clouway.bank.utils.IdsGenerator;
+import com.clouway.bank.utils.Timeout;
 import com.clouway.bank.validator.UserValidator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -38,9 +40,9 @@ public class Jetty {
 
         servletContext.addServlet("register", new RegisterServlet(new PersistentUserRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new UserValidator())).addMapping("/register");
         servletContext.addServlet("login", new LoginPageServlet()).addMapping("/login");
-        servletContext.addServlet("loginController", new LoginControllerServlet(new PersistentUserRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new PersistentSessionRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new UserValidator())).addMapping("/loginController");
+        servletContext.addServlet("loginController", new LoginControllerServlet(new PersistentUserRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new PersistentSessionRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new UserValidator(), new Timeout(1), new IdsGenerator())).addMapping("/loginController");
         servletContext.addServlet("home", new HomePageServlet()).addMapping("/home");
-        servletContext.addFilter("authentication", new AuthenticationFilter()).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+        servletContext.addFilter("security", new LoginFilter(new PersistentSessionRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new Timeout(1))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
       }
 
       public void contextDestroyed(ServletContextEvent servletContextEvent) {
