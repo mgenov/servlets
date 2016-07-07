@@ -47,7 +47,7 @@ public class TemplateSupplementationTest {
   public void templateFromFile() {
     String file = "someFile.txt";
     BracketsTemplate bracketsTemplate = new BracketsTemplate(reader);
-    context.checking(new Expectations(){{
+    context.checking(new Expectations() {{
       oneOf(reader).read(file);
       will(returnValue("${name}, is slacking"));
     }});

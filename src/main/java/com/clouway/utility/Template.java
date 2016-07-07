@@ -17,6 +17,7 @@ public interface Template {
 
   /**
    * uses reader to get a template
+   *
    * @param url
    */
   void loadFromFile(String url);
