@@ -55,7 +55,7 @@ public class LoginControllerServlet extends HttpServlet {
       sessionRepository.save(session);
 
       Cookie cookie = new Cookie("id", id);
-      cookie.setMaxAge(60*60*30);
+
       resp.addCookie(cookie);
 
       resp.sendRedirect("/home");

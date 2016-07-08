@@ -41,13 +41,15 @@ public class LoginFilter implements Filter {
     Cookie[] cookies = request.getCookies();
     Cookie sessionId = find(cookies);
 
-    if (sessionId == null) {
+    if (sessionId != null) {
       filterChain.doFilter(request, response);
       return;
     }
     Session session = sessionRepository.findSessionById(sessionId.getValue());
-    if (session.timeForLife < time.getCurrentTime()) {
-      response.sendRedirect("/login");
+    if (session != null) {
+      if (session.timeForLife < time.getCurrentTime()) {
+        response.sendRedirect("/login");
+      }
     }
   }
 

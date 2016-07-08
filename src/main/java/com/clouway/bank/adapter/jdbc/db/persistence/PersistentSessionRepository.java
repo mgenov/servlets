@@ -11,53 +11,53 @@ import java.sql.SQLException;
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
 public class PersistentSessionRepository implements SessionRepository {
-    private final Provider<Connection> provider;
-    private final Time time;
+  private final Provider<Connection> provider;
+  private final Time time;
 
-    public PersistentSessionRepository(Provider<Connection> provider, Time time) {
-        this.provider = provider;
-        this.time = time;
+  public PersistentSessionRepository(Provider<Connection> provider, Time time) {
+    this.provider = provider;
+    this.time = time;
+  }
+
+  @Override
+  public void save(Session session) {
+    try (PreparedStatement statement = provider.get().prepareStatement("INSERT into sessions VALUES (?,?,?)")) {
+      statement.setString(1, session.sessionId);
+      statement.setString(2, session.email);
+      statement.setLong(3, session.timeForLife);
+
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      throw new ConnectionException("Cannot connect to database");
     }
+  }
 
-    @Override
-    public void save(Session session) {
-        try (PreparedStatement statement = provider.get().prepareStatement("INSERT into sessions VALUES (?,?,?)")) {
-            statement.setString(1, session.sessionId);
-            statement.setString(2, session.email);
-            statement.setLong(3, session.timeForLife);
+  @Override
+  public Session findSessionById(String id) {
+    try (PreparedStatement statement = provider.get().prepareStatement("SELECT * FROM sessions WHERE id=?")) {
+      statement.setString(1, id);
 
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new ConnectionException("Cannot connect to database");
-        }
+      ResultSet resultSet = statement.executeQuery();
+
+      while (resultSet.next()) {
+        String email = resultSet.getString("email");
+        long timeout = resultSet.getLong("timeForLife");
+
+        return new Session(id, email, timeout);
+      }
+    } catch (SQLException e) {
+      throw new ConnectionException("Cannot connect to database");
     }
+    return null;
+  }
 
-    @Override
-    public Session findSessionById(String id) {
-        try (PreparedStatement statement = provider.get().prepareStatement("SELECT * FROM sessions WHERE id=?")) {
-            statement.setString(1, id);
+  @Override
+  public void remove() {
+    try (PreparedStatement statement = provider.get().prepareStatement("DELETE FROM sessions WHERE timeForLife<" + time.getCurrentTime())) {
 
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                String email = resultSet.getString("email");
-                long timeout = resultSet.getLong("timeForLife");
-
-                return new Session(id, email, timeout);
-            }
-        } catch (SQLException e) {
-            throw new ConnectionException("Cannot connect to database");
-        }
-        return null;
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      new ConnectionException("Cannot connect to database");
     }
-
-    @Override
-    public void remove() {
-        try (PreparedStatement statement = provider.get().prepareStatement("DELETE FROM sessions WHERE timeForLife<" + time.getCurrentTime())) {
-
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            new ConnectionException("Cannot connect to database");
-        }
-    }
+  }
 }
