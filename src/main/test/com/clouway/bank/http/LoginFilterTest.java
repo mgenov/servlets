@@ -50,8 +50,6 @@ public class LoginFilterTest {
             oneOf(time).getCurrentTime();
             will(returnValue(getTime("13:13:1313")));
 
-            oneOf(filterChain).doFilter(request, response);
-
             oneOf(response).sendRedirect("/login");
         }});
 

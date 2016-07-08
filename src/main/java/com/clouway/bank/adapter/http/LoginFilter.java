@@ -19,49 +19,49 @@ import java.io.IOException;
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
 public class LoginFilter implements Filter {
-    private final SessionRepository sessionRepository;
-    private final Time time;
+  private final SessionRepository sessionRepository;
+  private final Time time;
 
-    public LoginFilter(SessionRepository sessionRepository, Time time) {
-        this.sessionRepository = sessionRepository;
-        this.time = time;
+  public LoginFilter(SessionRepository sessionRepository, Time time) {
+    this.sessionRepository = sessionRepository;
+    this.time = time;
+  }
+
+  @Override
+  public void init(FilterConfig filterConfig) throws ServletException {
+
+  }
+
+  @Override
+  public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    HttpServletRequest request = (HttpServletRequest) servletRequest;
+    HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+    sessionRepository.remove();
+    Cookie[] cookies = request.getCookies();
+    Cookie sessionId = find(cookies);
+
+    if (sessionId == null) {
+      filterChain.doFilter(request, response);
+      return;
     }
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
+    Session session = sessionRepository.findSessionById(sessionId.getValue());
+    if (session.timeForLife < time.getCurrentTime()) {
+      response.sendRedirect("/login");
     }
+  }
 
-    @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
+  @Override
+  public void destroy() {
 
-        sessionRepository.remove();
-        Cookie[] cookies = request.getCookies();
-        Cookie sessionId = find(cookies);
+  }
 
-        if (sessionId != null) {
-            filterChain.doFilter(request, response);
-
-            Session session = sessionRepository.findSessionById(sessionId.getValue());
-            if (session.timeForLife < time.getCurrentTime()) {
-                response.sendRedirect("/login");
-            }
-        }
+  private Cookie find(Cookie[] cookies) {
+    for (Cookie each : cookies) {
+      if (each.getName().equals("id")) {
+        return each;
+      }
     }
-
-    @Override
-    public void destroy() {
-
-    }
-
-    private Cookie find(Cookie[] cookies) {
-        for (Cookie each : cookies) {
-            if (each.getName().equals("id")) {
-                return each;
-            }
-        }
-        return null;
-    }
+    return null;
+  }
 }
