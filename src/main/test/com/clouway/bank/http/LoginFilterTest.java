@@ -21,49 +21,84 @@ import java.util.Date;
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
 public class LoginFilterTest {
-    @Rule
-    public JUnitRuleMockery context = new JUnitRuleMockery();
+  @Rule
+  public JUnitRuleMockery context = new JUnitRuleMockery();
 
-    private HttpServletRequest request = context.mock(HttpServletRequest.class);
-    private HttpServletResponse response = context.mock(HttpServletResponse.class);
-    private FilterChain filterChain = context.mock(FilterChain.class);
+  private HttpServletRequest request = context.mock(HttpServletRequest.class);
+  private HttpServletResponse response = context.mock(HttpServletResponse.class);
+  private FilterChain filterChain = context.mock(FilterChain.class);
 
-    private SessionRepository sessionRepository = context.mock(SessionRepository.class);
-    private Time time = context.mock(Time.class);
+  private SessionRepository sessionRepository = context.mock(SessionRepository.class);
+  private Time time = context.mock(Time.class);
 
-    @Test
-    public void happyPath() throws Exception {
-        LoginFilter filter = new LoginFilter(sessionRepository, time);
-        final Session session = new Session("sessionId", "user@abv.bg", getTime("12:12:0000"));
-        final Cookie cookie = new Cookie("id", "sessionId");
-        final Cookie[] cookies = new Cookie[]{cookie};
+  @Test
+  public void happyPath() throws Exception {
+    LoginFilter filter = new LoginFilter(sessionRepository, time);
+    final Session session = new Session("sessionId", "user@abv.bg", getTime("12:12:0000"));
+    final Cookie cookie = new Cookie("id", session.sessionId);
+    final Cookie[] cookies = new Cookie[]{cookie};
 
-        context.checking(new Expectations() {{
-            oneOf(sessionRepository).remove();
+    context.checking(new Expectations() {{
+      oneOf(request).getCookies();
+      will(returnValue(cookies));
 
-            oneOf(request).getCookies();
-            will(returnValue(cookies));
+      oneOf(sessionRepository).findSessionById(session.sessionId);
+      will(returnValue(session));
 
-            oneOf(sessionRepository).findSessionById(session.sessionId);
-            will(returnValue(session));
+      oneOf(time).getCurrentTime();
+      will(returnValue(getTime("13:13:1313")));
 
-            oneOf(time).getCurrentTime();
-            will(returnValue(getTime("13:13:1313")));
+      oneOf(sessionRepository).remove("sessionId");
 
-            oneOf(response).sendRedirect("/login");
-        }});
+      oneOf(response).sendRedirect("/login");
 
-        filter.doFilter(request, response, filterChain);
+      oneOf(filterChain).doFilter(request, response);
+    }});
+
+    filter.doFilter(request, response, filterChain);
+  }
+
+  @Test
+  public void hasCookiesNoSession() throws Exception {
+    LoginFilter loginFilter = new LoginFilter(sessionRepository, time);
+    final Cookie cookie = new Cookie("id", "sessionId");
+    final Cookie[] cookies = new Cookie[]{cookie};
+
+    context.checking(new Expectations() {{
+      oneOf(request).getCookies();
+      will(returnValue(cookies));
+
+      oneOf(sessionRepository).findSessionById("sessionId");
+      will(returnValue(null));
+
+      oneOf(filterChain).doFilter(request, response);
+    }});
+    loginFilter.doFilter(request, response, filterChain);
+  }
+
+  @Test
+  public void hasSessionNoCookie() throws Exception {
+    LoginFilter loginFilter = new LoginFilter(sessionRepository, time);
+    final Session session = new Session("sessionId", "user@abv.bg", getTime("12:12:0000"));
+    final Cookie[] cookies = new Cookie[]{};
+
+    context.checking(new Expectations() {{
+      oneOf(request).getCookies();
+      will(returnValue(cookies));
+
+      oneOf(filterChain).doFilter(request, response);
+    }});
+    loginFilter.doFilter(request, response, filterChain);
+  }
+
+  private Long getTime(String dateAsString) {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ssss");
+    Date date = null;
+    try {
+      date = dateFormat.parse(dateAsString);
+    } catch (ParseException e) {
+      e.printStackTrace();
     }
-
-    private Long getTime(String dateAsString) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ssss");
-        Date date = null;
-        try {
-            date = dateFormat.parse(dateAsString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return date.getTime();
-    }
+    return date.getTime();
+  }
 }

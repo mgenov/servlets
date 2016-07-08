@@ -7,6 +7,7 @@ import com.clouway.bank.core.Time;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -37,19 +38,25 @@ public class LoginFilter implements Filter {
     HttpServletRequest request = (HttpServletRequest) servletRequest;
     HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-    sessionRepository.remove();
     Cookie[] cookies = request.getCookies();
     Cookie sessionId = find(cookies);
 
-    if (sessionId != null) {
+    Session session = null;
+
+    if (sessionId == null) {
       filterChain.doFilter(request, response);
       return;
     }
-    Session session = sessionRepository.findSessionById(sessionId.getValue());
+
+    session = sessionRepository.findSessionById(sessionId.getValue());
+
     if (session != null) {
       if (session.timeForLife < time.getCurrentTime()) {
-        response.sendRedirect("/login");
+        sessionId.setMaxAge(-1);
+        sessionRepository.remove(session.sessionId);
       }
+    } else {
+      response.sendRedirect("/login");
     }
   }
 

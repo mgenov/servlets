@@ -12,11 +12,9 @@ import java.sql.SQLException;
  */
 public class PersistentSessionRepository implements SessionRepository {
   private final Provider<Connection> provider;
-  private final Time time;
 
-  public PersistentSessionRepository(Provider<Connection> provider, Time time) {
+  public PersistentSessionRepository(Provider<Connection> provider) {
     this.provider = provider;
-    this.time = time;
   }
 
   @Override
@@ -52,8 +50,9 @@ public class PersistentSessionRepository implements SessionRepository {
   }
 
   @Override
-  public void remove() {
-    try (PreparedStatement statement = provider.get().prepareStatement("DELETE FROM sessions WHERE timeForLife<" + time.getCurrentTime())) {
+  public void remove(String id) {
+    try (PreparedStatement statement = provider.get().prepareStatement("DELETE FROM sessions WHERE id=?")) {
+      statement.setString(1, id);
 
       statement.executeUpdate();
     } catch (SQLException e) {
