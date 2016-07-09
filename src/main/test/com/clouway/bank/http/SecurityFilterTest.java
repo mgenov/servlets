@@ -1,6 +1,7 @@
 package com.clouway.bank.http;
 
 import com.clouway.bank.adapter.http.LoginFilter;
+import com.clouway.bank.adapter.http.SecurityFilter;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
 import com.clouway.bank.core.Time;
@@ -20,7 +21,7 @@ import java.util.Date;
 /**
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
-public class LoginFilterTest {
+public class SecurityFilterTest {
     @Rule
     public JUnitRuleMockery context = new JUnitRuleMockery();
 
@@ -33,7 +34,7 @@ public class LoginFilterTest {
 
     @Test
     public void sessionIsActive() throws Exception {
-        LoginFilter filter = new LoginFilter(sessionRepository, time);
+        SecurityFilter filter = new SecurityFilter(sessionRepository, time);
         final Session session = new Session("sessionId", "user@abv.bg", getTime("07"));
         final Cookie cookie = new Cookie("id", session.sessionId);
         final Cookie[] cookies = new Cookie[]{cookie};
@@ -48,7 +49,7 @@ public class LoginFilterTest {
             oneOf(time).getCurrentTime();
             will(returnValue(getTime("00")));
 
-            oneOf(response).sendRedirect("/account");
+            oneOf(response).sendRedirect("/login");
         }});
 
         filter.doFilter(request, response, filterChain);
@@ -56,7 +57,7 @@ public class LoginFilterTest {
 
     @Test
     public void sessionIsTimeout() throws Exception {
-        LoginFilter filter = new LoginFilter(sessionRepository, time);
+        SecurityFilter filter = new SecurityFilter(sessionRepository, time);
         final Session session = new Session("sessionId", "user@abv.bg", getTime("00"));
         final Cookie cookie = new Cookie("id", session.sessionId);
         final Cookie[] cookies = new Cookie[]{cookie};
@@ -77,18 +78,19 @@ public class LoginFilterTest {
         }});
 
         filter.doFilter(request, response, filterChain);
+
     }
 
     @Test
     public void noCookies() throws Exception {
-        LoginFilter loginFilter = new LoginFilter(sessionRepository, time);
+        SecurityFilter loginFilter = new SecurityFilter(sessionRepository, time);
         final Cookie[] cookies = new Cookie[]{};
 
         context.checking(new Expectations() {{
             oneOf(request).getCookies();
             will(returnValue(cookies));
 
-            oneOf(filterChain).doFilter(request, response);
+            oneOf(response).sendRedirect("/login");
         }});
         loginFilter.doFilter(request, response, filterChain);
     }

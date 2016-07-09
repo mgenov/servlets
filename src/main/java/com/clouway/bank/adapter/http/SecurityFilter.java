@@ -13,11 +13,11 @@ import java.io.IOException;
 /**
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
-public class LoginFilter implements Filter {
+public class SecurityFilter implements Filter {
     private final SessionRepository sessionRepository;
     private final Time time;
 
-    public LoginFilter(SessionRepository sessionRepository, Time time) {
+    public SecurityFilter(SessionRepository sessionRepository, Time time) {
         this.sessionRepository = sessionRepository;
         this.time = time;
     }
@@ -37,7 +37,7 @@ public class LoginFilter implements Filter {
         Session session;
 
         if (cookie == null) {
-            filterChain.doFilter(request, response);
+            response.sendRedirect("/login");
             return;
         }
 
@@ -48,7 +48,7 @@ public class LoginFilter implements Filter {
                 sessionRepository.remove(session.sessionId);
                 filterChain.doFilter(request, response);
             } else {
-                response.sendRedirect("/account");
+                response.sendRedirect("/login");
             }
         }
     }
