@@ -33,7 +33,7 @@ public class Jetty {
 
             public void contextInitialized(final ServletContextEvent servletContextEvent) {
                 ServletContext servletContext = servletContextEvent.getServletContext();
-                servletContext.addFilter("security", new SecurityFilter(new PersistentSessionRepository((new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com"))))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/home", "/login", "/account");
+                servletContext.addFilter("security", new SecurityFilter(new PersistentSessionRepository((new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com"))), new Timeout(1))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/home", "/login", "/account");
                 servletContext.addServlet("register", new RegisterServlet(new PersistentUserRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new UserValidator())).addMapping("/register");
                 servletContext.addServlet("login", new LoginPageServlet()).addMapping("/login");
                 servletContext.addServlet("loginController", new LoginControllerServlet(new PersistentUserRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new PersistentSessionRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new UserValidator(), new Timeout(1), new IdsGenerator())).addMapping("/loginController");

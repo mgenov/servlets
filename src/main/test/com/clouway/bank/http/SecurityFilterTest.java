@@ -28,12 +28,13 @@ public class SecurityFilterTest {
     private HttpServletRequest request = context.mock(HttpServletRequest.class);
     private HttpServletResponse response = context.mock(HttpServletResponse.class);
     private FilterChain filterChain = context.mock(FilterChain.class);
+    private Time time = context.mock(Time.class);
 
     private SessionRepository sessionRepository = context.mock(SessionRepository.class);
 
     @Test
     public void login() throws Exception {
-        SecurityFilter filter = new SecurityFilter(sessionRepository);
+        SecurityFilter filter = new SecurityFilter(sessionRepository, time);
 
         final Cookie cookie = new Cookie("id", "sessionId");
         final Cookie[] cookies = new Cookie[]{cookie};
@@ -56,7 +57,7 @@ public class SecurityFilterTest {
 
     @Test
     public void alreadyLogin() throws Exception {
-        SecurityFilter filter = new SecurityFilter(sessionRepository);
+        SecurityFilter filter = new SecurityFilter(sessionRepository, time);
 
         final Cookie cookie = new Cookie("id", "sessionId");
         final Cookie[] cookies = new Cookie[]{cookie};
@@ -72,6 +73,9 @@ public class SecurityFilterTest {
             oneOf(sessionRepository).findSessionById(cookie.getValue());
             will(returnValue(Optional.of(session)));
 
+            oneOf(time).getCurrentTime();
+            will(returnValue(getTime("00")));
+
             oneOf(response).sendRedirect("/home");
 
             oneOf(filterChain).doFilter(request, response);
@@ -82,10 +86,8 @@ public class SecurityFilterTest {
 
     @Test
     public void getSecurityResourceNoSession() throws Exception {
-        SecurityFilter filter = new SecurityFilter(sessionRepository);
-
-        final Cookie cookie = new Cookie("id", "sessionId");
-        final Cookie[] cookies = new Cookie[]{cookie};
+        SecurityFilter filter = new SecurityFilter(sessionRepository, time);
+        final Cookie[] cookies = new Cookie[]{};
 
         context.checking(new Expectations() {{
             oneOf(request).getRequestURI();
@@ -94,10 +96,41 @@ public class SecurityFilterTest {
             oneOf(request).getCookies();
             will(returnValue(cookies));
 
-            oneOf(sessionRepository).findSessionById(cookie.getValue());
+            oneOf(sessionRepository).findSessionById("");
             will(returnValue(Optional.absent()));
 
             oneOf(response).sendRedirect("/login");
+        }});
+
+        filter.doFilter(request, response, filterChain);
+    }
+
+    @Test
+    public void removeTimeOutSessions() throws Exception {
+        SecurityFilter filter = new SecurityFilter(sessionRepository, time);
+
+        final Cookie cookie = new Cookie("id", "sessionId");
+        final Cookie[] cookies = new Cookie[]{cookie};
+        final Session session = new Session(cookie.getValue(), "user@domain.com", getTime("00"));
+
+        context.checking(new Expectations() {{
+            oneOf(request).getRequestURI();
+            will(returnValue("/home"));
+
+            oneOf(request).getCookies();
+            will(returnValue(cookies));
+
+            oneOf(sessionRepository).findSessionById(cookie.getValue());
+            will(returnValue(Optional.of(session)));
+
+            oneOf(time).getCurrentTime();
+            will(returnValue(getTime("04")));
+
+            oneOf(sessionRepository).remove(session.sessionId);
+
+            oneOf(response).sendRedirect("/login");
+
+            oneOf(filterChain).doFilter(request, response);
         }});
 
         filter.doFilter(request, response, filterChain);

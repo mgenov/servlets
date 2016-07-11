@@ -57,7 +57,7 @@ public class PersistentSessionRepository implements SessionRepository {
     try (PreparedStatement statement = provider.get().prepareStatement("DELETE FROM sessions WHERE id=?")) {
       statement.setString(1, id);
 
-      statement.executeUpdate();
+      statement.execute();
     } catch (SQLException e) {
       new ConnectionException("Cannot connect to database");
     }
