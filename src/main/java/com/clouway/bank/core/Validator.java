@@ -22,4 +22,12 @@ public interface Validator<T> {
    * @return report from validation
    */
   String validate(String email, String password);
+
+  /**
+   * Will check the cash
+   *
+   * @param cash checked sum
+   * @return report from validation
+   */
+  String validate(String cash);
 }

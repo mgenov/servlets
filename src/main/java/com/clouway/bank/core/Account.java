@@ -4,8 +4,8 @@ package com.clouway.bank.core;
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
 public class Account {
-    public final String email;
-    private Double balance;
+  public final String email;
+  private Double balance;
 
     public Account(String email, Double balance) {
         this.email = email;

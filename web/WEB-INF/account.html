@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Account</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="panel panel-default">
+        <form action="/accountController" method="post">
+            <div class="panel-heading">Account:{email}</div>
+            <div class="panel-heading">Current balance:{balance}</div>
+            <div class="panel-body"><br>
+                <div class="col-xs-2">
+                    <input type="text" name="cash" class="form-control" placeholder="Enter cash"><br>
+                    {message}
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary">Operation</button>
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <div class="btn-group-vertical">
+                            <button type="submit" class="btn btn-primary" name="operation" value="deposit">Deposit
+                            </button>
+                            <button type="submit" class="btn btn-primary" name="operation" value="withdraw">Withdraw
+                            </button>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
