@@ -1,5 +1,7 @@
 package com.clouway.bank.core;
 
+import com.google.common.base.Optional;
+
 /**
  * The implementation of this interface will be used to save and retrieve session data
  *
@@ -19,7 +21,7 @@ public interface SessionRepository {
    * @param id session id
    * @return session
    */
-  Session findSessionById(String id);
+  Optional<Session> findSessionById(String id);
 
   /**
    * Will remove session

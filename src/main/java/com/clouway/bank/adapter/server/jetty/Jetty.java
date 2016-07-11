@@ -20,38 +20,37 @@ import java.util.EnumSet;
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
 public class Jetty {
-    private final Server server;
+  private final Server server;
 
-    public Jetty(int port) {
-        this.server = new Server(port);
+  public Jetty(int port) {
+    this.server = new Server(port);
+  }
+
+  public void start() {
+    ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+    context.setContextPath("/");
+    context.addEventListener(new ServletContextListener() {
+
+      public void contextInitialized(final ServletContextEvent servletContextEvent) {
+        ServletContext servletContext = servletContextEvent.getServletContext();
+        servletContext.addFilter("security", new SecurityFilter(new PersistentSessionRepository((new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com"))))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/home","/login","/account");
+        servletContext.addServlet("register", new RegisterServlet(new PersistentUserRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new UserValidator())).addMapping("/register");
+        servletContext.addServlet("login", new LoginPageServlet()).addMapping("/login");
+        servletContext.addServlet("loginController", new LoginControllerServlet(new PersistentUserRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new PersistentSessionRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new UserValidator(), new Timeout(1), new IdsGenerator())).addMapping("/loginController");
+        servletContext.addServlet("home", new HomePageServlet()).addMapping("/home");
+        servletContext.addServlet("/account", new Account()).addMapping("/account");
+      }
+
+      public void contextDestroyed(ServletContextEvent servletContextEvent) {
+
+      }
+    });
+
+    server.setHandler(context);
+    try {
+      server.start();
+    } catch (Exception e) {
+      e.printStackTrace();
     }
-
-    public void start() {
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath("/");
-        context.addEventListener(new ServletContextListener() {
-
-            public void contextInitialized(final ServletContextEvent servletContextEvent) {
-                ServletContext servletContext = servletContextEvent.getServletContext();
-                servletContext.addFilter("loginFilter", new LoginFilter(new PersistentSessionRepository((new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com"))), new Timeout(1))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/login");
-                servletContext.addFilter("secutiry", new SecurityFilter(new PersistentSessionRepository((new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com"))), new Timeout(1))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/account");
-                servletContext.addServlet("register", new RegisterServlet(new PersistentUserRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new UserValidator())).addMapping("/register");
-                servletContext.addServlet("login", new LoginPageServlet()).addMapping("/login");
-                servletContext.addServlet("loginController", new LoginControllerServlet(new PersistentUserRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new PersistentSessionRepository(new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com")), new UserValidator(), new Timeout(1), new IdsGenerator())).addMapping("/loginController");
-                servletContext.addServlet("home", new HomePageServlet()).addMapping("/home");
-                servletContext.addServlet("/account", new Account()).addMapping("/account");
-            }
-
-            public void contextDestroyed(ServletContextEvent servletContextEvent) {
-
-            }
-        });
-
-        server.setHandler(context);
-        try {
-            server.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+  }
 }

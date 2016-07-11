@@ -2,7 +2,7 @@ package com.clouway.bank.adapter.http;
 
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
-import com.clouway.bank.core.Time;
+import com.google.common.base.Optional;
 
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
@@ -14,56 +14,49 @@ import java.io.IOException;
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
 public class SecurityFilter implements Filter {
-    private final SessionRepository sessionRepository;
-    private final Time time;
+  private final SessionRepository sessionRepository;
 
-    public SecurityFilter(SessionRepository sessionRepository, Time time) {
-        this.sessionRepository = sessionRepository;
-        this.time = time;
+  public SecurityFilter(SessionRepository sessionRepository) {
+    this.sessionRepository = sessionRepository;
+  }
+
+  @Override
+  public void init(FilterConfig filterConfig) throws ServletException {
+
+  }
+
+  @Override
+  public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    HttpServletRequest request = (HttpServletRequest) servletRequest;
+    HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+    Cookie cookie = find(request.getCookies());
+
+    final String uri = request.getRequestURI();
+
+    Optional<Session> currentUser = null;
+    if (cookie != null) {
+      currentUser = sessionRepository.findSessionById(cookie.getValue());
     }
+    if (uri.contains("/login") || currentUser.isPresent()) {
+      filterChain.doFilter(request, response);
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
+    } else {
+      response.sendRedirect("/login");
     }
+  }
 
-    @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
+  @Override
+  public void destroy() {
 
-        Cookie cookie = find(request.getCookies());
+  }
 
-        Session session;
-
-        if (cookie == null) {
-            response.sendRedirect("/login");
-            return;
-        }
-
-        session = sessionRepository.findSessionById(cookie.getValue());
-
-        if (session != null) {
-            if (session.timeForLife < time.getCurrentTime()) {
-                sessionRepository.remove(session.sessionId);
-                filterChain.doFilter(request, response);
-            } else {
-                response.sendRedirect("/login");
-            }
-        }
+  private Cookie find(Cookie[] cookies) {
+    for (Cookie each : cookies) {
+      if (each.getName().equals("id")) {
+        return each;
+      }
     }
-
-    @Override
-    public void destroy() {
-
-    }
-
-    private Cookie find(Cookie[] cookies) {
-        for (Cookie each : cookies) {
-            if (each.getName().equals("id")) {
-                return each;
-            }
-        }
-        return null;
-    }
+    return null;
+  }
 }

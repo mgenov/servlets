@@ -1,10 +1,10 @@
 package com.clouway.bank.http;
 
-import com.clouway.bank.adapter.http.LoginFilter;
 import com.clouway.bank.adapter.http.SecurityFilter;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
 import com.clouway.bank.core.Time;
+import com.google.common.base.Optional;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Rule;
@@ -22,87 +22,72 @@ import java.util.Date;
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
 public class SecurityFilterTest {
-    @Rule
-    public JUnitRuleMockery context = new JUnitRuleMockery();
+  @Rule
+  public JUnitRuleMockery context = new JUnitRuleMockery();
 
-    private HttpServletRequest request = context.mock(HttpServletRequest.class);
-    private HttpServletResponse response = context.mock(HttpServletResponse.class);
-    private FilterChain filterChain = context.mock(FilterChain.class);
+  private HttpServletRequest request = context.mock(HttpServletRequest.class);
+  private HttpServletResponse response = context.mock(HttpServletResponse.class);
+  private FilterChain filterChain = context.mock(FilterChain.class);
 
-    private SessionRepository sessionRepository = context.mock(SessionRepository.class);
-    private Time time = context.mock(Time.class);
+  private SessionRepository sessionRepository = context.mock(SessionRepository.class);
+  private Time time = context.mock(Time.class);
 
-    @Test
-    public void sessionIsActive() throws Exception {
-        SecurityFilter filter = new SecurityFilter(sessionRepository, time);
-        final Session session = new Session("sessionId", "user@abv.bg", getTime("07"));
-        final Cookie cookie = new Cookie("id", session.sessionId);
-        final Cookie[] cookies = new Cookie[]{cookie};
+  @Test
+  public void sessionIsActive() throws Exception {
+    SecurityFilter filter = new SecurityFilter(sessionRepository);
 
-        context.checking(new Expectations() {{
-            oneOf(request).getCookies();
-            will(returnValue(cookies));
+    final Cookie cookie = new Cookie("id", "sessionId");
+    final Cookie[] cookies = new Cookie[]{cookie};
+    final Session session = new Session(cookie.getValue(), "user@domain.com", getTime("06"));
 
-            oneOf(sessionRepository).findSessionById(session.sessionId);
-            will(returnValue(session));
+    context.checking(new Expectations() {{
+      oneOf(request).getRequestURI();
+      will(returnValue("/login"));
 
-            oneOf(time).getCurrentTime();
-            will(returnValue(getTime("00")));
+      oneOf(request).getCookies();
+      will(returnValue(cookies));
 
-            oneOf(response).sendRedirect("/login");
-        }});
+      oneOf(sessionRepository).findSessionById(cookie.getValue());
+      will(returnValue(Optional.of(session)));
 
-        filter.doFilter(request, response, filterChain);
+      oneOf(filterChain).doFilter(request, response);
+    }});
+
+    filter.doFilter(request, response, filterChain);
+  }
+
+  @Test
+  public void getSecurityResourceNoSession() throws Exception {
+    SecurityFilter filter = new SecurityFilter(sessionRepository);
+
+    final Cookie cookie = new Cookie("id", "sessionId");
+    final Cookie[] cookies = new Cookie[]{cookie};
+
+    context.checking(new Expectations() {{
+      oneOf(request).getRequestURI();
+      will(returnValue("/account"));
+
+      oneOf(request).getCookies();
+      will(returnValue(cookies));
+
+      oneOf(sessionRepository).findSessionById(cookie.getValue());
+      will(returnValue(Optional.absent()));
+
+      oneOf(response).sendRedirect("/login");
+    }});
+
+    filter.doFilter(request, response, filterChain);
+
+  }
+
+  private Long getTime(String dateAsString) {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("mm");
+    Date date = null;
+    try {
+      date = dateFormat.parse(dateAsString);
+    } catch (ParseException e) {
+      e.printStackTrace();
     }
-
-    @Test
-    public void sessionIsTimeout() throws Exception {
-        SecurityFilter filter = new SecurityFilter(sessionRepository, time);
-        final Session session = new Session("sessionId", "user@abv.bg", getTime("00"));
-        final Cookie cookie = new Cookie("id", session.sessionId);
-        final Cookie[] cookies = new Cookie[]{cookie};
-
-        context.checking(new Expectations() {{
-            oneOf(request).getCookies();
-            will(returnValue(cookies));
-
-            oneOf(sessionRepository).findSessionById(session.sessionId);
-            will(returnValue(session));
-
-            oneOf(time).getCurrentTime();
-            will(returnValue(getTime("01")));
-
-            oneOf(sessionRepository).remove(session.sessionId);
-
-            oneOf(filterChain).doFilter(request, response);
-        }});
-
-        filter.doFilter(request, response, filterChain);
-
-    }
-
-    @Test
-    public void noCookies() throws Exception {
-        SecurityFilter loginFilter = new SecurityFilter(sessionRepository, time);
-        final Cookie[] cookies = new Cookie[]{};
-
-        context.checking(new Expectations() {{
-            oneOf(request).getCookies();
-            will(returnValue(cookies));
-
-            oneOf(response).sendRedirect("/login");
-        }});
-        loginFilter.doFilter(request, response, filterChain);
-    }
-
-    private Long getTime(String dateAsString) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("mm");
-        Date date = null;
-        try {
-            date = dateFormat.parse(dateAsString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return date.getTime();
-    }
+    return date.getTime();
+  }
 }

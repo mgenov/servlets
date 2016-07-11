@@ -6,6 +6,8 @@ import com.clouway.bank.core.Provider;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
 import com.clouway.bank.core.Time;
+import com.google.common.base.Optional;
+import org.hamcrest.core.Is;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.After;
@@ -54,9 +56,9 @@ public class PersistentSessionRepositoryTest {
     final Session session = new Session("sessionId", "user@domain.com", getTime("12:12:1002"));
 
     repository.save(session);
-    Session actual = repository.findSessionById(session.sessionId);
+    Optional<Session> actual = repository.findSessionById(session.sessionId);
 
-    assertThat(actual, is(equalTo(session)));
+    assertThat(actual, Is.<Optional<Session>>is((Optional<Session>) equalTo(session)));
   }
 
   @Test
@@ -72,7 +74,7 @@ public class PersistentSessionRepositoryTest {
     }});
     repository.remove(session.sessionId);
 
-    Session actual = repository.findSessionById(session.sessionId);
+    Optional<Session> actual = repository.findSessionById(session.sessionId);
 
     assertThat(actual, is(equalTo(null)));
   }

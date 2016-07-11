@@ -1,6 +1,7 @@
 package com.clouway.bank.adapter.jdbc.db.persistence;
 
 import com.clouway.bank.core.*;
+import com.google.common.base.Optional;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,7 +32,7 @@ public class PersistentSessionRepository implements SessionRepository {
   }
 
   @Override
-  public Session findSessionById(String id) {
+  public Optional<Session> findSessionById(String id) {
     try (PreparedStatement statement = provider.get().prepareStatement("SELECT * FROM sessions WHERE id=?")) {
       statement.setString(1, id);
 
@@ -40,14 +41,16 @@ public class PersistentSessionRepository implements SessionRepository {
       while (resultSet.next()) {
         String email = resultSet.getString("email");
         long timeout = resultSet.getLong("timeForLife");
+        Session session = new Session(id, email, timeout);
 
-        return new Session(id, email, timeout);
+        return Optional.of(session);
       }
     } catch (SQLException e) {
       throw new ConnectionException("Cannot connect to database");
     }
-    return null;
+    return Optional.absent();
   }
+
 
   @Override
   public void remove(String id) {
