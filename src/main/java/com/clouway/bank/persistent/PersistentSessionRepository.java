@@ -91,6 +91,22 @@ public class PersistentSessionRepository implements SessionRepository {
   }
 
   @Override
+  public Integer countActive(Long currentTime) {
+    String query = "SELECT count(*) FROM login WHERE expirationtime>?;";
+    Connection connection = connectionProvider.get();
+
+    try {
+      PreparedStatement statement = connection.prepareStatement(query);
+      statement.setTimestamp(1, new Timestamp(currentTime));
+      ResultSet resultSet = statement.executeQuery();
+      resultSet.next();
+      return resultSet.getInt(1);
+    } catch (SQLException e) {
+      return null;
+    }
+  }
+
+  @Override
   public void remove(String sessionId) {
     String query = "DELETE FROM login WHERE sessionid=?;";
 

@@ -7,15 +7,15 @@ import java.sql.Statement;
 /**
  * @author Krasimir Raikov(raikov.krasimir@gmail.com)
  */
-public class LoginRepositoryUtility {
+public class SessionRepositoryUtility {
 
   private Connection connection;
 
-  public LoginRepositoryUtility(Connection connection) {
+  public SessionRepositoryUtility(Connection connection) {
     this.connection = connection;
   }
 
-  public void clearLoginTable() {
+  public void clearSessionTable() {
     try {
       Statement statement = connection.createStatement();
       statement.execute("DELETE FROM login;");

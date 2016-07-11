@@ -1,5 +1,7 @@
 package com.clouway.bank.http;
 
+import com.clouway.bank.core.BankCalendar;
+import com.clouway.bank.core.SessionRepository;
 import com.clouway.utility.Template;
 
 import javax.servlet.ServletException;
@@ -16,9 +18,13 @@ import java.io.PrintWriter;
 @WebServlet(name = "HomePage")
 public class HomePage extends HttpServlet {
   private Template template;
+  private SessionRepository sessionRepository;
+  private BankCalendar calendar;
 
-  public HomePage(Template template) {
+  public HomePage(Template template, SessionRepository sessionRepository, BankCalendar calendar) {
     this.template = template;
+    this.sessionRepository = sessionRepository;
+    this.calendar = calendar;
   }
 
   @Override
@@ -28,6 +34,13 @@ public class HomePage extends HttpServlet {
   }
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    Integer onlineUsers = sessionRepository.countActive(calendar.getCurrentTime());
+    if (onlineUsers == null) {
+      template.put("message", "We have a problem with counting the online users.");
+    } else {
+      template.put("message", onlineUsers + " online users");
+    }
+
     PrintWriter writer = response.getWriter();
     response.setContentType("text/html");
     writer.write(template.evaluate());

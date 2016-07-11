@@ -43,6 +43,8 @@ public class BankEventListener implements ServletContextListener {
   public void contextInitialized(ServletContextEvent servletContextEvent) {
     ServletContext servletContext = servletContextEvent.getServletContext();
     List<String> accessible = new ArrayList<>();
+    int sessionDuration = 5;
+    BankTimeCalendar calendar = new BankTimeCalendar(Calendar.getInstance(), sessionDuration);
 
     accessible.add("/login");
     accessible.add("/logincontroller");
@@ -53,10 +55,10 @@ public class BankEventListener implements ServletContextListener {
 
     servletContext.addFilter("ConnectionFilter", new ConnectionFilter(dbName)).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
     servletContext.addFilter("HttprequestErrorReporter", new HttprequestErrorReporter(new BracketsTemplate(new FileReader()))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-    servletContext.addFilter("SecurityFilter", new SecurityFilter(new PersistentSessionRepository(new PerRequestConnectionProvider()), new BankTimeCalendar(Calendar.getInstance(), 5), accessible, currentSessionProvider)).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+    servletContext.addFilter("SecurityFilter", new SecurityFilter(new PersistentSessionRepository(new PerRequestConnectionProvider()), calendar, accessible, currentSessionProvider)).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
     servletContext.addServlet("LoginPage", new LoginPage(new BracketsTemplate(new FileReader()))).addMapping("/login");
-    servletContext.addServlet("LoginController", new LoginController(new PersistentSessionRepository(new PerRequestConnectionProvider()), new PersistentUserRepository(new PerRequestConnectionProvider()), new UserDataValidator(), new BankTimeCalendar(Calendar.getInstance(), 5))).addMapping("/logincontroller");
-    servletContext.addServlet("HomePage", new HomePage(new BracketsTemplate(new FileReader()))).addMapping("");
+    servletContext.addServlet("LoginController", new LoginController(new PersistentSessionRepository(new PerRequestConnectionProvider()), new PersistentUserRepository(new PerRequestConnectionProvider()), new UserDataValidator(), calendar)).addMapping("/logincontroller");
+    servletContext.addServlet("HomePage", new HomePage(new BracketsTemplate(new FileReader()), new PersistentSessionRepository(new PerRequestConnectionProvider()), calendar)).addMapping("");
     servletContext.addServlet("RegistrationPage", new RegistrationPage(new BracketsTemplate(new FileReader()))).addMapping("/register");
     servletContext.addServlet("RegisterControllerServlet", new RegistrationController(new PersistentUserRepository(new PerRequestConnectionProvider()), new PersistentAccountRepository(new PerRequestConnectionProvider()), new UserDataValidator())).addMapping("/registercontroller");
     servletContext.addServlet("DepositServlet", new DepositServlet(new PersistentAccountRepository(new PerRequestConnectionProvider()), new BracketsTemplate(new FileReader()), new BankTransactionValidator(), currentSessionProvider)).addMapping("/deposit");

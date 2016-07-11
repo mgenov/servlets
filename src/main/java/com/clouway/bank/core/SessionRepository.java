@@ -35,4 +35,12 @@ public interface SessionRepository {
    * @param sessionId the id of the session
    */
   void remove(String sessionId);
+
+  /**
+   * Counts the number of active sessions
+   *
+   * @param currentTime the current time in milliseconds
+   * @return
+   */
+  Integer countActive(Long currentTime);
 }
