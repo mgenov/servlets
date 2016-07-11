@@ -41,7 +41,7 @@ public class SecurityFilter implements Filter {
         if (uri.contains("/login") && currentUser.isPresent() && currentUser.get().timeForLife > time.getCurrentTime()) {
             response.sendRedirect("/home");
 
-        } else if (currentUser.isPresent() && currentUser.get().timeForLife < time.getCurrentTime()) {
+        } else if (isTimeout(currentUser)) {
             sessionRepository.remove(sessionId);
             response.sendRedirect("/login");
         }

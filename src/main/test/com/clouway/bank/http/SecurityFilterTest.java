@@ -115,7 +115,7 @@ public class SecurityFilterTest {
 
         context.checking(new Expectations() {{
             oneOf(request).getRequestURI();
-            will(returnValue("/home"));
+            will(returnValue(""));
 
             oneOf(request).getCookies();
             will(returnValue(cookies));
