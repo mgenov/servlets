@@ -29,4 +29,10 @@ public interface SessionRepository {
    * @param id session id
    */
   void remove(String id);
+
+    /**
+     * Will count active sessions
+     * @return result from counting
+     */
+  int  countOnlineUsers();
 }

@@ -36,10 +36,8 @@ public class LogoutServlet extends HttpServlet {
 
     if (currentSession.isPresent()) {
       sessionRepository.remove(sessionId);
-      resp.sendRedirect("/login?errorMessage=You are success logged out!");
-
     } else {
-      resp.sendRedirect("/login?errorMessage=You should first logged in!");
+      resp.sendRedirect("/");
     }
   }
 }

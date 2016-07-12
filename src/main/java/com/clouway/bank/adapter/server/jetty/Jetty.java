@@ -4,12 +4,10 @@ import com.clouway.bank.adapter.http.*;
 import com.clouway.bank.adapter.jdbc.ConnectionProvider;
 import com.clouway.bank.adapter.jdbc.db.persistence.PersistentSessionRepository;
 import com.clouway.bank.adapter.jdbc.db.persistence.PersistentUserRepository;
-import com.clouway.bank.core.Provider;
 import com.clouway.bank.utils.SessionIdFinder;
 import com.clouway.bank.utils.SessionIdGenerator;
 import com.clouway.bank.utils.Timeout;
 import com.clouway.bank.validator.UserValidator;
-import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
@@ -44,8 +42,7 @@ public class Jetty {
         servletContext.addServlet("register", new RegisterServlet(userRepository, new UserValidator())).addMapping("/register");
         servletContext.addServlet("login", new LoginPageServlet()).addMapping("/login");
         servletContext.addServlet("loginController", new LoginControllerServlet(userRepository, sessionRepository, new UserValidator(), new Timeout(1), new SessionIdGenerator())).addMapping("/loginController");
-        servletContext.addServlet("home", new HomePageServlet()).addMapping("/home");
-        servletContext.addServlet("homeController", new HomeControllerServlet()).addMapping("/homeController");
+        servletContext.addServlet("home", new HomePageServlet(sessionRepository)).addMapping("/home");
         servletContext.addServlet("/account", new Account()).addMapping("/account");
         servletContext.addServlet("/logout", new LogoutServlet(new SessionIdFinder(), sessionRepository)).addMapping("/logout");
       }

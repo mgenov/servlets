@@ -44,8 +44,6 @@ public class LogoutServletTest {
       will(returnValue(Optional.of(userSession)));
 
       oneOf(sessionRepository).remove(userSession.sessionId);
-
-      oneOf(response).sendRedirect("/login?errorMessage=You are success logged out!");
     }});
     logoutServlet.doGet(request, response);
   }
@@ -63,7 +61,7 @@ public class LogoutServletTest {
       oneOf(sessionRepository).findSessionById("");
       will(returnValue(Optional.absent()));
 
-      oneOf(response).sendRedirect("/login?errorMessage=You should first logged in!");
+      oneOf(response).sendRedirect("/");
     }});
     logoutServlet.doGet(request, response);
   }
