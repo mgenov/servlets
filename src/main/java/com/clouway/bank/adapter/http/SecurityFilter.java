@@ -52,8 +52,8 @@ public class SecurityFilter implements Filter {
         }
     }
 
-    private boolean isTimeout(Optional<Session> currentUser) {
-        if (currentUser.isPresent() && currentUser.get().sessionLifeTime < time.getCurrentTime()) {
+    private boolean isTimeout(Optional<Session> currentSession) {
+        if (currentSession.isPresent() && currentSession.get().sessionLifeTime < time.getCurrentTime()) {
             return true;
         }
         return false;
