@@ -1,7 +1,9 @@
 package com.clouway.bank.adapter.http;
 
+import com.clouway.bank.core.SessionRepository;
 import com.clouway.bank.utils.HtmlHelper;
 import com.clouway.bank.utils.HtmlTemplate;
+import com.google.common.base.Strings;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,17 +16,29 @@ import java.io.PrintWriter;
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
 public class HomePageServlet extends HttpServlet {
-  @Override
-  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    HtmlHelper helper = new HtmlHelper("web/WEB-INF/home.html");
-    String page = helper.loadResource();
+    private SessionRepository sessionRepository;
 
-    HtmlTemplate template = new HtmlTemplate(page);
-    template.put("number", "");
+    public HomePageServlet(SessionRepository sessionRepository) {
+        this.sessionRepository = sessionRepository;
+    }
 
-    PrintWriter writer = resp.getWriter();
-    writer.println(template.evaluate());
+    @Override
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        PrintWriter writer = resp.getWriter();
+        String pages = req.getParameter("page");
 
-    writer.flush();
-  }
+        if (!Strings.isNullOrEmpty(pages)) {
+            resp.sendRedirect(pages);
+        }
+
+        HtmlHelper helper = new HtmlHelper("web/WEB-INF/home.html");
+        String htmlPage = helper.loadResource();
+
+        HtmlTemplate template = new HtmlTemplate(htmlPage);
+        template.put("number", String.valueOf(sessionRepository.getOnlineUsersCount()));
+
+        writer.println(template.evaluate());
+
+        writer.flush();
+    }
 }

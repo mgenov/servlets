@@ -1,6 +1,9 @@
 package com.clouway.bank.adapter.jdbc.db.persistence;
 
-import com.clouway.bank.core.*;
+import com.clouway.bank.core.ConnectionException;
+import com.clouway.bank.core.Provider;
+import com.clouway.bank.core.Session;
+import com.clouway.bank.core.SessionRepository;
 import com.google.common.base.Optional;
 
 import java.sql.Connection;
@@ -60,7 +63,22 @@ public class PersistentSessionRepository implements SessionRepository {
 
       statement.execute();
     } catch (SQLException e) {
+      e.printStackTrace();
       new ConnectionException("Cannot connect to database");
     }
+  }
+
+  @Override
+  public int getOnlineUsersCount() {
+    int counter = 0;
+    try (PreparedStatement statement = connectionProvider.get().prepareStatement("SELECT COUNT (DISTINCT (email))FROM sessions")) {
+
+      ResultSet resultSet = statement.executeQuery();
+      resultSet.next();
+      counter = resultSet.getInt(1);
+    } catch (SQLException e) {
+      throw new ConnectionException("Cannot connect to database");
+    }
+    return counter;
   }
 }

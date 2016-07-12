@@ -1,6 +1,7 @@
 package com.clouway.bank.http;
 
 import com.clouway.bank.adapter.http.HomePageServlet;
+import com.clouway.bank.core.SessionRepository;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Before;
@@ -12,21 +13,22 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 
 /**
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
-public class LogoutPageServletTest {
+public class HomePageServletTest {
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
+  private SessionRepository sessionRepository = context.mock(SessionRepository.class);
   private HttpServletRequest request = context.mock(HttpServletRequest.class);
   private HttpServletResponse response = context.mock(HttpServletResponse.class);
 
-  private ByteArrayOutputStream out;
   private PrintWriter writer;
+  private ByteArrayOutputStream out;
 
   @Before
   public void setUp() throws Exception {
@@ -35,18 +37,26 @@ public class LogoutPageServletTest {
   }
 
   @Test
-  public void loadResource() throws Exception {
-    HomePageServlet homePageServlet = new HomePageServlet();
+  public void loadHomePageOneUserOnline() throws Exception {
+    HomePageServlet homePageServlet = new HomePageServlet(sessionRepository);
 
     context.checking(new Expectations() {{
       oneOf(response).getWriter();
       will(returnValue(writer));
+
+      oneOf(request).getParameter("page");
+      will(returnValue("/account"));
+
+      oneOf(response).sendRedirect("/account");
+
+      oneOf(sessionRepository).getOnlineUsersCount();
+      will(returnValue(1));
     }});
 
     homePageServlet.doGet(request, response);
 
-    String page = out.toString();
+    String pageContent = out.toString();
 
-    assertThat(page, containsString(" <title>Home</title>"));
+    assertThat(pageContent, containsString("Online users:<span class=\"badge\">1</span>"));
   }
 }

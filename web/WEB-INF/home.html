@@ -3,15 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <meta name="viewport" content="width=device-width initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div>
-    Welcome! You are user number: {number}
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1>WELCOME</h1><br>
+            <ul class="nav nav-pills">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="home?page=/account">Account</a></li>
+                <li><a href="home?page=/logout">Logout</a></li>
+            </ul>
+        </div>
+        <div class="panel panel-body">
+            Online users:<span class="badge">{number}</span>
+            <br>
+        </div>
+    </div>
 </div>
-<form action="/homeController">
-    <input type="submit" value="LOGIN" name="login">
-    <input type="submit" value="LOGOUT" name="page">
-    <input type="submit" value="ACCOUNT" name="page">
-</form>
 </body>
 </html>
