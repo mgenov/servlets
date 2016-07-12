@@ -38,29 +38,34 @@ public class SecurityFilter implements Filter {
     String sessionId = findSid(request.getCookies());
 
     Optional<Session> currentSession = sessionRepository.findSessionById(sessionId);
-    if (uri.contains("/login") && currentSession.isPresent()) {
+
+    if (isLogged(uri, currentSession)) {
       response.sendRedirect("/home");
     }
+
     if (isExpireOff(currentSession)) {
       sessionRepository.remove(sessionId);
     }
+
     if (uri.contains("/login") || currentSession.isPresent()) {
       filterChain.doFilter(request, response);
+
     } else {
       response.sendRedirect("/login");
     }
   }
 
-  private boolean isExpireOff(Optional<Session> currentSession) {
-    if (currentSession.isPresent() && currentSession.get().expirationTime < time.getCurrentTime()) {
-      return true;
-    }
-    return false;
-  }
-
   @Override
   public void destroy() {
 
+  }
+
+  private boolean isLogged(String uri, Optional<Session> currentSession) {
+    return uri.contains("/login") && currentSession.isPresent();
+  }
+
+  private boolean isExpireOff(Optional<Session> currentSession) {
+    return currentSession.isPresent() && currentSession.get().expirationTime < time.getCurrentTime();
   }
 
   private String findSid(Cookie[] cookies) {

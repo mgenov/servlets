@@ -35,12 +35,14 @@ public class Jetty {
 
       public void contextInitialized(final ServletContextEvent servletContextEvent) {
         ConnectionProvider connectionProvider = new ConnectionProvider("jdbc:postgresql://localhost/bank", "postgres", "clouway.com");
+        PersistentSessionRepository sessionRepository = new PersistentSessionRepository(connectionProvider);
+        PersistentUserRepository userRepository = new PersistentUserRepository(connectionProvider);
 
         ServletContext servletContext = servletContextEvent.getServletContext();
-        servletContext.addFilter("security", new SecurityFilter(new PersistentSessionRepository(connectionProvider), new Timeout(1))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/home", "/login", "/account");
-        servletContext.addServlet("register", new RegisterServlet(new PersistentUserRepository(connectionProvider), new UserValidator())).addMapping("/register");
+        servletContext.addFilter("security", new SecurityFilter(sessionRepository, new Timeout(1))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/home", "/login", "/account");
+        servletContext.addServlet("register", new RegisterServlet(userRepository, new UserValidator())).addMapping("/register");
         servletContext.addServlet("login", new LoginPageServlet()).addMapping("/login");
-        servletContext.addServlet("loginController", new LoginControllerServlet(new PersistentUserRepository(connectionProvider), new PersistentSessionRepository(connectionProvider), new UserValidator(), new Timeout(1), new SessionIdGenerator())).addMapping("/loginController");
+        servletContext.addServlet("loginController", new LoginControllerServlet(userRepository, sessionRepository, new UserValidator(), new Timeout(1), new SessionIdGenerator())).addMapping("/loginController");
         servletContext.addServlet("home", new HomePageServlet()).addMapping("/home");
         servletContext.addServlet("/account", new Account()).addMapping("/account");
       }
