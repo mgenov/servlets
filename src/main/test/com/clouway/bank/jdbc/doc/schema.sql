@@ -9,5 +9,5 @@ password VARCHAR (16)
 create table sessions(
 id VARCHAR (20),
 email varchar(30),
-sessionLifeTime bigint
+expirationTime bigint
 );

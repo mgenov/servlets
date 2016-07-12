@@ -5,7 +5,7 @@ import com.clouway.bank.adapter.jdbc.db.persistence.PersistentSessionRepository;
 import com.clouway.bank.core.Provider;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
-import com.clouway.bank.core.SessionTime;
+import com.clouway.bank.core.CurrentTime;
 import com.google.common.base.Optional;
 import org.hamcrest.core.Is;
 import org.jmock.Expectations;
@@ -32,7 +32,7 @@ public class PersistentSessionRepositoryTest {
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
-  private SessionTime time = context.mock(SessionTime.class);
+  private CurrentTime time = context.mock(CurrentTime.class);
 
   private Provider<Connection> provider;
   private PreparedStatement statement;

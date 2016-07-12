@@ -1,10 +1,10 @@
 package com.clouway.bank.http;
 
 import com.clouway.bank.adapter.http.LoginControllerServlet;
-import com.clouway.bank.core.Generator;
+import com.clouway.bank.core.IdGenerator;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
-import com.clouway.bank.core.SessionTime;
+import com.clouway.bank.core.CurrentTime;
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserRepository;
 import com.clouway.bank.core.Validator;
@@ -31,14 +31,14 @@ public class LoginControllerServletTest {
   private SessionRepository sessionRepository = context.mock(SessionRepository.class);
   private Validator<User> validator = context.mock(Validator.class);
 
-  private SessionTime time = context.mock(SessionTime.class);
-  private Generator generator = context.mock(Generator.class);
+  private CurrentTime currentTime = context.mock(CurrentTime.class);
+  private IdGenerator generator = context.mock(IdGenerator.class);
 
   @Test
   public void login() throws Exception {
-    LoginControllerServlet servlet = new LoginControllerServlet(repository, sessionRepository, validator, time, generator);
+    LoginControllerServlet servlet = new LoginControllerServlet(repository, sessionRepository, validator, currentTime, generator);
     final TimeConverter timeConverter = new TimeConverter();
-    long timeForSessionLife = timeConverter.convertStringToLong("12:12:0000");
+    final long timeForSessionLife = timeConverter.convertStringToLong("12:12:0000");
 
     final User user = new User("Ivan", "ivan@abv.bg", "password");
     final Session userSession = new Session("sessionId", "ivan@abv.bg", timeForSessionLife);
@@ -59,8 +59,8 @@ public class LoginControllerServletTest {
       oneOf(generator).generateId();
       will(returnValue(userSession.sessionId));
 
-      oneOf(time).getTimeOfLife();
-      will(returnValue(userSession.sessionLifeTime));
+      allowing(currentTime).expirationTime();
+      will(returnValue(timeForSessionLife));
 
       oneOf(sessionRepository).createSession(userSession);
 
@@ -74,7 +74,7 @@ public class LoginControllerServletTest {
 
   @Test
   public void loginNoRegisteredUser() throws Exception {
-    LoginControllerServlet servlet = new LoginControllerServlet(repository, sessionRepository, validator, time, generator);
+    LoginControllerServlet servlet = new LoginControllerServlet(repository, sessionRepository, validator, currentTime, generator);
     final User user = new User("Maria", "m@avc.bg", "password");
 
     context.checking(new Expectations() {{
@@ -98,7 +98,7 @@ public class LoginControllerServletTest {
 
   @Test
   public void loginInvalidUser() throws Exception {
-    LoginControllerServlet servlet = new LoginControllerServlet(repository, sessionRepository, validator, time, generator);
+    LoginControllerServlet servlet = new LoginControllerServlet(repository, sessionRepository, validator, currentTime, generator);
     final User user = new User("Maria", "email", "password");
 
     context.checking(new Expectations() {{

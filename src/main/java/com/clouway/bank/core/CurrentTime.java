@@ -5,7 +5,7 @@ package com.clouway.bank.core;
  *
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
-public interface SessionTime {
+public interface CurrentTime {
   /**
    * Will get current time
    *
@@ -14,9 +14,9 @@ public interface SessionTime {
   long getCurrentTime();
 
   /**
-   * Will get time of life of the session
+   * Will get expiration time of life of the session
    *
    * @return time
    */
-  long getTimeOfLife();
+  long expirationTime();
 }

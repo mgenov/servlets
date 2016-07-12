@@ -6,12 +6,12 @@ package com.clouway.bank.core;
 public class Session {
   public final String sessionId;
   public final String email;
-  public final long sessionLifeTime;
+  public final long expirationTime;
 
-  public Session(String sessionId, String email, long sessionLifeTime) {
+  public Session(String sessionId, String email, long expirationTime) {
     this.sessionId = sessionId;
     this.email = email;
-    this.sessionLifeTime = sessionLifeTime;
+    this.expirationTime = expirationTime;
   }
 
   @Override
@@ -21,7 +21,7 @@ public class Session {
 
     Session session = (Session) o;
 
-    if (sessionLifeTime != session.sessionLifeTime) return false;
+    if (expirationTime != session.expirationTime) return false;
     if (sessionId != null ? !sessionId.equals(session.sessionId) : session.sessionId != null) return false;
     return email != null ? email.equals(session.email) : session.email == null;
 
@@ -31,7 +31,7 @@ public class Session {
   public int hashCode() {
     int result = sessionId != null ? sessionId.hashCode() : 0;
     result = 31 * result + (email != null ? email.hashCode() : 0);
-    result = 31 * result + (int) (sessionLifeTime ^ (sessionLifeTime >>> 32));
+    result = 31 * result + (int) (expirationTime ^ (expirationTime >>> 32));
     return result;
   }
 
@@ -40,7 +40,7 @@ public class Session {
     return "Session{" +
             "sessionId='" + sessionId + '\'' +
             ", email='" + email + '\'' +
-            ", sessionLifeTime=" + sessionLifeTime +
+            ", expirationTime=" + expirationTime +
             '}';
   }
 }

@@ -7,7 +7,7 @@ password VARCHAR (16)
 );
 
  create table sessions(
- id VARCHAR (20),
+ id VARCHAR (50),
  email varchar(30),
- sessionLifeTime bigint
+ expirationTime bigint
  );

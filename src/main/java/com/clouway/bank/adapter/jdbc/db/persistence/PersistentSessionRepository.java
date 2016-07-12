@@ -23,10 +23,11 @@ public class PersistentSessionRepository implements SessionRepository {
     try (PreparedStatement statement = connectionProvider.get().prepareStatement("INSERT into sessions VALUES (?,?,?)")) {
       statement.setString(1, session.sessionId);
       statement.setString(2, session.email);
-      statement.setLong(3, session.sessionLifeTime);
+      statement.setLong(3, session.expirationTime);
 
       statement.executeUpdate();
     } catch (SQLException e) {
+      e.printStackTrace();
       throw new ConnectionException("Cannot connect to database");
     }
   }
@@ -40,8 +41,8 @@ public class PersistentSessionRepository implements SessionRepository {
 
       while (resultSet.next()) {
         String email = resultSet.getString("email");
-        long timeout = resultSet.getLong("sessionLifeTime");
-        Session session = new Session(id, email, timeout);
+        long expirationTime = resultSet.getLong("expirationTime");
+        Session session = new Session(id, email, expirationTime);
 
         return Optional.of(session);
       }
@@ -53,9 +54,9 @@ public class PersistentSessionRepository implements SessionRepository {
 
 
   @Override
-  public void remove(String id) {
+  public void remove(String sessionId) {
     try (PreparedStatement statement = connectionProvider.get().prepareStatement("DELETE FROM sessions WHERE id=?")) {
-      statement.setString(1, id);
+      statement.setString(1, sessionId);
 
       statement.execute();
     } catch (SQLException e) {

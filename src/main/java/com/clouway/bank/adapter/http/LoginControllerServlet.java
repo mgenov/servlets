@@ -1,9 +1,9 @@
 package com.clouway.bank.adapter.http;
 
-import com.clouway.bank.core.Generator;
+import com.clouway.bank.core.IdGenerator;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
-import com.clouway.bank.core.SessionTime;
+import com.clouway.bank.core.CurrentTime;
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserRepository;
 import com.clouway.bank.core.Validator;
@@ -23,10 +23,10 @@ public class LoginControllerServlet extends HttpServlet {
   private final UserRepository userRepository;
   private final SessionRepository sessionRepository;
   private final Validator<User> validator;
-  private final SessionTime time;
-  private final Generator generator;
+  private final CurrentTime time;
+  private final IdGenerator generator;
 
-  public LoginControllerServlet(UserRepository userRepository, SessionRepository sessionRepository, Validator<User> validator, SessionTime time, Generator generator) {
+  public LoginControllerServlet(UserRepository userRepository, SessionRepository sessionRepository, Validator<User> validator, CurrentTime time, IdGenerator generator) {
     this.userRepository = userRepository;
     this.sessionRepository = sessionRepository;
     this.validator = validator;
@@ -53,12 +53,12 @@ public class LoginControllerServlet extends HttpServlet {
     } else {
       String sessionId = generator.generateId();
 
-      Session session = new Session(sessionId, email, time.getTimeOfLife());
+      Session session = new Session(sessionId, email, time.expirationTime());
       sessionRepository.createSession(session);
 
       Cookie cookie = new Cookie("sessionId", sessionId);
 
-      cookie.setMaxAge(100);
+      cookie.setMaxAge((int) time.expirationTime());
       resp.addCookie(cookie);
 
       resp.sendRedirect("/home");
