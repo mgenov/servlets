@@ -51,12 +51,12 @@ public class LoginControllerServlet extends HttpServlet {
       resp.sendRedirect("/login?errorMessage=You should register first!");
 
     } else {
-      String id = generator.generate();
+      String sessionId = generator.generateId();
 
-      Session session = new Session(id, email, time.getTimeOfLife());
+      Session session = new Session(sessionId, email, time.getTimeOfLife());
       sessionRepository.createSession(session);
 
-      Cookie cookie = new Cookie("id", id);
+      Cookie cookie = new Cookie("sessionId", sessionId);
 
       cookie.setMaxAge(100);
       resp.addCookie(cookie);

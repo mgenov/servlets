@@ -56,7 +56,7 @@ public class LoginControllerServletTest {
       oneOf(repository).findByEmail(user.email);
       will(returnValue(user));
 
-      oneOf(generator).generate();
+      oneOf(generator).generateId();
       will(returnValue(userSession.sessionId));
 
       oneOf(time).getTimeOfLife();
