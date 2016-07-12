@@ -16,9 +16,6 @@ import org.junit.Test;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
@@ -40,9 +37,11 @@ public class LoginControllerServletTest {
   @Test
   public void login() throws Exception {
     LoginControllerServlet servlet = new LoginControllerServlet(repository, sessionRepository, validator, time, generator);
+    final TimeConverter timeConverter = new TimeConverter();
+    long timeForSessionLife = timeConverter.convertStringToLong("12:12:0000");
 
     final User user = new User("Ivan", "ivan@abv.bg", "password");
-    final Session userSession = new Session("sessionId", "ivan@abv.bg", getTime("12:12:0000"));
+    final Session userSession = new Session("sessionId", "ivan@abv.bg", timeForSessionLife);
 
     context.checking(new Expectations() {{
       oneOf(request).getParameter("email");
@@ -116,17 +115,5 @@ public class LoginControllerServletTest {
     }});
 
     servlet.doPost(request, response);
-  }
-
-  private long getTime(String timeAsString) {
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ssss");
-
-    Date date = null;
-    try {
-      date = simpleDateFormat.parse(timeAsString);
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
-    return date.getTime();
   }
 }
