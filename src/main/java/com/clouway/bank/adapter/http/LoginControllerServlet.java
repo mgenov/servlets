@@ -7,6 +7,7 @@ import com.clouway.bank.core.SessionTime;
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserRepository;
 import com.clouway.bank.core.Validator;
+import com.google.common.base.Strings;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -40,7 +41,7 @@ public class LoginControllerServlet extends HttpServlet {
 
     String message = validator.validate(email, password);
 
-    if (!(message.equals(""))) {
+    if (!(Strings.isNullOrEmpty(message))) {
       resp.sendRedirect("/login?errorMessage=" + message);
       return;
     }
