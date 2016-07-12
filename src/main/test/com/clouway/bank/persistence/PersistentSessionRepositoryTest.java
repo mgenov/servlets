@@ -6,6 +6,7 @@ import com.clouway.bank.core.Provider;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
 import com.clouway.bank.core.CurrentTime;
+import com.clouway.bank.http.TimeConverter;
 import com.google.common.base.Optional;
 import org.hamcrest.core.Is;
 import org.jmock.Expectations;
@@ -53,41 +54,31 @@ public class PersistentSessionRepositoryTest {
   @Test
   public void create() throws Exception {
     final SessionRepository repository = new PersistentSessionRepository(provider);
-    final Session session = new Session("sessionId", "user@domain.com", getTime("12:12:1002"));
+
+    final TimeConverter converter = new TimeConverter();
+    long expiredTime = converter.convertStringToLong("12:12:1002");
+
+    final Session session = new Session("sessionId", "user@domain.com", expiredTime);
 
     repository.createSession(session);
     Optional<Session> actual = repository.findSessionById(session.sessionId);
 
-    assertThat(actual, Is.<Optional<Session>>is((Optional<Session>) equalTo(session)));
+    assertThat(actual, is(equalTo(Optional.of(session))));
   }
 
   @Test
   public void remove() throws Exception {
     final SessionRepository repository = new PersistentSessionRepository(provider);
-    final Session session = new Session("sessionId", "user@domain.com", getTime("12:12:1002"));
+    final TimeConverter converter = new TimeConverter();
+
+    long expiredTime = converter.convertStringToLong("12:12:1002");
+    final Session session = new Session("sessionId", "user@domain.com", expiredTime);
     repository.createSession(session);
 
-    final long currentTime = getTime("13:13:1212");
-    context.checking(new Expectations() {{
-      oneOf(time).getCurrentTime();
-      will(returnValue(currentTime));
-    }});
     repository.remove(session.sessionId);
 
     Optional<Session> actual = repository.findSessionById(session.sessionId);
 
-    assertThat(actual, is(equalTo(null)));
-  }
-
-  private long getTime(String timeAsString) {
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ssss");
-
-    Date date = null;
-    try {
-      date = simpleDateFormat.parse(timeAsString);
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
-    return date.getTime();
+    assertThat(actual, is(equalTo(Optional.<Session>absent())));
   }
 }

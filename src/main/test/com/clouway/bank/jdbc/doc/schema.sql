@@ -6,8 +6,8 @@ email VARCHAR (30),
 password VARCHAR (16)
 );
 
-create table sessions(
-id VARCHAR (20),
-email varchar(30),
-expirationTime bigint
-);
+ create table sessions(
+ id VARCHAR (50),
+ email varchar(30),
+ expirationTime bigint
+ );
