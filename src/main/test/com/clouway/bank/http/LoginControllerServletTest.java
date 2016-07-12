@@ -4,7 +4,7 @@ import com.clouway.bank.adapter.http.LoginControllerServlet;
 import com.clouway.bank.core.Generator;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
-import com.clouway.bank.core.Time;
+import com.clouway.bank.core.SessionTime;
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserRepository;
 import com.clouway.bank.core.Validator;
@@ -34,7 +34,7 @@ public class LoginControllerServletTest {
   private SessionRepository sessionRepository = context.mock(SessionRepository.class);
   private Validator<User> validator = context.mock(Validator.class);
 
-  private Time time = context.mock(Time.class);
+  private SessionTime time = context.mock(SessionTime.class);
   private Generator generator = context.mock(Generator.class);
 
   @Test
@@ -60,10 +60,10 @@ public class LoginControllerServletTest {
       oneOf(generator).generate();
       will(returnValue(userSession.sessionId));
 
-      oneOf(time).setTimeOfLife();
-      will(returnValue(userSession.timeForLife));
+      oneOf(time).getTimeOfLife();
+      will(returnValue(userSession.sessionLifeTime));
 
-      oneOf(sessionRepository).save(userSession);
+      oneOf(sessionRepository).createSession(userSession);
 
       oneOf(response).addCookie(with(any(Cookie.class)));
 
@@ -92,6 +92,27 @@ public class LoginControllerServletTest {
       will(returnValue(null));
 
       oneOf(response).sendRedirect("/login?errorMessage=You should register first!");
+    }});
+
+    servlet.doPost(request, response);
+  }
+
+  @Test
+  public void loginInvalidUser() throws Exception {
+    LoginControllerServlet servlet = new LoginControllerServlet(repository, sessionRepository, validator, time, generator);
+    final User user = new User("Maria", "email", "password");
+
+    context.checking(new Expectations() {{
+      oneOf(request).getParameter("email");
+      will(returnValue(user.email));
+
+      oneOf(request).getParameter("password");
+      will(returnValue(user.password));
+
+      oneOf(validator).validate(user.email, user.password);
+      will(returnValue("Error"));
+
+      oneOf(response).sendRedirect("/login?errorMessage=Error");
     }});
 
     servlet.doPost(request, response);

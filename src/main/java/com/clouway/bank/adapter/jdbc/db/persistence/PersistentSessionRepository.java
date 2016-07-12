@@ -19,11 +19,11 @@ public class PersistentSessionRepository implements SessionRepository {
   }
 
   @Override
-  public void save(Session session) {
+  public void createSession(Session session) {
     try (PreparedStatement statement = provider.get().prepareStatement("INSERT into sessions VALUES (?,?,?)")) {
       statement.setString(1, session.sessionId);
       statement.setString(2, session.email);
-      statement.setLong(3, session.timeForLife);
+      statement.setLong(3, session.sessionLifeTime);
 
       statement.executeUpdate();
     } catch (SQLException e) {
@@ -40,7 +40,7 @@ public class PersistentSessionRepository implements SessionRepository {
 
       while (resultSet.next()) {
         String email = resultSet.getString("email");
-        long timeout = resultSet.getLong("timeForLife");
+        long timeout = resultSet.getLong("sessionLifeTime");
         Session session = new Session(id, email, timeout);
 
         return Optional.of(session);

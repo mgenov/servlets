@@ -1,6 +1,6 @@
 package com.clouway.bank.utils;
 
-import com.clouway.bank.core.Time;
+import com.clouway.bank.core.SessionTime;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
-public class Timeout implements Time {
+public class Timeout implements SessionTime {
   private final int minute;
 
   public Timeout(int minute) {
@@ -21,7 +21,7 @@ public class Timeout implements Time {
   }
 
   @Override
-  public long setTimeOfLife() {
+  public long getTimeOfLife() {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(new Date(getCurrentTime()));
     calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + minute);

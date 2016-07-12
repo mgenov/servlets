@@ -3,7 +3,7 @@ package com.clouway.bank.http;
 import com.clouway.bank.adapter.http.SecurityFilter;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
-import com.clouway.bank.core.Time;
+import com.clouway.bank.core.SessionTime;
 import com.google.common.base.Optional;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -28,7 +28,7 @@ public class SecurityFilterTest {
     private HttpServletRequest request = context.mock(HttpServletRequest.class);
     private HttpServletResponse response = context.mock(HttpServletResponse.class);
     private FilterChain filterChain = context.mock(FilterChain.class);
-    private Time time = context.mock(Time.class);
+    private SessionTime time = context.mock(SessionTime.class);
 
     private SessionRepository sessionRepository = context.mock(SessionRepository.class);
 

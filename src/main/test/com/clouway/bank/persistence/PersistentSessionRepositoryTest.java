@@ -5,7 +5,7 @@ import com.clouway.bank.adapter.jdbc.db.persistence.PersistentSessionRepository;
 import com.clouway.bank.core.Provider;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
-import com.clouway.bank.core.Time;
+import com.clouway.bank.core.SessionTime;
 import com.google.common.base.Optional;
 import org.hamcrest.core.Is;
 import org.jmock.Expectations;
@@ -32,7 +32,7 @@ public class PersistentSessionRepositoryTest {
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
-  private Time time = context.mock(Time.class);
+  private SessionTime time = context.mock(SessionTime.class);
 
   private Provider<Connection> provider;
   private PreparedStatement statement;
@@ -55,7 +55,7 @@ public class PersistentSessionRepositoryTest {
     final SessionRepository repository = new PersistentSessionRepository(provider);
     final Session session = new Session("sessionId", "user@domain.com", getTime("12:12:1002"));
 
-    repository.save(session);
+    repository.createSession(session);
     Optional<Session> actual = repository.findSessionById(session.sessionId);
 
     assertThat(actual, Is.<Optional<Session>>is((Optional<Session>) equalTo(session)));
@@ -65,7 +65,7 @@ public class PersistentSessionRepositoryTest {
   public void remove() throws Exception {
     final SessionRepository repository = new PersistentSessionRepository(provider);
     final Session session = new Session("sessionId", "user@domain.com", getTime("12:12:1002"));
-    repository.save(session);
+    repository.createSession(session);
 
     final long currentTime = getTime("13:13:1212");
     context.checking(new Expectations() {{
