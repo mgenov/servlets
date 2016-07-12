@@ -17,6 +17,7 @@ import java.io.IOException;
 public class SecurityFilter implements Filter {
   private final SessionRepository sessionRepository;
   private final CurrentTime time;
+  private boolean isAccessible;
 
   public SecurityFilter(SessionRepository sessionRepository, CurrentTime time) {
     this.sessionRepository = sessionRepository;
@@ -38,8 +39,9 @@ public class SecurityFilter implements Filter {
     String sessionId = findSid(request.getCookies());
 
     Optional<Session> currentSession = sessionRepository.findSessionById(sessionId);
+    boolean isAccessible = uri.contains("/login");
 
-    if (isLogged(uri, currentSession)) {
+    if (isAccessible && isAuthorized(currentSession)) {
       response.sendRedirect("/home");
     }
 
@@ -47,7 +49,7 @@ public class SecurityFilter implements Filter {
       sessionRepository.remove(sessionId);
     }
 
-    if (uri.contains("/login") || isAuthorized(currentSession)) {
+    if (isAccessible || isAuthorized(currentSession)) {
       filterChain.doFilter(request, response);
 
     } else {
@@ -58,10 +60,6 @@ public class SecurityFilter implements Filter {
   @Override
   public void destroy() {
 
-  }
-
-  private boolean isLogged(String uri, Optional<Session> currentSession) {
-    return uri.contains("/login") && currentSession.isPresent();
   }
 
   private boolean isAuthorized(Optional<Session> currentSession) {
