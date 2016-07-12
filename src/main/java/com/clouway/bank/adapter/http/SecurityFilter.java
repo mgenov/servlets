@@ -47,7 +47,7 @@ public class SecurityFilter implements Filter {
       sessionRepository.remove(sessionId);
     }
 
-    if (uri.contains("/login") || currentSession.isPresent()) {
+    if (uri.contains("/login") || isAuthorized(currentSession)) {
       filterChain.doFilter(request, response);
 
     } else {
@@ -62,6 +62,10 @@ public class SecurityFilter implements Filter {
 
   private boolean isLogged(String uri, Optional<Session> currentSession) {
     return uri.contains("/login") && currentSession.isPresent();
+  }
+
+  private boolean isAuthorized(Optional<Session> currentSession) {
+    return currentSession.isPresent();
   }
 
   private boolean isExpireOff(Optional<Session> currentSession) {
