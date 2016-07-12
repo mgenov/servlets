@@ -5,6 +5,7 @@ import com.clouway.bank.adapter.jdbc.ConnectionProvider;
 import com.clouway.bank.adapter.jdbc.db.persistence.PersistentSessionRepository;
 import com.clouway.bank.adapter.jdbc.db.persistence.PersistentUserRepository;
 import com.clouway.bank.core.Provider;
+import com.clouway.bank.utils.SessionIdFinder;
 import com.clouway.bank.utils.SessionIdGenerator;
 import com.clouway.bank.utils.Timeout;
 import com.clouway.bank.validator.UserValidator;
@@ -46,6 +47,7 @@ public class Jetty {
         servletContext.addServlet("home", new HomePageServlet()).addMapping("/home");
         servletContext.addServlet("homeController", new HomeControllerServlet()).addMapping("/homeController");
         servletContext.addServlet("/account", new Account()).addMapping("/account");
+        servletContext.addServlet("/logout", new LogoutServlet(new SessionIdFinder(), sessionRepository)).addMapping("/logout");
       }
 
       public void contextDestroyed(ServletContextEvent servletContextEvent) {

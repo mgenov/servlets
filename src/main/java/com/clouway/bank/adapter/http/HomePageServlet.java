@@ -2,6 +2,7 @@ package com.clouway.bank.adapter.http;
 
 import com.clouway.bank.utils.HtmlHelper;
 import com.clouway.bank.utils.HtmlTemplate;
+import com.google.common.base.Strings;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,13 +17,19 @@ import java.io.PrintWriter;
 public class HomePageServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    PrintWriter writer = resp.getWriter();
+    String pages = req.getParameter("page");
+
+    if (!Strings.isNullOrEmpty(pages)) {
+      resp.sendRedirect(pages);
+    }
+
     HtmlHelper helper = new HtmlHelper("web/WEB-INF/home.html");
     String page = helper.loadResource();
 
     HtmlTemplate template = new HtmlTemplate(page);
     template.put("number", "");
 
-    PrintWriter writer = resp.getWriter();
     writer.println(template.evaluate());
 
     writer.flush();
