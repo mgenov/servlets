@@ -37,15 +37,15 @@ public class SecurityFilter implements Filter {
 
         String sessionId = findSid(request.getCookies());
 
-        Optional<Session> currentUser = sessionRepository.findSessionById(sessionId);
-        if (uri.contains("/login") && currentUser.isPresent() && currentUser.get().sessionLifeTime > time.getCurrentTime()) {
+        Optional<Session> currentSession = sessionRepository.findSessionById(sessionId);
+        if (uri.contains("/login") && currentSession.isPresent() && currentSession.get().sessionLifeTime > time.getCurrentTime()) {
             response.sendRedirect("/home");
 
-        } else if (isTimeout(currentUser)) {
+        } else if (isTimeout(currentSession)) {
             sessionRepository.remove(sessionId);
             response.sendRedirect("/login");
         }
-        if (uri.contains("/login") || currentUser.isPresent()) {
+        if (uri.contains("/login") || currentSession.isPresent()) {
             filterChain.doFilter(request, response);
         } else {
             response.sendRedirect("/login");
