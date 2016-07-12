@@ -12,15 +12,15 @@ import java.sql.SQLException;
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
 public class PersistentSessionRepository implements SessionRepository {
-  private final Provider<Connection> provider;
+  private final Provider<Connection> connectionProvider;
 
   public PersistentSessionRepository(Provider<Connection> provider) {
-    this.provider = provider;
+    this.connectionProvider = provider;
   }
 
   @Override
   public void createSession(Session session) {
-    try (PreparedStatement statement = provider.get().prepareStatement("INSERT into sessions VALUES (?,?,?)")) {
+    try (PreparedStatement statement = connectionProvider.get().prepareStatement("INSERT into sessions VALUES (?,?,?)")) {
       statement.setString(1, session.sessionId);
       statement.setString(2, session.email);
       statement.setLong(3, session.sessionLifeTime);
@@ -33,7 +33,7 @@ public class PersistentSessionRepository implements SessionRepository {
 
   @Override
   public Optional<Session> findSessionById(String id) {
-    try (PreparedStatement statement = provider.get().prepareStatement("SELECT * FROM sessions WHERE id=?")) {
+    try (PreparedStatement statement = connectionProvider.get().prepareStatement("SELECT * FROM sessions WHERE id=?")) {
       statement.setString(1, id);
 
       ResultSet resultSet = statement.executeQuery();
@@ -54,7 +54,7 @@ public class PersistentSessionRepository implements SessionRepository {
 
   @Override
   public void remove(String id) {
-    try (PreparedStatement statement = provider.get().prepareStatement("DELETE FROM sessions WHERE id=?")) {
+    try (PreparedStatement statement = connectionProvider.get().prepareStatement("DELETE FROM sessions WHERE id=?")) {
       statement.setString(1, id);
 
       statement.execute();
