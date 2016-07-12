@@ -1,5 +1,8 @@
 package com.clouway.bank.adapter.http;
 
+import com.clouway.bank.utils.HtmlHelper;
+import com.clouway.bank.utils.HtmlTemplate;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +15,16 @@ import java.io.PrintWriter;
  */
 public class HomePageServlet extends HttpServlet {
   @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    HtmlHelper helper = new HtmlHelper("web/WEB-INF/home.html");
+    String page = helper.loadResource();
+
+    HtmlTemplate template = new HtmlTemplate(page);
+    template.put("number", "");
+
     PrintWriter writer = resp.getWriter();
-    writer.println("Success!You are in home page!");
+    writer.println(template.evaluate());
+
+    writer.flush();
   }
 }

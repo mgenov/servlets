@@ -44,6 +44,7 @@ public class Jetty {
         servletContext.addServlet("login", new LoginPageServlet()).addMapping("/login");
         servletContext.addServlet("loginController", new LoginControllerServlet(userRepository, sessionRepository, new UserValidator(), new Timeout(1), new SessionIdGenerator())).addMapping("/loginController");
         servletContext.addServlet("home", new HomePageServlet()).addMapping("/home");
+        servletContext.addServlet("homeController", new HomeControllerServlet()).addMapping("/homeController");
         servletContext.addServlet("/account", new Account()).addMapping("/account");
       }
 
