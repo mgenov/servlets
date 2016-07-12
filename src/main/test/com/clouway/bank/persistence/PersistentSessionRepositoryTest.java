@@ -51,7 +51,7 @@ public class PersistentSessionRepositoryTest {
   }
 
   @Test
-  public void save() throws Exception {
+  public void create() throws Exception {
     final SessionRepository repository = new PersistentSessionRepository(provider);
     final Session session = new Session("sessionId", "user@domain.com", getTime("12:12:1002"));
 

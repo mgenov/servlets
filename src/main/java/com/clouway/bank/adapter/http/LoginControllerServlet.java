@@ -20,14 +20,14 @@ import java.io.IOException;
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
 public class LoginControllerServlet extends HttpServlet {
-  private final UserRepository repository;
+  private final UserRepository userRepository;
   private final SessionRepository sessionRepository;
   private final Validator<User> validator;
   private final SessionTime time;
   private final Generator generator;
 
-  public LoginControllerServlet(UserRepository repository, SessionRepository sessionRepository, Validator<User> validator, SessionTime time, Generator generator) {
-    this.repository = repository;
+  public LoginControllerServlet(UserRepository userRepository, SessionRepository sessionRepository, Validator<User> validator, SessionTime time, Generator generator) {
+    this.userRepository = userRepository;
     this.sessionRepository = sessionRepository;
     this.validator = validator;
     this.time = time;
@@ -46,7 +46,7 @@ public class LoginControllerServlet extends HttpServlet {
       return;
     }
 
-    User user = repository.findByEmail(email);
+    User user = userRepository.findByEmail(email);
     if (user == null || !user.password.equals(password)) {
       resp.sendRedirect("/login?errorMessage=You should register first!");
 
