@@ -3,15 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <meta name="viewport" content="width=device-width initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 <body>
-Welcome:<br>
-
-Online users: {number}
-<br>
-<a href="home?page=/login">Login</a><br>
-<a href="home?page=/logout">Logout</a><br>
-<a href="home?page=/account">Your account</a>
-<br>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1>WELCOME</h1><br>
+            <ul class="nav nav-pills">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="home?page=/account">Account</a></li>
+                <li><a href="home?page=/logout">Logout</a></li>
+            </ul>
+        </div>
+        <div class="panel panel-body">
+            <div>
+                Online users:
+                <span class="badge">{number}</span>
+            </div>
+            <br>
+        </div>
+    </div>
+</div>
 </body>
 </html>
