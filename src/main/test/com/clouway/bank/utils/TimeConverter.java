@@ -1,4 +1,4 @@
-package com.clouway.bank.http;
+package com.clouway.bank.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

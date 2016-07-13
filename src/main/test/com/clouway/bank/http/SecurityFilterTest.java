@@ -4,6 +4,7 @@ import com.clouway.bank.adapter.http.SecurityFilter;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
 import com.clouway.bank.core.CurrentTime;
+import com.clouway.bank.utils.TimeConverter;
 import com.google.common.base.Optional;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;

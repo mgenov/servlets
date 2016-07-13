@@ -8,6 +8,7 @@ import com.clouway.bank.core.CurrentTime;
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserRepository;
 import com.clouway.bank.core.Validator;
+import com.clouway.bank.utils.TimeConverter;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Rule;

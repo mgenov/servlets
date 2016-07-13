@@ -6,10 +6,8 @@ import com.clouway.bank.core.Provider;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
 import com.clouway.bank.core.CurrentTime;
-import com.clouway.bank.http.TimeConverter;
+import com.clouway.bank.utils.TimeConverter;
 import com.google.common.base.Optional;
-import org.hamcrest.core.Is;
-import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.After;
 import org.junit.Before;
@@ -18,9 +16,6 @@ import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
