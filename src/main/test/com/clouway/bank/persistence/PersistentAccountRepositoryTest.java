@@ -22,9 +22,14 @@ public class PersistentAccountRepositoryTest {
   private Provider<Connection> provider;
   private PreparedStatement statement;
 
+  private AccountRepository accountRepository;
+  Account account = new Account("user@domain.com", 0.0);
+
   @Before
   public void setUp() throws Exception {
     provider = new ConnectionProvider("jdbc:postgresql://localhost/test", "postgres", "clouway.com");
+
+    accountRepository = new PersistentAccountRepository(provider);
 
     statement = provider.get().prepareStatement("truncate table accounts;");
     statement.executeUpdate();
@@ -37,50 +42,38 @@ public class PersistentAccountRepositoryTest {
 
   @Test
   public void createAccount() throws Exception {
-    AccountRepository repository = new PersistentAccountRepository(provider);
-    Account account = new Account("user@domain.com", 0.0);
-
-    repository.createAccount(account);
-    Account actual = repository.findByEmail("user@domain.com");
+    accountRepository.createAccount(account);
+    Account actual = accountRepository.findByEmail("user@domain.com");
 
     assertThat(actual, is(account));
   }
 
   @Test
   public void deposit() throws Exception {
-    AccountRepository repository = new PersistentAccountRepository(provider);
-    Account account = new Account("user@domain.com", 0.0);
+    accountRepository.createAccount(account);
+    accountRepository.deposit(account.email, 2.2);
 
-    repository.createAccount(account);
-    repository.deposit(account.email, 2.2);
-
-    Account actual = repository.findByEmail(account.email);
+    Account actual = accountRepository.findByEmail(account.email);
 
     assertThat(actual.getBalance(), is(2.2));
   }
 
   @Test
   public void withdraw() throws Exception {
-    AccountRepository repository = new PersistentAccountRepository(provider);
-    Account account = new Account("user@domain.com", 12.00);
+    accountRepository.createAccount(account);
+    accountRepository.withdraw(account.email, 12.00);
 
-    repository.createAccount(account);
-    repository.withdraw(account.email, 12.00);
-
-    Account actual = repository.findByEmail(account.email);
+    Account actual = accountRepository.findByEmail(account.email);
 
     assertThat(actual.getBalance(), is(0.0));
   }
 
   @Test
   public void getBalance() throws Exception {
-    AccountRepository repository = new PersistentAccountRepository(provider);
-    Account account = new Account("user@domain.com", 50.00);
+    accountRepository.createAccount(account);
 
-    repository.createAccount(account);
+    Double actual = account.getBalance();
 
-    Double actual = repository.getBalance(account.email);
-
-    assertThat(actual, is(50.00));
+    assertThat(actual, is(00.00));
   }
 }

@@ -25,12 +25,14 @@ public class PersistentTransactionRepository implements TransactionRepository {
 
   @Override
   public void updateHistory(String email, String operation, Double amount) {
+    Account account = accountRepository.findByEmail(email);
+
     try (PreparedStatement statement = provider.get().prepareStatement("INSERT INTO transactions VALUES (?,?,?,?,?)")) {
       statement.setLong(1, date.getCurrentDate());
       statement.setString(2, email);
       statement.setString(3, operation);
       statement.setDouble(4, amount);
-      statement.setDouble(5, accountRepository.getBalance(email));
+      statement.setDouble(5, account.getBalance());
 
       statement.executeUpdate();
     } catch (SQLException e) {

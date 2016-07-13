@@ -63,7 +63,7 @@ public class PersistentSessionRepository implements SessionRepository {
 
       statement.execute();
     } catch (SQLException e) {
-      new ConnectionException("Cannot connect to database");
+     throw  new ConnectionException("Cannot connect to database");
     }
   }
 
@@ -85,14 +85,15 @@ public class PersistentSessionRepository implements SessionRepository {
   public String findUserEmailBySid(String sessionId) {
     try (PreparedStatement statement = connectionProvider.get().prepareStatement("SELECT email from sessions WHERE id=?")) {
       statement.setString(1, sessionId);
+
       ResultSet resultSet = statement.executeQuery();
 
       resultSet.next();
 
       return resultSet.getString("email");
     } catch (SQLException e) {
-      e.printStackTrace();
       throw new ConnectionException("Can not connect to database");
     }
+
   }
 }

@@ -1,5 +1,7 @@
 package com.clouway.bank.http;
 
+import com.clouway.bank.core.Account;
+import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserRepository;
 import com.clouway.bank.core.Validator;
@@ -27,6 +29,7 @@ public class RegisterServletTest {
   private HttpServletResponse response = context.mock(HttpServletResponse.class);
   private UserRepository repository = context.mock(UserRepository.class);
   private Validator validator = context.mock(Validator.class);
+  private AccountRepository accountRepository = context.mock(AccountRepository.class);
 
   private ByteArrayOutputStream out = new ByteArrayOutputStream();
   private PrintWriter writer = new PrintWriter(out);
@@ -50,7 +53,7 @@ public class RegisterServletTest {
 
   @Test
   public void register() throws Exception {
-    final RegisterServlet register = new RegisterServlet(repository, validator);
+    final RegisterServlet register = new RegisterServlet(repository, validator, accountRepository);
 
     final User user = getUser(request);
 
@@ -63,6 +66,8 @@ public class RegisterServletTest {
 
       oneOf(repository).register(user);
 
+      oneOf(accountRepository).createAccount(new Account("lilia@abv.bg",0.00));
+
       oneOf(response).sendRedirect("/login");
     }});
     register.doPost(request, response);
@@ -70,7 +75,7 @@ public class RegisterServletTest {
 
   @Test
   public void registerInvalidUser() throws Exception {
-    RegisterServlet register = new RegisterServlet(repository, validator);
+    RegisterServlet register = new RegisterServlet(repository, validator, accountRepository);
 
     final User user = getUser(request);
 
@@ -86,7 +91,7 @@ public class RegisterServletTest {
 
   @Test
   public void registerTwice() throws Exception {
-    RegisterServlet register = new RegisterServlet(repository, validator);
+    RegisterServlet register = new RegisterServlet(repository, validator, accountRepository);
 
     final User user1 = getUser(request);
     final User user2 = getUser(request);
@@ -99,6 +104,8 @@ public class RegisterServletTest {
       will(returnValue(null));
 
       oneOf(repository).register(user1);
+
+      oneOf(accountRepository).createAccount(new Account("lilia@abv.bg",0.00));
 
       oneOf(response).sendRedirect("/login");
 

@@ -39,6 +39,7 @@ public class SecurityFilter implements Filter {
 
     Optional<Session> currentSession = sessionRepository.findSessionById(sessionId);
     boolean isLoginPage = uri.contains("/login");
+    boolean isRegisterPage = uri.contains("/register");
 
     if (isLoginPage && isAuthorized(currentSession)) {
       response.sendRedirect("/home");
@@ -48,7 +49,7 @@ public class SecurityFilter implements Filter {
       sessionRepository.remove(sessionId);
     }
 
-    if (isLoginPage || isAuthorized(currentSession)) {
+    if (isRegisterPage || isLoginPage || isAuthorized(currentSession)) {
       filterChain.doFilter(request, response);
 
     } else {

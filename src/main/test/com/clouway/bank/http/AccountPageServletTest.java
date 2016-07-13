@@ -5,7 +5,9 @@ import com.clouway.bank.core.Account;
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
+import com.clouway.bank.utils.SessionIdFinder;
 import org.jmock.Expectations;
+import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.After;
 import org.junit.Before;
@@ -17,12 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 /**
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
@@ -31,16 +30,31 @@ public class AccountPageServletTest {
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
-  private HttpServletRequest request = context.mock(HttpServletRequest.class);
-  private HttpServletResponse response = context.mock(HttpServletResponse.class);
-  private SessionRepository sessionRepository = context.mock(SessionRepository.class);
-  private AccountRepository accountRepository = context.mock(AccountRepository.class);
+  @Mock
+  private HttpServletRequest request;
+
+  @Mock
+  private HttpServletResponse response;
+
+  @Mock
+  private SessionRepository sessionRepository;
+
+  @Mock
+  private AccountRepository accountRepository;
+
+  private AccountPageServlet accountPageServlet;
 
   private ByteArrayOutputStream out;
   private PrintWriter writer;
 
+  private Account account = new Account("user@domain.com", 22.00);
+  long time = 123123123;
+  private Session session = new Session("sessionId", "user@domain.com", time);
+  private SessionIdFinder sessionIdFinder = new SessionIdFinder("sessionId");
+
   @Before
   public void setUp() throws Exception {
+    accountPageServlet = new AccountPageServlet(sessionRepository, accountRepository, sessionIdFinder);
     out = new ByteArrayOutputStream();
     writer = new PrintWriter(out);
   }
@@ -53,24 +67,18 @@ public class AccountPageServletTest {
 
   @Test
   public void loadPage() throws Exception {
-    AccountPageServlet accountPageServlet = new AccountPageServlet(sessionRepository, accountRepository);
-    final Account account = new Account("user@domain.com", 22.00);
-    final Session session = new Session("sessionId", "user@domain.com", getTime("12:12:0000"));
-    final Cookie cookie = new Cookie("id", session.sessionId);
-    final Cookie[] cookies = new Cookie[]{cookie};
-
     context.checking(new Expectations() {{
       oneOf(request).getCookies();
-      will(returnValue(cookies));
-
-      oneOf(sessionRepository).findEmailById(session.sessionId);
-      will(returnValue(session.email));
+      will(returnValue(new Cookie[]{new Cookie("sessionId", "sessionId")}));
 
       oneOf(request).getParameter("errorMessage");
-      will(returnValue(""));
+      will(returnValue(null));
 
-      oneOf(accountRepository).getBalance(account.email);
-      will(returnValue(22.00));
+      oneOf(sessionRepository).findUserEmailBySid(session.sessionId);
+      will(returnValue(account.email));
+
+      oneOf(accountRepository).findByEmail(account.email);
+      will(returnValue(account));
 
       oneOf(response).getWriter();
       will(returnValue(writer));
@@ -84,25 +92,13 @@ public class AccountPageServletTest {
   }
 
   @Test
-  public void loadPageWithValidationError() throws Exception {
-    AccountPageServlet accountPageServlet = new AccountPageServlet(sessionRepository, accountRepository);
-    final Account account = new Account("user@domain.com", 22.00);
-    final Session session = new Session("sessionId", "user@domain.com", getTime("12:12:0000"));
-    final Cookie cookie = new Cookie("id", session.sessionId);
-    final Cookie[] cookies = new Cookie[]{cookie};
-
+  public void loadPageWithErrorMessage() throws Exception {
     context.checking(new Expectations() {{
       oneOf(request).getCookies();
-      will(returnValue(cookies));
-
-      oneOf(sessionRepository).findEmailById(cookie.getValue());
-      will(returnValue("user@domain.com"));
+      will(returnValue(new Cookie[]{new Cookie("sessionId", "sessionId")}));
 
       oneOf(request).getParameter("errorMessage");
       will(returnValue("Error"));
-
-      oneOf(accountRepository).getBalance(account.email);
-      will(returnValue(22.00));
 
       oneOf(response).getWriter();
       will(returnValue(writer));
@@ -112,17 +108,5 @@ public class AccountPageServletTest {
     String actual = out.toString();
 
     assertThat(actual, containsString("Error"));
-  }
-
-  private long getTime(String timeAsString) {
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ssss");
-
-    Date date = null;
-    try {
-      date = simpleDateFormat.parse(timeAsString);
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
-    return date.getTime();
   }
 }

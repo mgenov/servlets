@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
 public class AmountValidatorTest {
-  private Validator validator;
+  private Validator<String> validator;
 
   @Before
   public void setUp() throws Exception {
@@ -19,47 +19,52 @@ public class AmountValidatorTest {
   }
 
   @Test
-  public void validateValidCash() throws Exception {
-    String cash = "123.00";
+  public void validAmount() throws Exception {
+    String amount = "123.00";
 
-    String actual = validator.validate(cash);
+    String actual = validator.validate(amount);
+    String expectedErrorMessage = "";
 
-    assertThat(actual, is(""));
+    assertThat(actual, is(expectedErrorMessage));
   }
 
   @Test
-  public void validateWholeCash() throws Exception {
-    String cash = "100";
+  public void tooLongWholePart() throws Exception {
+    String amount = "123456.00";
 
-    String actual = validator.validate(cash);
+    String actual = validator.validate(amount);
+    String expectedErrorMessage = "Amount must be positive number.";
 
-    assertThat(actual, is(""));
+    assertThat(actual, is(expectedErrorMessage));
   }
 
   @Test
-  public void validateToLongWholePiece() throws Exception {
-    String cash = "123456.00";
+  public void tooLongFractionPart() throws Exception {
+    String amount = "100.1234";
 
-    String actual = validator.validate(cash);
+    String actual = validator.validate(amount);
+    String expectedErrorMessage = "Amount must be positive number.";
 
-    assertThat(actual, is("The format of the amount is not valid. Valid format is 12.00. Please enter valid data!"));
+    assertThat(actual, is(expectedErrorMessage));
   }
 
   @Test
-  public void validateToLongFractionalPiece() throws Exception {
-    String cash = "100.1234";
+  public void amountIsLetters() throws Exception {
+    String amount = "asas";
 
-    String actual = validator.validate(cash);
+    String actual = validator.validate(amount);
+    String expectedErrorMessage = "Amount must be positive number.";
 
-    assertThat(actual, is("The format of the amount is not valid. Valid format is 12.00. Please enter valid data!"));
+    assertThat(actual, is(expectedErrorMessage));
   }
 
   @Test
-  public void validateWrongFormat() throws Exception {
-    String cash = "asas";
+  public void amountIsNegative() throws Exception {
+    String amount = "-10.20";
 
-    String actual = validator.validate(cash);
+    String actual = validator.validate(amount);
+    String expectedErrorMessage = "Amount must be positive number.";
 
-    assertThat(actual, is("The format of the amount is not valid. Valid format is 12.00. Please enter valid data!"));
+    assertThat(actual, is(expectedErrorMessage));
   }
 }

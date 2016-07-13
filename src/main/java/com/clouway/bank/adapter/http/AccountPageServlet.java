@@ -1,12 +1,14 @@
 package com.clouway.bank.adapter.http;
 
+import com.clouway.bank.core.Account;
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.SessionRepository;
 import com.clouway.bank.utils.HtmlHelper;
 import com.clouway.bank.utils.HtmlTemplate;
+import com.clouway.bank.utils.SessionIdFinder;
+import com.google.common.base.Strings;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,10 +21,12 @@ import java.io.PrintWriter;
 public class AccountPageServlet extends HttpServlet {
   private final SessionRepository sessionRepository;
   private final AccountRepository accountRepository;
+  private final SessionIdFinder sessionIdFinder;
 
-  public AccountPageServlet(SessionRepository repository, AccountRepository accountRepository) {
+  public AccountPageServlet(SessionRepository repository, AccountRepository accountRepository, SessionIdFinder sessionIdFinder) {
     this.sessionRepository = repository;
     this.accountRepository = accountRepository;
+    this.sessionIdFinder = sessionIdFinder;
   }
 
   @Override
@@ -32,14 +36,13 @@ public class AccountPageServlet extends HttpServlet {
 
     HtmlTemplate template = new HtmlTemplate(page);
     template.put("email", "");
-    template.put("amount", "");
+    template.put("balance", "");
     template.put("message", "");
 
     String errors = req.getParameter("errorMessage");
+    String sessionId = sessionIdFinder.findSid(req.getCookies());
 
-    Cookie[] cookies = req.getCookies();
-    Cookie cookie = find(cookies);
-    render(template, errors, cookie);
+    render(template, errors, sessionId);
 
     PrintWriter writer = resp.getWriter();
     writer.println(template.evaluate());
@@ -47,26 +50,18 @@ public class AccountPageServlet extends HttpServlet {
     writer.flush();
   }
 
-  private void render(HtmlTemplate template, String errors, Cookie cookie) {
-    String email;
+  private void render(HtmlTemplate template, String errors, String sessionId) {
     if (errors != null) {
       template.put("message", errors);
+      return;
     }
-    if (cookie != null) {
-      email = sessionRepository.findEmailById(cookie.getValue());
-      template.put("email", email);
 
-      Double balance = accountRepository.getBalance(email);
-      template.put("balance", String.valueOf(balance));
-    }
-  }
+    String email = sessionRepository.findUserEmailBySid(sessionId);
+    Account account = accountRepository.findByEmail(email);
 
-  private Cookie find(Cookie[] cookies) {
-    for (Cookie each : cookies) {
-      if (each.getName().equals("id")) {
-        return each;
-      }
-    }
-    return null;
+    template.put("email", email);
+
+    Double balance = account.getBalance();
+    template.put("balance", String.valueOf(balance));
   }
 }

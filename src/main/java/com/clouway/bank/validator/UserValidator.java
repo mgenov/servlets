@@ -41,11 +41,6 @@ public class UserValidator implements Validator<User> {
     return message.toString();
   }
 
-  @Override
-  public String validate(String cash) {
-    return null;
-  }
-
   private String validateMatching(Matcher matcher, String errorMessage) {
     if (!matcher.matches()) {
       return errorMessage;

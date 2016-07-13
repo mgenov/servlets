@@ -44,7 +44,6 @@ public class PersistentTransactionRepositoryTest {
 
   private final Account account = new Account("user@domain.com", 50.00);
   private final long currentDate = 1212121212;
-  private final Double processingAmount = 10.00;
 
   @Before
   public void setUp() throws Exception {
@@ -67,14 +66,14 @@ public class PersistentTransactionRepositoryTest {
       oneOf(date).getCurrentDate();
       will(returnValue(currentDate));
 
-      oneOf(accountRepository).getBalance(account.email);
-      will(returnValue(60.00));
+      oneOf(accountRepository).findByEmail(account.getEmail());
+      will(returnValue(account));
     }});
 
-    transactionRepository.updateHistory(account.email, "deposit", processingAmount);
+    transactionRepository.updateHistory(account.email, "deposit", 10.00);
     Double depositAmount = 10.00;
 
-    List<Transaction> expected = Lists.newArrayList(new Transaction(currentDate, account.email, "deposit", depositAmount, 60.00));
+    List<Transaction> expected = Lists.newArrayList(new Transaction(currentDate, account.email, "deposit", depositAmount, 50.00));
     List<Transaction> actual = transactionRepository.getTransactions(account.email, 1, 0);
 
     assertThat(actual, is(expected));
@@ -85,25 +84,26 @@ public class PersistentTransactionRepositoryTest {
     final long currentDate = 123123123;
     Double depositAmount = 20.00;
     Double withdrawAmount = 20.00;
-    final Transaction transaction1 = new Transaction(currentDate, account.email, "deposit", depositAmount, 60.00);
-    final Transaction transaction2 = new Transaction(currentDate, account.email, "withdraw", withdrawAmount, 40.00);
+
+    final Transaction transaction1 = new Transaction(currentDate, account.email, "deposit", depositAmount, 50.00);
+    final Transaction transaction2 = new Transaction(currentDate, account.email, "withdraw", withdrawAmount, 50.00);
 
     context.checking(new Expectations() {{
       oneOf(date).getCurrentDate();
       will(returnValue(currentDate));
 
-      oneOf(accountRepository).getBalance(account.email);
-      will(returnValue(transaction1.currentAmount));
+      oneOf(accountRepository).findByEmail(account.email);
+      will(returnValue(account));
 
       oneOf(date).getCurrentDate();
       will(returnValue(currentDate));
 
-      oneOf(accountRepository).getBalance(account.email);
-      will(returnValue(transaction2.currentAmount));
+      oneOf(accountRepository).findByEmail(account.email);
+      will(returnValue(account));
     }});
 
-    transactionRepository.updateHistory(account.email, "deposit", processingAmount);
-    transactionRepository.updateHistory(account.email, "withdraw", processingAmount);
+    transactionRepository.updateHistory(account.email, "deposit", depositAmount);
+    transactionRepository.updateHistory(account.email, "withdraw", withdrawAmount);
 
     List<Transaction> expected = Lists.newArrayList(transaction1, transaction2);
     List<Transaction> actual = transactionRepository.getTransactions(account.email, 2, 0);

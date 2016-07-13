@@ -22,25 +22,17 @@ public interface AccountRepository {
   Account findByEmail(String email);
 
   /**
-   * Will be added cash to user
+   * Will be added amount to user
    *
    * @param email user email
    */
-  void deposit(String email, Double cash);
+  void deposit(String email, Double amount);
 
   /**
-   * Will be remove cash from user
+   * Will be remove amount from user
    *
    * @param email user email
    */
 
-  void withdraw(String email, Double cash);
-
-  /**
-   * Will be check current balance
-   *
-   * @param email user email
-   * @return current amount
-   */
-  Double getBalance(String email);
+  void withdraw(String email, Double amount);
 }

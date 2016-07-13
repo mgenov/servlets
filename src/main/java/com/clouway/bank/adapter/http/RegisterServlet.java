@@ -1,5 +1,7 @@
 package com.clouway.bank.adapter.http;
 
+import com.clouway.bank.core.Account;
+import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.User;
 import com.clouway.bank.core.UserRepository;
 import com.clouway.bank.core.Validator;
@@ -21,10 +23,12 @@ public class RegisterServlet extends HttpServlet {
     private final Validator<User> validator;
     private String html;
     private HtmlTemplate template;
+    private final AccountRepository accountRepository;
 
-    public RegisterServlet(UserRepository repository, Validator<User> validator) {
+    public RegisterServlet(UserRepository repository, Validator<User> validator, AccountRepository accountRepository) {
         this.repository = repository;
         this.validator = validator;
+        this.accountRepository = accountRepository;
     }
 
     @Override
@@ -50,6 +54,8 @@ public class RegisterServlet extends HttpServlet {
             resp.sendRedirect("/register?errorMessage=User with this email already exist");
         } else {
             repository.register(user);
+
+            accountRepository.createAccount(new Account(email, 0.00));
 
             resp.sendRedirect("/login");
         }

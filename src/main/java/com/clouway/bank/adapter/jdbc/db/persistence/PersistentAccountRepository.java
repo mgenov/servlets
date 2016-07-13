@@ -4,9 +4,10 @@ import com.clouway.bank.core.Account;
 import com.clouway.bank.core.AccountRepository;
 import com.clouway.bank.core.ConnectionException;
 import com.clouway.bank.core.Provider;
+import com.clouway.bank.core.RowGetter;
+import com.clouway.bank.utils.DatabaseHelper;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -23,76 +24,47 @@ public class PersistentAccountRepository implements AccountRepository {
 
   @Override
   public void createAccount(Account account) {
-    Double balance = account.getBalance();
-    try (PreparedStatement statement = provider.get().prepareStatement("INSERT into accounts VALUES (?,?)")) {
-      statement.setString(1, account.email);
-      statement.setDouble(2, balance);
+    DatabaseHelper databaseHelper = new DatabaseHelper(provider);
 
-      statement.executeUpdate();
-    } catch (SQLException e) {
-      e.printStackTrace();
-      throw new ConnectionException("Cannot connect to database");
-    }
-  }
-
-  @Override
-  public Account findByEmail(String email) {
-    try (PreparedStatement statement = provider.get().prepareStatement("SELECT * FROM accounts WHERE email=?")) {
-      statement.setString(1, email);
-
-      ResultSet resultSet = statement.executeQuery();
-      resultSet.next();
-
-      return new Account(email, resultSet.getDouble("balance"));
-    } catch (SQLException e) {
-      throw new ConnectionException("Cannot connect to database");
-    }
-  }
-
-  @Override
-  public void deposit(String email, Double cash) {
-    Account account = findByEmail(email);
-    account.deposit(cash);
-
-    try (PreparedStatement statement = provider.get().prepareStatement("UPDATE accounts SET balance=? WHERE email=?")) {
-      statement.setDouble(1, account.getBalance());
-      statement.setString(2, email);
-
-      statement.executeUpdate();
-    } catch (SQLException e) {
-      throw new ConnectionException("Cannot connect to database");
-    }
-  }
-
-  @Override
-  public void withdraw(String email, Double cash) {
-    Account account = findByEmail(email);
-    account.withdraw(cash);
-
+    String query = "INSERT into accounts VALUES (?,?)";
     Double balance = account.getBalance();
 
-    try (PreparedStatement statement = provider.get().prepareStatement("UPDATE accounts SET balance=? WHERE email=?")) {
-      statement.setDouble(1, balance);
-      statement.setString(2, email);
-
-      statement.executeUpdate();
-
-    } catch (SQLException e) {
-      throw new ConnectionException("Can not connect to database");
-    }
+    databaseHelper.executeQuery(query, account.email, balance);
   }
 
   @Override
-  public Double getBalance(String email) {
-    try (PreparedStatement statement = provider.get().prepareStatement("SELECT balance FROM accounts WHERE email=?")) {
-      statement.setString(1, email);
+  public Account findByEmail(final String email) {
+    DatabaseHelper databaseHelper = new DatabaseHelper(provider);
+    String userEmail = "'" + email + "'";
 
-      ResultSet resultSet = statement.executeQuery();
-      resultSet.next();
+    return (Account) databaseHelper.fetchRow("SELECT * FROM accounts WHERE email=" + userEmail, new RowGetter() {
+      @Override
+      public Account getRows(ResultSet resultSet) throws SQLException {
+        Double balance = resultSet.getDouble("balance");
+        return new Account(email, balance);
+      }
+    });
+  }
 
-      return resultSet.getDouble("balance");
-    } catch (SQLException e) {
-      throw new ConnectionException("Cannot connect to database");
-    }
+  @Override
+  public void deposit(String email, Double amount) {
+    Account account = findByEmail(email);
+    account.deposit(amount);
+
+    DatabaseHelper databaseHelper = new DatabaseHelper(provider);
+    String query = "UPDATE accounts SET balance=? WHERE email=?";
+
+    databaseHelper.executeQuery(query, account.getBalance(), email);
+  }
+
+  @Override
+  public void withdraw(String email, Double amount) {
+    Account account = findByEmail(email);
+    account.withdraw(amount);
+
+    DatabaseHelper databaseHelper = new DatabaseHelper(provider);
+    String query = "UPDATE accounts SET balance=? WHERE email=?";
+
+    databaseHelper.executeQuery(query, account.getBalance(), email);
   }
 }

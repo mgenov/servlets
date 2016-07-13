@@ -49,9 +49,8 @@ public class Pager {
 
   private int getNumberOfPages() {
     Integer totalNumberOfRecords = transactionRepository.getNumberOfRecords();
-
     if (totalNumberOfRecords % pageSize != 0) {
-      return (totalNumberOfRecords % pageSize);
+      return ((totalNumberOfRecords / pageSize) + 1);
 
     } else {
       return totalNumberOfRecords / pageSize;

@@ -12,12 +12,11 @@ public class Account {
         this.balance = balance;
     }
 
-    public String getEmail() {
-        return email;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-
-    public void deposit(Double sum) {
+  public void deposit(Double sum) {
         this.balance += sum;
     }
 

@@ -8,26 +8,21 @@ import java.util.regex.Pattern;
 /**
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
-public class AmountValidator implements Validator {
-  private final Pattern amountPattern = Pattern.compile("^[0-9]{1,3}+(\\.[0-9]{2})?$");
+public class AmountValidator implements Validator<String> {
+  private final Pattern amountPattern = Pattern.compile("^[0-9]{1,4}+(\\.[0-9]{2})?$");
 
   @Override
-  public String validate(Object object) {
-    return null;
+  public String validate(String amount) {
+    Matcher amountMatcher = amountPattern.matcher(amount);
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(validateMatching(amountMatcher, "Amount must be positive number."));
+
+    return buffer.toString();
   }
 
   @Override
   public String validate(String email, String password) {
     return null;
-  }
-
-  @Override
-  public String validate(String cash) {
-    Matcher cashMatcher = amountPattern.matcher(cash);
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(validateMatching(cashMatcher, "The format of the amount is not valid. Valid format is 12.00. Please enter valid data!"));
-
-    return buffer.toString();
   }
 
   private String validateMatching(Matcher matcher, String errorMessage) {

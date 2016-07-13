@@ -12,6 +12,7 @@ import com.clouway.bank.core.TransactionRepository;
 import com.clouway.bank.utils.SessionIdFinder;
 import com.clouway.bank.utils.SessionIdGenerator;
 import com.clouway.bank.utils.Timeout;
+import com.clouway.bank.validator.AmountValidator;
 import com.clouway.bank.validator.UserValidator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -47,12 +48,14 @@ public class Jetty {
 
         ServletContext servletContext = servletContextEvent.getServletContext();
         servletContext.addFilter("security", new SecurityFilter(sessionRepository, new Timeout(100))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-        servletContext.addServlet("register", new RegisterServlet(userRepository, new UserValidator())).addMapping("/register");
+        servletContext.addServlet("register", new RegisterServlet(userRepository, new UserValidator(), accountRepository)).addMapping("/register");
         servletContext.addServlet("login", new LoginPageServlet()).addMapping("/login");
         servletContext.addServlet("loginController", new LoginControllerServlet(userRepository, sessionRepository, new UserValidator(), new Timeout(1), new SessionIdGenerator())).addMapping("/loginController");
         servletContext.addServlet("home", new HomePageServlet(sessionRepository)).addMapping("/home");
         servletContext.addServlet("/logout", new LogoutServlet(new SessionIdFinder("sessionId"), sessionRepository)).addMapping("/logout");
         servletContext.addServlet("/transaction", new TransactionHistoryPageServlet(transactionRepository, 5, sessionRepository, sessionIdFinder)).addMapping("/transaction");
+        servletContext.addServlet("/account", new AccountPageServlet(sessionRepository, accountRepository, sessionIdFinder)).addMapping("/account");
+        servletContext.addServlet("/accountController", new AccountOperationControllerServlet(new AmountValidator(), accountRepository, sessionRepository, sessionIdFinder, transactionRepository)).addMapping("/accountController");
       }
 
       public void contextDestroyed(ServletContextEvent servletContextEvent) {
