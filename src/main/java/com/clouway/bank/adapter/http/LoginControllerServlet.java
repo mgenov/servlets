@@ -41,7 +41,7 @@ public class LoginControllerServlet extends HttpServlet {
 
     String message = validator.validate(email, password);
 
-    if (!(Strings.isNullOrEmpty(message))) {
+    if (!Strings.isNullOrEmpty(message)) {
       resp.sendRedirect("/login?errorMessage=" + message);
       return;
     }
