@@ -2,6 +2,7 @@ package com.clouway.bank.adapter.http;
 
 import com.clouway.bank.core.SessionRepository;
 import com.clouway.bank.utils.SessionIdFinder;
+import com.google.common.base.Strings;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -28,7 +29,9 @@ public class LogoutServlet extends HttpServlet {
 
     String sessionId = sessionIdFinder.findSid(cookies);
 
-    sessionRepository.remove(sessionId);
-    resp.sendRedirect("/login");
+    if (!Strings.isNullOrEmpty(sessionId)) {
+      sessionRepository.remove(sessionId);
+      resp.sendRedirect("/login");
+    }
   }
 }

@@ -40,10 +40,9 @@ public class LogoutServletTest {
       oneOf(request).getCookies();
       will(returnValue(cookies));
 
-      oneOf(sessionRepository).findSessionById(userSession.sessionId);
-      will(returnValue(Optional.of(userSession)));
-
       oneOf(sessionRepository).remove(userSession.sessionId);
+
+      oneOf(response).sendRedirect("/login");
     }});
     logoutServlet.doGet(request, response);
   }
@@ -57,11 +56,6 @@ public class LogoutServletTest {
     context.checking(new Expectations() {{
       oneOf(request).getCookies();
       will(returnValue(cookies));
-
-      oneOf(sessionRepository).findSessionById("");
-      will(returnValue(Optional.absent()));
-
-      oneOf(response).sendRedirect("/");
     }});
     logoutServlet.doGet(request, response);
   }
