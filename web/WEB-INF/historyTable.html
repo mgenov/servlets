@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h2>Transaction History</h2>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Date:</th>
+            <th>User email:</th>
+            <th>Operation:</th>
+            <th>Amount:</th>
+            <th>New Balance:</th>
+        </tr>
+        </thead>
+        {row}
+        <br>
+
+    </table>
+    <ul class="pager">
+        <form action="/transaction" method="get">
+            <li>
+                <a href="transaction?page={previous}">Previous</a>
+                <a href="transaction?page={next}">Next</a>
+            </li>
+        </form>
+    </ul>
+    </table>
+</div>
+</body>
+</html>

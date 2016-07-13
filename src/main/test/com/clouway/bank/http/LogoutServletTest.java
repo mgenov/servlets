@@ -4,6 +4,7 @@ import com.clouway.bank.adapter.http.LogoutServlet;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
 import com.clouway.bank.utils.SessionIdFinder;
+import com.clouway.bank.utils.TimeConverter;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Rule;

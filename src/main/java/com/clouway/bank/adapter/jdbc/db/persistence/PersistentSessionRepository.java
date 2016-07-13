@@ -23,7 +23,7 @@ public class PersistentSessionRepository implements SessionRepository {
 
   @Override
   public void createSession(Session session) {
-    try (PreparedStatement statement = connectionProvider.get().prepareStatement("INSERT into sessions VALUES (?,?,?)")) {
+    try (PreparedStatement statement = connectionProvider.get().prepareStatement("INSERT INTO sessions VALUES (?,?,?)")) {
       statement.setString(1, session.sessionId);
       statement.setString(2, session.email);
       statement.setLong(3, session.expirationTime);
@@ -63,7 +63,6 @@ public class PersistentSessionRepository implements SessionRepository {
 
       statement.execute();
     } catch (SQLException e) {
-      e.printStackTrace();
       new ConnectionException("Cannot connect to database");
     }
   }
@@ -80,5 +79,20 @@ public class PersistentSessionRepository implements SessionRepository {
       throw new ConnectionException("Cannot connect to database");
     }
     return counter;
+  }
+
+  @Override
+  public String findUserEmailBySid(String sessionId) {
+    try (PreparedStatement statement = connectionProvider.get().prepareStatement("SELECT email from sessions WHERE id=?")) {
+      statement.setString(1, sessionId);
+      ResultSet resultSet = statement.executeQuery();
+
+      resultSet.next();
+
+      return resultSet.getString("email");
+    } catch (SQLException e) {
+      e.printStackTrace();
+      throw new ConnectionException("Can not connect to database");
+    }
   }
 }

@@ -3,16 +3,18 @@ package com.clouway.bank.core;
 /**
  * @author Stanislava Kaukova(sisiivanovva@gmail.com)
  */
-public class TransactionHistory {
+public class Transaction {
   public final long date;
   public final String email;
   public final String operation;
   public final double currentAmount;
+  public final double processingAmount;
 
-  public TransactionHistory(long date, String email, String operation, double currentAmount) {
+  public Transaction(long date, String email, String operation, Double processingAmount, double currentAmount) {
     this.date = date;
     this.email = email;
     this.operation = operation;
+    this.processingAmount = processingAmount;
     this.currentAmount = currentAmount;
   }
 
@@ -21,7 +23,7 @@ public class TransactionHistory {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    TransactionHistory that = (TransactionHistory) o;
+    Transaction that = (Transaction) o;
 
     if (date != that.date) return false;
     if (Double.compare(that.currentAmount, currentAmount) != 0) return false;
@@ -40,5 +42,15 @@ public class TransactionHistory {
     temp = Double.doubleToLongBits(currentAmount);
     result = 31 * result + (int) (temp ^ (temp >>> 32));
     return result;
+  }
+
+  @Override
+  public String toString() {
+    return "Transaction{" +
+            "date=" + date +
+            ", email='" + email + '\'' +
+            ", operation='" + operation + '\'' +
+            ", currentAmount=" + currentAmount +
+            '}';
   }
 }

@@ -12,9 +12,10 @@ password VARCHAR (16)
  expirationTime bigint
  );
 
- create table transactions (
- date bigint,
- email varchar(30),
- operation varchar(30),
- currentBalance double precision
- );
+create table transactions (
+  date bigint,
+  email varchar(30),
+  operation varchar(30),
+  amount DOUBLE PRECISION,
+  currentBalance DOUBLE PRECISION
+  );

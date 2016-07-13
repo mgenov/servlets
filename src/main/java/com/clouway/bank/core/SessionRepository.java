@@ -30,9 +30,18 @@ public interface SessionRepository {
    */
   void remove(String id);
 
-    /**
-     * Will count active sessions
-     * @return result from counting
-     */
+  /**
+   * Will count active sessions
+   *
+   * @return result from counting
+   */
   int getOnlineUsersCount();
+
+  /**
+   * Will find user email by sessionIf
+   *
+   * @param sessionId session id
+   * @return user email
+   */
+  String findUserEmailBySid(String sessionId);
 }

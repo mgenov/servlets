@@ -16,4 +16,6 @@ password VARCHAR (16)
   date bigint,
   email varchar(30),
   operation varchar(30),
-  currentBalance double precision)
+  amount DOUBLE PRECISION,
+  currentBalance DOUBLE PRECISION
+  );
