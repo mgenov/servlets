@@ -49,7 +49,7 @@ public class HomePageServletTest {
 
       oneOf(response).sendRedirect("/account");
 
-      oneOf(sessionRepository).countOnlineUsers();
+      oneOf(sessionRepository).getOnlineUsersCount();
       will(returnValue(1));
     }});
 

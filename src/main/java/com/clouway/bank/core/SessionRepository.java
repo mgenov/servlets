@@ -34,5 +34,5 @@ public interface SessionRepository {
      * Will count active sessions
      * @return result from counting
      */
-  int  countOnlineUsers();
+  int getOnlineUsersCount();
 }

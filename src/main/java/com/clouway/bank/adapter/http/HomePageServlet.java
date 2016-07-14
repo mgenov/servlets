@@ -43,6 +43,6 @@ public class HomePageServlet extends HttpServlet {
     }
 
     private Integer getOnlineUsers() {
-        return sessionRepository.countOnlineUsers();
+        return sessionRepository.getOnlineUsersCount();
     }
 }

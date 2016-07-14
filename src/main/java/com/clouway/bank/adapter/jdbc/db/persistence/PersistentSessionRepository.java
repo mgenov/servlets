@@ -69,7 +69,7 @@ public class PersistentSessionRepository implements SessionRepository {
   }
 
   @Override
-  public int countOnlineUsers() {
+  public int getOnlineUsersCount() {
     int counter = 0;
     try (PreparedStatement statement = connectionProvider.get().prepareStatement("SELECT COUNT (DISTINCT (email))FROM sessions")) {
 
