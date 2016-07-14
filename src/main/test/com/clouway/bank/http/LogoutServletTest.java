@@ -24,7 +24,8 @@ public class LogoutServletTest {
   private HttpServletResponse response = context.mock(HttpServletResponse.class);
   private SessionRepository sessionRepository = context.mock(SessionRepository.class);
 
-  private final SessionIdFinder sessionIdFinder=new SessionIdFinder("sessionId");
+  private final SessionIdFinder sessionIdFinder = new SessionIdFinder("sessionId");
+
   @Test
   public void logout() throws Exception {
     LogoutServlet logoutServlet = new LogoutServlet(sessionIdFinder, sessionRepository);
@@ -33,12 +34,11 @@ public class LogoutServletTest {
     long expirationTime = converter.convertStringToLong("00:12:0000");
 
     final Cookie cookie = new Cookie("sessionId", "sessionId");
-    final Cookie[] cookies = new Cookie[]{cookie};
     final Session userSession = new Session(cookie.getValue(), "user@domain.com", expirationTime);
 
     context.checking(new Expectations() {{
       oneOf(request).getCookies();
-      will(returnValue(cookies));
+      will(returnValue(new Cookie[]{cookie}));
 
       oneOf(sessionRepository).remove(userSession.sessionId);
 
@@ -51,11 +51,9 @@ public class LogoutServletTest {
   public void logoutNoLoginUser() throws Exception {
     LogoutServlet logoutServlet = new LogoutServlet(sessionIdFinder, sessionRepository);
 
-    final Cookie[] cookies = new Cookie[]{};
-
     context.checking(new Expectations() {{
       oneOf(request).getCookies();
-      will(returnValue(cookies));
+      will(returnValue(new Cookie[]{}));
     }});
     logoutServlet.doGet(request, response);
   }
