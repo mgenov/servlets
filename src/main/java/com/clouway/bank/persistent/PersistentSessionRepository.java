@@ -30,7 +30,7 @@ public class PersistentSessionRepository implements SessionRepository {
    */
   @Override
   public void create(Session session) {
-    String query = "insert into login(sessionid, username, expirationtime) values(?, ?, ?)";
+    String query = "INSERT INTO login(sessionid, username, expirationtime) VALUES(?, ?, ?)";
     Connection connection = connectionProvider.get();
 
     try {
@@ -53,7 +53,7 @@ public class PersistentSessionRepository implements SessionRepository {
    */
   @Override
   public Session retrieve(String sessionId) {
-    String query = "select sessionid, username, expirationtime from login where sessionid=?;";
+    String query = "SELECT sessionid, username, expirationtime FROM login WHERE sessionid=?;";
 
     Connection connection = connectionProvider.get();
 
@@ -75,7 +75,7 @@ public class PersistentSessionRepository implements SessionRepository {
    */
   @Override
   public void update(Session session) {
-    String query = "update login set expirationtime=? WHERE sessionid=?;";
+    String query = "UPDATE login SET expirationtime=? WHERE sessionid=?;";
 
     Connection connection = connectionProvider.get();
 
@@ -87,6 +87,21 @@ public class PersistentSessionRepository implements SessionRepository {
     } catch (SQLException e) {
       e.printStackTrace();
       throw new LoginException("There was a problem with your session, please try to login again, if needed contact the administrators");
+    }
+  }
+
+  @Override
+  public void remove(String sessionId) {
+    String query = "DELETE FROM login WHERE sessionid=?;";
+
+    Connection connection = connectionProvider.get();
+
+    try {
+      PreparedStatement statement = connection.prepareStatement(query);
+      statement.setString(1, sessionId);
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
   }
 }

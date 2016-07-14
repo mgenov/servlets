@@ -64,4 +64,21 @@ public class PersistentSessionRepositoryTest {
     Session returnedSession = sessionRepository.retrieve("2");
     assertThat(returnedSession.expirationTime.toString(), is(equalTo(session.expirationTime.toString())));
   }
+
+  @Test
+  public void removeExistingSession() {
+    Calendar calendar = Calendar.getInstance();
+    calendar.set(2016, 7, 10);
+    calendar.set(Calendar.MILLISECOND, 0);
+    Long time = calendar.getTimeInMillis();
+
+    Session session = new Session("1", "Krasimir", time);
+
+    sessionRepository.create(session);
+
+    sessionRepository.remove(session.id);
+
+    Session returnedSession = sessionRepository.retrieve(session.id);
+    assertThat(returnedSession, is(equalTo(null)));
+  }
 }

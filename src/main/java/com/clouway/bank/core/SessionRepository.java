@@ -28,4 +28,11 @@ public interface SessionRepository {
    * @param session the updated version of the session
    */
   void update(Session session);
+
+  /**
+   * Removes session from the repository
+   *
+   * @param sessionId the id of the session
+   */
+  void remove(String sessionId);
 }

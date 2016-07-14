@@ -61,6 +61,7 @@ public class BankEventListener implements ServletContextListener {
     servletContext.addServlet("RegisterControllerServlet", new RegistrationController(new PersistentUserRepository(new PerRequestConnectionProvider()), new PersistentAccountRepository(new PerRequestConnectionProvider()), new UserDataValidator())).addMapping("/registercontroller");
     servletContext.addServlet("DepositServlet", new DepositServlet(new PersistentAccountRepository(new PerRequestConnectionProvider()), new BracketsTemplate(new FileReader()), new BankTransactionValidator(), currentSessionProvider)).addMapping("/deposit");
     servletContext.addServlet("WithdrawServlet", new WithdrawServlet(new PersistentAccountRepository(new PerRequestConnectionProvider()), new BracketsTemplate(new FileReader()), new BankTransactionValidator(), currentSessionProvider)).addMapping("/withdraw");
+    servletContext.addServlet("LogoutController", new LogoutController(new PersistentSessionRepository(new PerRequestConnectionProvider()), currentSessionProvider)).addMapping("/logoutcontroller");
   }
 
   /**
