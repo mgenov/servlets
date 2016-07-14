@@ -57,6 +57,6 @@ public class HomePageServletTest {
 
     String pageContent = out.toString();
 
-    assertThat(pageContent, containsString("Online users: 1"));
+    assertThat(pageContent, containsString("Online users:<span class=\"badge\">1</span>"));
   }
 }
