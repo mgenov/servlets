@@ -4,7 +4,6 @@ import com.clouway.bank.adapter.http.LogoutServlet;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
 import com.clouway.bank.utils.SessionIdFinder;
-import com.google.common.base.Optional;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Rule;
@@ -25,9 +24,10 @@ public class LogoutServletTest {
   private HttpServletResponse response = context.mock(HttpServletResponse.class);
   private SessionRepository sessionRepository = context.mock(SessionRepository.class);
 
+  private final SessionIdFinder sessionIdFinder=new SessionIdFinder("sessionId");
   @Test
   public void logout() throws Exception {
-    LogoutServlet logoutServlet = new LogoutServlet(new SessionIdFinder(), sessionRepository);
+    LogoutServlet logoutServlet = new LogoutServlet(sessionIdFinder, sessionRepository);
 
     final TimeConverter converter = new TimeConverter();
     long expirationTime = converter.convertStringToLong("00:12:0000");
@@ -49,7 +49,7 @@ public class LogoutServletTest {
 
   @Test
   public void logoutNoLoginUser() throws Exception {
-    LogoutServlet logoutServlet = new LogoutServlet(new SessionIdFinder(), sessionRepository);
+    LogoutServlet logoutServlet = new LogoutServlet(sessionIdFinder, sessionRepository);
 
     final Cookie[] cookies = new Cookie[]{};
 

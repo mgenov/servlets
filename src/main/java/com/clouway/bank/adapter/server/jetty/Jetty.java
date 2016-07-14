@@ -44,7 +44,7 @@ public class Jetty {
         servletContext.addServlet("loginController", new LoginControllerServlet(userRepository, sessionRepository, new UserValidator(), new Timeout(1), new SessionIdGenerator())).addMapping("/loginController");
         servletContext.addServlet("home", new HomePageServlet(sessionRepository)).addMapping("/home");
         servletContext.addServlet("/account", new Account()).addMapping("/account");
-        servletContext.addServlet("/logout", new LogoutServlet(new SessionIdFinder(), sessionRepository)).addMapping("/logout");
+        servletContext.addServlet("/logout", new LogoutServlet(new SessionIdFinder("sessionId"), sessionRepository)).addMapping("/logout");
       }
 
       public void contextDestroyed(ServletContextEvent servletContextEvent) {
