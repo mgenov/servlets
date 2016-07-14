@@ -1,9 +1,8 @@
-package com.clouway.bank.http.validation;
+package com.clouway.bank.http;
 
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionProvider;
 import com.clouway.bank.core.SessionRepository;
-import com.clouway.bank.http.LogoutController;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -12,6 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -46,6 +46,8 @@ public class LogoutControllerTest {
       will(returnValue(session));
 
       oneOf(sessionRepository).remove(session.id);
+
+      oneOf(response).addCookie(with(any(Cookie.class)));
 
       oneOf(response).sendRedirect("/login");
     }});
