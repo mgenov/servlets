@@ -38,7 +38,7 @@ public class Jetty {
         PersistentUserRepository userRepository = new PersistentUserRepository(connectionProvider);
 
         ServletContext servletContext = servletContextEvent.getServletContext();
-        servletContext.addFilter("security", new SecurityFilter(sessionRepository, new Timeout(1))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/home", "/login", "/account");
+        servletContext.addFilter("security", new SecurityFilter(sessionRepository, new Timeout(1))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
         servletContext.addServlet("register", new RegisterServlet(userRepository, new UserValidator())).addMapping("/register");
         servletContext.addServlet("login", new LoginPageServlet()).addMapping("/login");
         servletContext.addServlet("loginController", new LoginControllerServlet(userRepository, sessionRepository, new UserValidator(), new Timeout(1), new SessionIdGenerator())).addMapping("/loginController");
