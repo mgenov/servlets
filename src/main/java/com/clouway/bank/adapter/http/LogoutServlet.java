@@ -25,9 +25,7 @@ public class LogoutServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    Cookie[] cookies = req.getCookies();
-
-    String sessionId = sessionIdFinder.findSid(cookies);
+    String sessionId = sessionIdFinder.findSid(req.getCookies());
 
     if (!Strings.isNullOrEmpty(sessionId)) {
       sessionRepository.remove(sessionId);

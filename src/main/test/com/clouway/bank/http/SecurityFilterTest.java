@@ -53,7 +53,7 @@ public class SecurityFilterTest {
   }
 
   @Test
-  public void alreadyLoggedIn() throws Exception {
+  public void alreadyLogin() throws Exception {
     final SecurityFilter filter = new SecurityFilter(sessionRepository, currentTime);
     final TimeConverter converter = new TimeConverter();
     long timeForSessionLife = converter.convertStringToLong("00:06:0000");
@@ -84,7 +84,7 @@ public class SecurityFilterTest {
   }
 
   @Test
-  public void getSecuredResourceNoSession() throws Exception {
+  public void getSecurityResourceNoSession() throws Exception {
     SecurityFilter filter = new SecurityFilter(sessionRepository, currentTime);
     final Cookie[] cookies = new Cookie[]{};
 

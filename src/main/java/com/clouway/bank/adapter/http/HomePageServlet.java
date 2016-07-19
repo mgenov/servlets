@@ -32,17 +32,13 @@ public class HomePageServlet extends HttpServlet {
         }
 
         HtmlHelper helper = new HtmlHelper("web/WEB-INF/home.html");
-        String page = helper.loadResource();
+        String htmlPage = helper.loadResource();
 
-        HtmlTemplate template = new HtmlTemplate(page);
-        template.put("number", getOnlineUsers().toString());
+        HtmlTemplate template = new HtmlTemplate(htmlPage);
+        template.put("number", String.valueOf(sessionRepository.getOnlineUsersCount()));
 
         writer.println(template.evaluate());
 
         writer.flush();
-    }
-
-    private Integer getOnlineUsers() {
-        return sessionRepository.getOnlineUsersCount();
     }
 }

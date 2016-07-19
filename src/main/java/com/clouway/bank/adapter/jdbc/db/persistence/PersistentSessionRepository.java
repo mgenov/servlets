@@ -74,9 +74,8 @@ public class PersistentSessionRepository implements SessionRepository {
     try (PreparedStatement statement = connectionProvider.get().prepareStatement("SELECT COUNT (DISTINCT (email))FROM sessions")) {
 
       ResultSet resultSet = statement.executeQuery();
-      while (resultSet.next()) {
-        counter = resultSet.getInt(1);
-      }
+      resultSet.next();
+      counter = resultSet.getInt(1);
     } catch (SQLException e) {
       throw new ConnectionException("Cannot connect to database");
     }
