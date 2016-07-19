@@ -1,9 +1,12 @@
 package com.clouway.bank.http;
 
 import com.clouway.bank.core.AccountHistoryPager;
+import com.clouway.bank.core.ConnectionProvider;
 import com.clouway.bank.core.CurrentSessionProvider;
+import com.clouway.bank.core.DataStore;
 import com.clouway.bank.http.validation.BankTransactionValidator;
 import com.clouway.bank.http.validation.UserDataValidator;
+import com.clouway.bank.persistent.DatabaseHelper;
 import com.clouway.bank.persistent.PerRequestConnectionProvider;
 import com.clouway.bank.persistent.PersistentAccountHistoryRepository;
 import com.clouway.bank.persistent.PersistentAccountRepository;
@@ -56,18 +59,21 @@ public class BankEventListener implements ServletContextListener {
 
     CurrentSessionProvider currentSessionProvider = new CurrentSessionProvider();
 
+    ConnectionProvider connectionProvider = new PerRequestConnectionProvider();
+    DataStore dataStore = new DatabaseHelper(connectionProvider);
+
     servletContext.addFilter("ConnectionFilter", new ConnectionFilter(dbName)).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
     servletContext.addFilter("HttprequestErrorReporter", new HttprequestErrorReporter(new BracketsTemplate(new FileReader()))).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-    servletContext.addFilter("SecurityFilter", new SecurityFilter(new PersistentSessionRepository(new PerRequestConnectionProvider()), calendar, accessible, currentSessionProvider)).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+    servletContext.addFilter("SecurityFilter", new SecurityFilter(new PersistentSessionRepository(dataStore), calendar, accessible, currentSessionProvider)).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
     servletContext.addServlet("LoginPage", new LoginPage(new BracketsTemplate(new FileReader()))).addMapping("/login");
-    servletContext.addServlet("LoginController", new LoginController(new PersistentSessionRepository(new PerRequestConnectionProvider()), new PersistentUserRepository(new PerRequestConnectionProvider()), new UserDataValidator(), calendar)).addMapping("/logincontroller");
-    servletContext.addServlet("HomePage", new HomePage(new BracketsTemplate(new FileReader()), new PersistentSessionRepository(new PerRequestConnectionProvider()), calendar)).addMapping("");
+    servletContext.addServlet("LoginController", new LoginController(new PersistentSessionRepository(dataStore), new PersistentUserRepository(dataStore), new UserDataValidator(), calendar)).addMapping("/logincontroller");
+    servletContext.addServlet("HomePage", new HomePage(new BracketsTemplate(new FileReader()), new PersistentSessionRepository(dataStore), calendar)).addMapping("");
     servletContext.addServlet("RegistrationPage", new RegistrationPage(new BracketsTemplate(new FileReader()))).addMapping("/register");
-    servletContext.addServlet("RegisterControllerServlet", new RegistrationController(new PersistentUserRepository(new PerRequestConnectionProvider()), new PersistentAccountRepository(new PerRequestConnectionProvider()), new UserDataValidator())).addMapping("/registercontroller");
-    servletContext.addServlet("DepositServlet", new DepositServlet(new PersistentAccountRepository(new PerRequestConnectionProvider()), new BracketsTemplate(new FileReader()), new BankTransactionValidator(), currentSessionProvider)).addMapping("/deposit");
-    servletContext.addServlet("WithdrawServlet", new WithdrawServlet(new PersistentAccountRepository(new PerRequestConnectionProvider()), new BracketsTemplate(new FileReader()), new BankTransactionValidator(), currentSessionProvider)).addMapping("/withdraw");
-    servletContext.addServlet("LogoutController", new LogoutController(new PersistentSessionRepository(new PerRequestConnectionProvider()), currentSessionProvider)).addMapping("/logoutcontroller");
-    servletContext.addServlet("AccountHistory", new AccountHistoryPage(new BracketsTemplate(new FileReader()), new HtmlTableBuilder("table table-hover table-bordered"), new AccountHistoryPager(20, new PersistentAccountHistoryRepository(new PerRequestConnectionProvider())), currentSessionProvider)).addMapping("/history");
+    servletContext.addServlet("RegisterControllerServlet", new RegistrationController(new PersistentUserRepository(dataStore), new PersistentAccountRepository(dataStore), new UserDataValidator())).addMapping("/registercontroller");
+    servletContext.addServlet("DepositServlet", new DepositServlet(new PersistentAccountRepository(dataStore), new BracketsTemplate(new FileReader()), new BankTransactionValidator(), currentSessionProvider)).addMapping("/deposit");
+    servletContext.addServlet("WithdrawServlet", new WithdrawServlet(new PersistentAccountRepository(dataStore), new BracketsTemplate(new FileReader()), new BankTransactionValidator(), currentSessionProvider)).addMapping("/withdraw");
+    servletContext.addServlet("LogoutController", new LogoutController(new PersistentSessionRepository(dataStore), currentSessionProvider)).addMapping("/logoutcontroller");
+    servletContext.addServlet("AccountHistory", new AccountHistoryPage(new BracketsTemplate(new FileReader()), new HtmlTableBuilder("table table-hover table-bordered"), new AccountHistoryPager(20, new PersistentAccountHistoryRepository(dataStore)), currentSessionProvider)).addMapping("/history");
   }
 
   /**

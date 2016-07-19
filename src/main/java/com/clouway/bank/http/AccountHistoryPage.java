@@ -80,7 +80,7 @@ public class AccountHistoryPage extends HttpServlet {
     template.put("previous", String.valueOf(previousPageNumber + 1));
     template.put("currentPage", String.valueOf(currentPageNumber + 1));
     template.put("next", String.valueOf(nextPageNumber + 1));
-    template.put("username", userId);
+    template.put("userId", userId);
     template.put("table", tableBuilder.build());
 
     PrintWriter writer = response.getWriter();

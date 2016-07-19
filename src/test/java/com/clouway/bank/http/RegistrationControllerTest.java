@@ -73,7 +73,7 @@ public class RegistrationControllerTest {
 
   @Test
   public void invalidUsername() throws ServletException, IOException {
-    String exceptionMessage = "username too short, needs to be at least 5 characters";
+    String exceptionMessage = "userId too short, needs to be at least 5 characters";
     User ivan = new User("Ivan", "123456");
 
     context.checking(new Expectations() {{
@@ -149,9 +149,9 @@ public class RegistrationControllerTest {
       oneOf(validator).passwordsMatch("123456", "123456");
 
       oneOf(userRepository).register(ivan);
-      will(throwException(new ValidationException("username is taken")));
+      will(throwException(new ValidationException("userId is taken")));
 
-      oneOf(response).sendRedirect("register?state=has-error&registerMessage=username is taken");
+      oneOf(response).sendRedirect("register?state=has-error&registerMessage=userId is taken");
     }});
 
     register.init();

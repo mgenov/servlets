@@ -5,11 +5,11 @@ package com.clouway.bank.core;
  */
 public class Amount {
 
-  public final String username;
+  public final String userId;
   public final Double value;
 
-  public Amount(String username, Double value) {
-    this.username = username;
+  public Amount(String userId, Double value) {
+    this.userId = userId;
     this.value = value;
   }
 
@@ -20,14 +20,14 @@ public class Amount {
 
     Amount amount = (Amount) o;
 
-    if (username != null ? !username.equals(amount.username) : amount.username != null) return false;
+    if (userId != null ? !userId.equals(amount.userId) : amount.userId != null) return false;
     return !(value != null ? !value.equals(amount.value) : amount.value != null);
 
   }
 
   @Override
   public int hashCode() {
-    int result = username != null ? username.hashCode() : 0;
+    int result = userId != null ? userId.hashCode() : 0;
     result = 31 * result + (value != null ? value.hashCode() : 0);
     return result;
   }

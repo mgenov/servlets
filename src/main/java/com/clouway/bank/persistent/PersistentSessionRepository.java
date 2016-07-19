@@ -1,15 +1,13 @@
 package com.clouway.bank.persistent;
 
-import com.clouway.bank.core.ConnectionProvider;
-import com.clouway.bank.core.LoginException;
+import com.clouway.bank.core.DataStore;
+import com.clouway.bank.core.RowFetcher;
 import com.clouway.bank.core.Session;
 import com.clouway.bank.core.SessionRepository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * repository for storing logins
@@ -17,10 +15,10 @@ import java.sql.Timestamp;
  * @author Krasimir Raikov(raikov.krasimir@gmail.com)
  */
 public class PersistentSessionRepository implements SessionRepository {
-  private ConnectionProvider connectionProvider;
+  private DataStore dataStore;
 
-  public PersistentSessionRepository(ConnectionProvider connectionProvider) {
-    this.connectionProvider = connectionProvider;
+  public PersistentSessionRepository(DataStore dataStore) {
+    this.dataStore = dataStore;
   }
 
   /**
@@ -31,18 +29,8 @@ public class PersistentSessionRepository implements SessionRepository {
   @Override
   public void create(Session session) {
     String query = "INSERT INTO login(sessionid, username, expirationtime) VALUES(?, ?, ?)";
-    Connection connection = connectionProvider.get();
 
-    try {
-      PreparedStatement statement = connection.prepareStatement(query);
-      statement.setString(1, session.id);
-      statement.setString(2, session.userId);
-      statement.setTimestamp(3, new Timestamp(session.expirationTime));
-      statement.execute();
-    } catch (SQLException e) {
-      e.printStackTrace();
-      throw new LoginException("There was a problem with your session, please try again, and if needed contact the administrators");
-    }
+    dataStore.executeQuery(query, session.id, session.userId, new Timestamp(session.expirationTime));
   }
 
   /**
@@ -55,17 +43,13 @@ public class PersistentSessionRepository implements SessionRepository {
   public Session retrieve(String sessionId) {
     String query = "SELECT sessionid, username, expirationtime FROM login WHERE sessionid=?;";
 
-    Connection connection = connectionProvider.get();
-
-    try {
-      PreparedStatement statement = connection.prepareStatement(query);
-      statement.setString(1, sessionId);
-      ResultSet resultSet = statement.executeQuery();
-      resultSet.next();
-      return new Session(resultSet.getString("sessionid"), resultSet.getString("username"), resultSet.getTimestamp("expirationtime").getTime());
-    } catch (SQLException e) {
+    RowFetcher<Session> rowFetcher = rs -> new Session(rs.getString("sessionid"), rs.getString("username"), rs.getTimestamp("expirationtime").getTime());
+    List<Session> sessions = new ArrayList();
+    sessions = dataStore.fetchRows(query, rowFetcher, sessionId);
+    if (sessions.isEmpty()) {
       return null;
     }
+    return sessions.get(0);
   }
 
   /**
@@ -77,47 +61,26 @@ public class PersistentSessionRepository implements SessionRepository {
   public void update(Session session) {
     String query = "UPDATE login SET expirationtime=? WHERE sessionid=?;";
 
-    Connection connection = connectionProvider.get();
-
-    try {
-      PreparedStatement statement = connection.prepareStatement(query);
-      statement.setTimestamp(1, new Timestamp(session.expirationTime));
-      statement.setString(2, session.id);
-      statement.executeUpdate();
-    } catch (SQLException e) {
-      e.printStackTrace();
-      throw new LoginException("There was a problem with your session, please try to login again, if needed contact the administrators");
-    }
+    dataStore.executeQuery(query, new Timestamp(session.expirationTime), session.id);
   }
 
   @Override
   public Integer countActive(Long currentTime) {
     String query = "SELECT count(*) FROM login WHERE expirationtime>?;";
-    Connection connection = connectionProvider.get();
 
-    try {
-      PreparedStatement statement = connection.prepareStatement(query);
-      statement.setTimestamp(1, new Timestamp(currentTime));
-      ResultSet resultSet = statement.executeQuery();
-      resultSet.next();
-      return resultSet.getInt(1);
-    } catch (SQLException e) {
+    RowFetcher<Integer> rowFetcher = rs -> rs.getInt(1);
+
+    List<Integer> amountActiveSessions = dataStore.fetchRows(query, rowFetcher, new Timestamp(currentTime));
+    if (amountActiveSessions.isEmpty()) {
       return null;
     }
+    return amountActiveSessions.get(0);
   }
 
   @Override
   public void remove(String sessionId) {
     String query = "DELETE FROM login WHERE sessionid=?;";
 
-    Connection connection = connectionProvider.get();
-
-    try {
-      PreparedStatement statement = connection.prepareStatement(query);
-      statement.setString(1, sessionId);
-      statement.executeUpdate();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
+    dataStore.executeQuery(query, sessionId);
   }
 }

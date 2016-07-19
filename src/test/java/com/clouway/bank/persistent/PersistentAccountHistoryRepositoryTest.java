@@ -3,6 +3,8 @@ package com.clouway.bank.persistent;
 import com.clouway.bank.core.AccountHistoryRepository;
 import com.clouway.bank.core.AccountRecord;
 import com.clouway.bank.core.ConnectionProvider;
+import com.clouway.bank.core.DataStore;
+import com.clouway.bank.core.RowFetcher;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -11,10 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,71 +35,25 @@ public class PersistentAccountHistoryRepositoryTest {
   Connection connection;
 
   @Mock
-  PreparedStatement preparedStatement;
+  DataStore dataStore;
 
-  @Mock
-  ResultSet resultSet;
 
   @Before
   public void setUp() {
-    historyRepository = new PersistentAccountHistoryRepository(connectionProvider);
+    historyRepository = new PersistentAccountHistoryRepository(dataStore);
   }
 
 
   @Test
   public void getAccountHistory() throws SQLException {
+    List<AccountRecord> records = new ArrayList<>();
+    records.add(new AccountRecord(100L, "Kristian", "deposit", 14.5D));
+    records.add(new AccountRecord(170L, "Kristian", "withdraw", 4.5D));
+
     context.checking(new Expectations() {{
-      oneOf(connectionProvider).get();
-      will(returnValue(connection));
+      oneOf(dataStore).fetchRows(with(equalTo("SELECT date, username, operation, amount FROM account_history WHERE username=? ORDER BY date LIMIT ? OFFSET ?;")), with(any(RowFetcher.class)), with(equalTo(new Object[]{"Kristian", 20, 0})));
+      will(returnValue(records));
 
-      oneOf(connection).prepareStatement("SELECT date, username, operation, amount FROM account_history WHERE username=? ORDER BY date LIMIT ? OFFSET ?;");
-      will(returnValue(preparedStatement));
-
-      oneOf(preparedStatement).setString(1, "Kristian");
-
-      oneOf(preparedStatement).setInt(2, 20);
-
-      oneOf(preparedStatement).setInt(3, 0);
-
-      oneOf(preparedStatement).executeQuery();
-      will(returnValue(resultSet));
-
-      oneOf(resultSet).next();
-      will(returnValue(true));
-
-      oneOf(resultSet).getTimestamp(1);
-      will(returnValue(new Timestamp(100)));
-
-      oneOf(resultSet).getString(2);
-      will(returnValue("Kristian"));
-
-      oneOf(resultSet).getString(3);
-      will(returnValue("deposit"));
-
-      oneOf(resultSet).getDouble(4);
-      will(returnValue(14.5));
-
-      oneOf(resultSet).next();
-      will(returnValue(true));
-
-      oneOf(resultSet).getTimestamp(1);
-      will(returnValue(new Timestamp(170)));
-
-      oneOf(resultSet).getString(2);
-      will(returnValue("Kristian"));
-
-      oneOf(resultSet).getString(3);
-      will(returnValue("withdraw"));
-
-      oneOf(resultSet).getDouble(4);
-      will(returnValue(4.5));
-
-      oneOf(resultSet).next();
-      will(returnValue(false));
-
-      oneOf(resultSet).close();
-
-      oneOf(preparedStatement).close();
     }});
     List<AccountRecord> accountRecords = historyRepository.getAccountRecords("Kristian", 0, 20);
 

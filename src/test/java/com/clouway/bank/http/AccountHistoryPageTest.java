@@ -98,7 +98,7 @@ public class AccountHistoryPageTest {
 
       oneOf(template).put("next", "2");
 
-      oneOf(template).put("username", "Stanislava");
+      oneOf(template).put("userId", "Stanislava");
 
       oneOf(tableBuilder).build();
       will(returnValue("first page"));
@@ -163,7 +163,7 @@ public class AccountHistoryPageTest {
 
       oneOf(template).put("next", "2");
 
-      oneOf(template).put("username", "Stanislava");
+      oneOf(template).put("userId", "Stanislava");
 
       oneOf(tableBuilder).build();
       will(returnValue("second page"));
@@ -229,7 +229,7 @@ public class AccountHistoryPageTest {
 
       oneOf(template).put("next", "2");
 
-      oneOf(template).put("username", "Stanislava");
+      oneOf(template).put("userId", "Stanislava");
 
       oneOf(tableBuilder).build();
       will(returnValue("second page"));
