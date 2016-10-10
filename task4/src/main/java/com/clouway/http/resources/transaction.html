@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <title>CTEF Bank - transaction</title>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">CTEF Bank</a>
+                </div>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#"><span class="glyphicon glyphicon-user"></span> ${username}</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <div class="container-fluid row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <p style="background: rgb(255,170,170); text-align: center; color: rgb(255,40,40); font-size: 20px;">${warning}</p>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+    <div class="container-fluid row">
+        <div class="col-md-5"></div>
+        <div class="col-md-2">
+            <form action="/transaction" method="post">
+                <legend>Transaction:</legend>
+                Type:<br>
+                <input type="radio" name="transaction" value="deposit"> Deposit
+                <input type="radio" name="transaction" value="withdraw"> Withdraw
+                Amount:<br>
+                <input type="text" name="name" style="width: 100%; height: 30%; margin: auto;"><br>
+                Password:<br>
+                <input type="password" name="password" style="width: 100%; height: 30%; margin: auto;">
+                <br>
+                <br>
+                <input type="submit" class="btn btn-success" name="action" value="proceed" style="width: 100%; height: 20%; margin: auto;"/>
+                <br>
+                <br>
+                <button class="btn btn-danger" name="action" value="cancel" style="width: 100%; height: 20%;">Cancel</button>
+            </form>
+        </div>
+        <div class="col-md-5"></div>
+    </div>
+</body>
+</html>
