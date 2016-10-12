@@ -1,4 +1,4 @@
-package com.clouway.bankrepository.connectionprovider.core;
+package com.clouway.core;
 
 /**
  * This {@code Provider} interface provides a method that returns a value

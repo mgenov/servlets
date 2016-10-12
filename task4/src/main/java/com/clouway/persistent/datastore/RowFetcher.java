@@ -1,4 +1,4 @@
-package com.clouway.bankrepository.datastore;
+package com.clouway.persistent.datastore;
 
 import java.sql.ResultSet;
 

@@ -1,6 +1,6 @@
-package com.clouway.bankrepository.connectionprovider.adapter.jdbc;
+package com.clouway.persistent.adapter.jdbc;
 
-import com.clouway.bankrepository.connectionprovider.core.Provider;
+import com.clouway.core.Provider;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

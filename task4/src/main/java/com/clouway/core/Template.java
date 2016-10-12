@@ -1,4 +1,4 @@
-package com.clouway.http.core;
+package com.clouway.core;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

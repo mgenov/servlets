@@ -1,6 +1,6 @@
-package com.clouway.bankrepository.datastore;
+package com.clouway.persistent.datastore;
 
-import com.clouway.bankrepository.connectionprovider.core.Provider;
+import com.clouway.core.Provider;
 import com.google.common.collect.Lists;
 
 import java.sql.Connection;
