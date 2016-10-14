@@ -9,13 +9,16 @@ import javax.servlet.http.HttpServlet;
 /**
  * @author Borislav Gadjev <gadjevb@gmail.com>
  */
-public class BankServer {
+public class JettyServer {
     private final Server server;
     private final ServletContextHandler context;
 
-    public BankServer(int port, String path){
+    public JettyServer(int port){
         server = new Server(port);
         context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+    }
+
+    public void initHandler(String path){
         context.setContextPath(path);
         server.setHandler(context);
     }

@@ -20,12 +20,11 @@ public class MainPageServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         try {
             pageForUser = Files.toString(new File("src/main/java/com/clouway/http/resources/index.html"), Charsets.UTF_8);
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType("text/html");
+            response.getWriter().println(pageForUser);
         } catch (IOException e) {
-            e.printStackTrace();
+            response.sendError(404);
         }
-
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println(pageForUser);
     }
 }

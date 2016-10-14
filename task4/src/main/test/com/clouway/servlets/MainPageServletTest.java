@@ -12,7 +12,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringContains.containsString;
 
 /**
  * @author Borislav Gadjev <gadjevb@gmail.com>
@@ -24,7 +25,7 @@ public class MainPageServletTest {
 
     @Test
     public void happyPath() throws ServletException, IOException {
-        MainPageServlet recognizerServlet = new MainPageServlet();
+        MainPageServlet mainPageServlet = new MainPageServlet();
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         context.checking(new Expectations() {
@@ -36,11 +37,8 @@ public class MainPageServletTest {
             }
         });
 
-        recognizerServlet.doGet(request, response);
+        mainPageServlet.doGet(request, response);
         String page = stringWriter.toString();
-        CharSequence firstExpected = "<title>CTEF Bank</title>";
-        CharSequence secondExpected = "<p style=\"text-align: right;\">Users online: ${users}</p>";
-        assertTrue(page.contains(firstExpected));
-        assertTrue(page.contains(secondExpected));
+        assertThat(page, containsString("<title>CTEF Bank</title>"));
     }
 }

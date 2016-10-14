@@ -1,6 +1,6 @@
 package com.clouway;
 
-import com.clouway.http.server.BankServer;
+import com.clouway.http.server.JettyServer;
 import com.clouway.http.servlets.MainPageServlet;
 
 /**
@@ -8,7 +8,8 @@ import com.clouway.http.servlets.MainPageServlet;
  */
 public class App {
     public static void main(String[] args) {
-        BankServer server = new BankServer(8080,"/");
+        JettyServer server = new JettyServer(8080);
+        server.initHandler("/");
         server.addServlet(new MainPageServlet(), "/");
         server.start();
     }
