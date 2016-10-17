@@ -1,6 +1,6 @@
 package com.clouway.servlets;
 
-import com.clouway.http.servlets.MainPageServlet;
+import com.clouway.http.servlets.MainPageViewServlet;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
@@ -18,14 +18,14 @@ import static org.hamcrest.core.StringContains.containsString;
 /**
  * @author Borislav Gadjev <gadjevb@gmail.com>
  */
-public class MainPageServletTest {
+public class MainPageViewServletTest {
     public JUnit4Mockery context = new JUnit4Mockery();
     private HttpServletRequest request = context.mock(HttpServletRequest.class);
     private HttpServletResponse response = context.mock(HttpServletResponse.class);
 
     @Test
     public void happyPath() throws ServletException, IOException {
-        MainPageServlet mainPageServlet = new MainPageServlet();
+        MainPageViewServlet mainPageViewServlet = new MainPageViewServlet();
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         context.checking(new Expectations() {{
@@ -35,7 +35,7 @@ public class MainPageServletTest {
             will(returnValue(printWriter));
         }});
 
-        mainPageServlet.doGet(request, response);
+        mainPageViewServlet.doGet(request, response);
         String page = stringWriter.toString();
         assertThat(page, containsString("<title>CTEF Bank</title>"));
     }

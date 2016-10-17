@@ -42,7 +42,7 @@ public class RegisterPageServlet extends HttpServlet {
         ConnectionProvider provider = new ConnectionProvider("bank", "postgres", "123");
         DataStore dataStore = new DataStore(provider);
         customerRepository = new PersistentCustomerRepository(dataStore);
-        pageTemplate = getResource("register.html").get();
+        pageTemplate = getResource("register.html");
         template = new HtmlTemplate(pageTemplate);
     }
 
@@ -79,10 +79,10 @@ public class RegisterPageServlet extends HttpServlet {
         }
     }
 
-    private Optional<String> getResource(String page) {
-        Optional result = Optional.empty();
+    private String getResource(String page) {
+        String result = "";
         try {
-            result = Optional.of(Files.toString(new File("src/main/resources/" + page), Charsets.UTF_8));
+            result = Files.toString(new File("src/main/resources/" + page), Charsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }

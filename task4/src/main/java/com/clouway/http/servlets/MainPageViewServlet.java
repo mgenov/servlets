@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * @author Borislav Gadjev <gadjevb@gmail.com>
  */
-public class MainPageServlet extends HttpServlet {
+public class MainPageViewServlet extends HttpServlet {
     private String pageForUser;
 
     @Override

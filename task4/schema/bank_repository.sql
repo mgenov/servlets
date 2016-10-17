@@ -5,5 +5,12 @@ CREATE TABLE customer
     ID INT DEFAULT NEXTVAL('customer_id') PRIMARY KEY,
     Name VARCHAR(50) NOT NULL UNIQUE,
     Password VARCHAR(50) NOT NULL,
-    Balance MONEY NOT NULL
+    Balance DOUBLE NOT NULL
+);
+
+CREATE TABLE session
+(
+    ID VARCHAR(200) NOT NULL UNIQUE,
+    Name VARCHAR(50) REFERENCES customer(name) NOT NULL UNIQUE,
+    Expires TIMESTAMP
 );

@@ -21,7 +21,7 @@ public interface CustomerRepository {
      * Returns object of class Customer if such exist corresponding to the username search parameter
      *
      * @param username used to match the row which is going to be returned
-     * @return Customer list
+     * @return Customer object
      */
     Optional<Customer> getByName(String username);
 }
