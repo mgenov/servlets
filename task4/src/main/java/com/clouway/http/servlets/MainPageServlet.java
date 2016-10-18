@@ -19,7 +19,7 @@ public class MainPageServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         try {
-            pageForUser = Files.toString(new File("src/main/java/com/clouway/http/resources/index.html"), Charsets.UTF_8);
+            pageForUser = Files.toString(new File("index.html"), Charsets.UTF_8);
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("text/html");
             response.getWriter().println(pageForUser);

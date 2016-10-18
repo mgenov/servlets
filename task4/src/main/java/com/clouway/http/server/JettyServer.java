@@ -1,30 +1,23 @@
 package com.clouway.http.server;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-
-import javax.servlet.http.HttpServlet;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
  * @author Borislav Gadjev <gadjevb@gmail.com>
  */
 public class JettyServer {
-    private final Server server;
-    private final ServletContextHandler context;
+    private Server server;
+    private WebAppContext context = new WebAppContext();
 
-    public JettyServer(int port){
+    public void setPort(int port){
         server = new Server(port);
-        context = new ServletContextHandler(ServletContextHandler.SESSIONS);
     }
 
-    public void initHandler(String path){
+    public void initHandler(String path, String war){
         context.setContextPath(path);
+        context.setWar(war);
         server.setHandler(context);
-    }
-
-    public void addServlet(HttpServlet servlet, String url){
-        context.addServlet(new ServletHolder(servlet), url);
     }
 
     public void start(){
