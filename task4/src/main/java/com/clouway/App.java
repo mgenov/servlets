@@ -9,8 +9,7 @@ public class App {
     public static void main(String[] args) {
         JettyServer server = new JettyServer();
         server.setPort(8080);
-        server.initHandler("/main","src/main/webapp");
-
+        server.initHandler(".","src/main/webapp/WEB-INF/web.xml","/");
         server.start();
     }
 }

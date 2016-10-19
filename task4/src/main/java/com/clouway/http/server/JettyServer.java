@@ -14,20 +14,11 @@ public class JettyServer {
         server = new Server(port);
     }
 
-    public void initHandler(String path, String war) {
-//        context.setDescriptor("../webapp/WEB-INF/web.xml");
-
-        context.setResourceBase(".");
-        context.setDescriptor("src/main/webapp/WEB-INF/web.xml");
-//        context.setResourceBase("../test-jetty-webapp/src/main/webapp");
-        context.setContextPath("/");
-
-
-//        context.setContextPath("/");
-//        context.setWar(jetty_home+"/webapps/test.war");
+    public void initHandler(String resourceBase, String descriptor,String path) {
+        context.setResourceBase(resourceBase);
+        context.setDescriptor(descriptor);
+        context.setContextPath(path);
         server.setHandler(context);
-
-
     }
 
     public void start() {
