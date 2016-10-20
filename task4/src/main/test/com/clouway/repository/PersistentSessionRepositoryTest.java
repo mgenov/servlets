@@ -1,5 +1,6 @@
-package com.clouway.bankrepository;
+package com.clouway.repository;
 
+import com.clouway.bankrepository.PersistentSessionRepository;
 import com.clouway.core.Session;
 import com.clouway.persistent.adapter.jdbc.ConnectionProvider;
 import com.clouway.persistent.datastore.DataStore;

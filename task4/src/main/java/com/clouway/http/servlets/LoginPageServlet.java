@@ -80,6 +80,7 @@ public class LoginPageServlet extends HttpServlet {
                 response.addCookie(cookie);
 
                 Timestamp timestamp =new Timestamp(Calendar.getInstance().getTime().getTime());
+                timestamp.setTime(timestamp.getTime() + 300000);
                 sessionRepository.save(new Session(cookie.getValue(), username, timestamp));
 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("/personal");
