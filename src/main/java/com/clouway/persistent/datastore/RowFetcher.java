@@ -1,4 +1,4 @@
-package main.java.com.clouway.persistent.datastore;
+package com.clouway.persistent.datastore;
 
 import java.sql.ResultSet;
 

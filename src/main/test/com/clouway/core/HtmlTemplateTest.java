@@ -1,15 +1,15 @@
-package main.java.com.clouway.core;
+package com.clouway.core;
 
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-
 /**
  * @author Martin Milev <martinmariusmilev@gmail.com>
  */
 public class HtmlTemplateTest {
+
   @Test
   public void happyPath() throws Exception {
     String content = "Hello ${name}!";

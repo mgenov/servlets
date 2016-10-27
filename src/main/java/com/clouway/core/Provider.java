@@ -1,4 +1,4 @@
-package main.java.com.clouway.core;
+package com.clouway.core;
 
 /**
  * @author Martin Milev <martinmariusmilev@gmail.com>

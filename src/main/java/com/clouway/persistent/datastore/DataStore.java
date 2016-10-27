@@ -1,7 +1,7 @@
-package main.java.com.clouway.persistent.datastore;
+package com.clouway.persistent.datastore;
 
+import com.clouway.core.Provider;
 import com.google.common.collect.Lists;
-import main.java.com.clouway.core.Provider;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,10 +23,9 @@ public class DataStore {
     Connection connection = provider.get();
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       fillStatement(statement, objects);
-
       statement.execute();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new IllegalStateException("Connection to the database wasn't established");
     } finally {
       close(connection);
     }
@@ -42,7 +41,7 @@ public class DataStore {
         list.add(row);
       }
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new IllegalStateException("Connection to the database wasn't established");
     } finally {
       close(connection);
     }

@@ -1,4 +1,4 @@
-package main.java.com.clouway.core;
+package com.clouway.core;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -6,7 +6,8 @@ import java.util.Map;
 /**
  * @author Martin Milev <martinmariusmilev@gmail.com>
  */
-public class HtmlTemplate {
+
+public class HtmlTemplate implements Template{
   private final Map<String, String> placeHolderToValue = new LinkedHashMap<String, String>();
   private final String templateValue;
 

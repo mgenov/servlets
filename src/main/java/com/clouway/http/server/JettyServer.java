@@ -1,33 +1,30 @@
-package main.java.com.clouway.http.server;
-
+package com.clouway.http.server;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-
-import javax.servlet.http.HttpServlet;
-import java.util.Map;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
  * @author Martin Milev <martinmariusmilev@gmail.com>
  */
 public class JettyServer {
-  private final Map<String, HttpServlet> servlets;
   private final int port;
 
-  public JettyServer(int port, Map<String, HttpServlet> servlets) {
-    this.servlets = servlets;
+  private WebAppContext context = new WebAppContext();
+
+  public JettyServer(int port) {
     this.port = port;
   }
 
   public void start() {
     Server server = new Server(port);
-    ServletHandler handler = new ServletHandler();
-    server.setHandler(handler);
+
+    context.setResourceBase(".");
+    context.setDescriptor("src/main/webapp/WEB-INF/web.xml");
+    context.setResourceBase("../test-jetty-webapp/src/main/webapp");
+    context.setContextPath("/");
+
+    server.setHandler(context);
     try {
-      for (String key : servlets.keySet()) {
-        handler.addServletWithMapping(new ServletHolder(servlets.get(key)), key);
-      }
       server.start();
       server.join();
     } catch (Exception e) {
