@@ -10,9 +10,17 @@
         <servlet-name>main</servlet-name>
         <servlet-class>com.clouway.http.servlets.MainPageServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>register</servlet-name>
+        <servlet-class>com.clouway.http.servlets.RegisterPageServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>main</servlet-name>
-        <url-pattern>/main</url-pattern>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>register</servlet-name>
+        <url-pattern>/register</url-pattern>
     </servlet-mapping>
 </web-app>

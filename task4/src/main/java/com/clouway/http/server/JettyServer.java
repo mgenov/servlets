@@ -21,7 +21,7 @@ public class JettyServer {
         server.setHandler(context);
     }
 
-    public void start() {
+    public void start(){
         try {
             server.start();
             server.join();
@@ -30,7 +30,7 @@ public class JettyServer {
         }
     }
 
-    public void stop() {
+    public void stop(){
         try {
             server.stop();
         } catch (Exception e) {

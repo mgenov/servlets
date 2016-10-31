@@ -1,30 +1,25 @@
 package com.clouway.core;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
+ * This {@code Template} interface provides the methods that return a
+ * String with replaced values
+ *
  * @author Borislav Gadjev <gadjevb@gmail.com>
  */
-public class Template {
-    private final Map<String, String> placeHolderToValue = new LinkedHashMap<>();
-    private final String templateValue;
+public interface Template {
 
-    public Template(String templateValue) {
-        this.templateValue = templateValue;
-    }
+    /**
+     * Puts the placeHolder and the value in a map
+     *
+     * @param placeHolder the key in the map, used to match the value to be replaced
+     * @param value the value in the map, replaces the matched value
+     */
+    public void put(String placeHolder, String value);
 
-
-    public void put(String placeHolder, String value) {
-        placeHolderToValue.put(placeHolder, value);
-    }
-
-    public String evaluate() {
-        String evaluationResult = templateValue;
-        for (String placeHolder : placeHolderToValue.keySet()) {
-            evaluationResult = evaluationResult.replaceAll("\\$\\{" + placeHolder + "\\}", placeHolderToValue.get(placeHolder));
-        }
-
-        return evaluationResult;
-    }
+    /**
+     * Replaces the matched values
+     *
+     * @return the evaluated String
+     */
+    public String evaluate();
 }

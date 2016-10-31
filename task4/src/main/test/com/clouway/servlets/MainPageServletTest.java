@@ -28,14 +28,12 @@ public class MainPageServletTest {
         MainPageServlet mainPageServlet = new MainPageServlet();
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
-        context.checking(new Expectations() {
-            {
-                oneOf(response).setContentType("text/html");
-                oneOf(response).setStatus(200);
-                oneOf(response).getWriter();
-                will(returnValue(printWriter));
-            }
-        });
+        context.checking(new Expectations() {{
+            oneOf(response).setContentType("text/html");
+            oneOf(response).setStatus(200);
+            oneOf(response).getWriter();
+            will(returnValue(printWriter));
+        }});
 
         mainPageServlet.doGet(request, response);
         String page = stringWriter.toString();
