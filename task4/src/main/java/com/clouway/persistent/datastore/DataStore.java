@@ -19,7 +19,7 @@ public class DataStore {
         this.provider = provider;
     }
 
-    public void update(String query, Object... objects) {
+    public void update(String query, Object... objects) throws SQLException {
         Connection connection = provider.get();
         try {
             PreparedStatement statement = connection.prepareStatement(query);
@@ -27,23 +27,42 @@ public class DataStore {
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally {
+            connection.close();
         }
     }
 
-    public <T> List<T> fetchRows(String query, RowFetcher<T> rowFetcher) {
+    public ResultSet execute(String query, Object... objects) throws SQLException {
+        Connection connection = provider.get();
+        ResultSet set = null;
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            fillStatement(statement, objects);
+            set = statement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            connection.close();
+        }
+        return set;
+    }
+
+    public <T> List<T> fetchRows(String query, RowFetcher<T> rowFetcher) throws SQLException {
         List<T> list = Lists.newArrayList();
         Connection connection = provider.get();
         try {
             PreparedStatement statement = connection.prepareStatement(query);
-            ResultSet resultSet = statement.executeQuery(query);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 T row = rowFetcher.fetchRow(resultSet);
                 list.add(row);
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally {
+            connection.close();
         }
-        return null;
+        return list;
     }
 
     private void fillStatement(PreparedStatement statement, Object[] objects) throws SQLException {

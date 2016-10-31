@@ -24,7 +24,7 @@ public class MainPageServlet extends HttpServlet {
             response.setContentType("text/html");
             response.getWriter().println(pageForUser);
         } catch (IOException e) {
-            response.sendError(404);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 }
