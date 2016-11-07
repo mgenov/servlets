@@ -66,7 +66,7 @@ public class IndexPageServletTest {
     context.checking(new Expectations() {{
       oneOf(repo).getByName("John");
       will(returnValue(Optional.of(new Account("John","pwd",0))));
-      oneOf(template).put("error", "<p style=\"color:red;\">Username is taken.</p>");
+      oneOf(template).put("error", "Username is taken");
       oneOf(template).evaluate();
       will(returnValue(expected));
     }});
