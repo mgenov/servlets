@@ -7,15 +7,13 @@ import com.clouway.core.Template;
 import com.clouway.persistent.adapter.jdbc.ConnectionProvider;
 import com.clouway.persistent.adapter.jdbc.PersistentAccountRepository;
 import com.clouway.persistent.datastore.DataStore;
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
+import com.google.common.io.ByteStreams;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -31,8 +29,9 @@ public class IndexPageServlet extends HttpServlet {
     ConnectionProvider provider = new ConnectionProvider();
     DataStore dataStore = new DataStore(provider);
     repository = new PersistentAccountRepository(dataStore);
+
     try {
-      String page = Files.toString(new File("src/main/resources/index.html"), Charsets.UTF_8);
+      String page = new String(ByteStreams.toByteArray(IndexPageServlet.class.getResourceAsStream("index.html")));
       template = new HtmlTemplate(page);
       template.put("error", "");
     } catch (IOException e) {
@@ -41,6 +40,7 @@ public class IndexPageServlet extends HttpServlet {
   }
 
   @Ignore
+  @SuppressWarnings("unused")
   public IndexPageServlet() {
   }
 
