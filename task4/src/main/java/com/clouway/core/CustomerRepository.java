@@ -18,6 +18,14 @@ public interface CustomerRepository {
     void register(Customer customer);
 
     /**
+     * Updates an existing record with the new balance
+     *
+     * @param name    used to match the row which is going to be updated
+     * @param balance used to replace the old value of balance
+     */
+    void updateBalance(String name, Integer balance);
+
+    /**
      * Returns object of class Customer if such exist corresponding to the username search parameter
      *
      * @param username used to match the row which is going to be returned

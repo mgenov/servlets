@@ -44,6 +44,18 @@ public class PersistentCustomerRepositoryTest {
     }
 
     @Test
+    public void updateBalance() {
+        Customer customer = new Customer(1, "Borislav", "mypass", 0);
+        Customer updated = new Customer(1, "Borislav", "mypass", 500);
+
+        customerRepository.register(customer);
+        customerRepository.updateBalance(updated.name, updated.balance);
+        Customer actual = customerRepository.getByName("Borislav").get();
+
+        assertTrue(actual.equals(updated));
+    }
+
+    @Test
     public void getUnknown() {
         Optional<Customer> customer = customerRepository.getByName("Borislav");
 
