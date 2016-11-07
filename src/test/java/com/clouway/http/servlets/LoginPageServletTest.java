@@ -4,6 +4,7 @@ import com.clouway.FakeHttpServletRequest;
 import com.clouway.FakeHttpServletResponse;
 import com.clouway.core.Account;
 import com.clouway.core.AccountRepository;
+import com.clouway.core.ServletResponseWriter;
 import com.clouway.core.Template;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -34,10 +35,11 @@ public class LoginPageServletTest {
 
   private AccountRepository repo = context.mock(AccountRepository.class);
   private Template template = context.mock(Template.class);
+  private ServletResponseWriter servletResponseWriter = context.mock(ServletResponseWriter.class);
 
   @Before
   public void setUp() throws Exception {
-    servlet = new LoginPageServlet(repo, template);
+    servlet = new LoginPageServlet(repo, template, servletResponseWriter);
     stream = new ByteArrayOutputStream();
     writer = new PrintWriter(stream);
   }
@@ -49,12 +51,11 @@ public class LoginPageServletTest {
     context.checking(new Expectations() {{
       oneOf(template).evaluate();
       will(returnValue("page"));
+
+      oneOf(servletResponseWriter).writeResponse(response, "page");
     }});
 
     servlet.doGet(request, response);
-    String actual = stream.toString();
-    assertThat(response.getStatus(), is(200));
-    assertThat(actual, is("page"));
   }
 
   @Test
@@ -85,12 +86,11 @@ public class LoginPageServletTest {
       oneOf(template).put("error", "Wrong username");
       oneOf(template).evaluate();
       will(returnValue("Wrong username"));
+
+      oneOf(servletResponseWriter).writeResponse(response, "Wrong username");
     }});
 
     servlet.doPost(request, response);
-    String actual = stream.toString();
-    assertThat(response.getStatus(), is(400));
-    assertThat(actual, is("Wrong username"));
   }
 
   @Test
@@ -105,11 +105,10 @@ public class LoginPageServletTest {
       oneOf(template).put("error", "Wrong password");
       oneOf(template).evaluate();
       will(returnValue("Wrong password"));
+
+      oneOf(servletResponseWriter).writeResponse(response, "Wrong password");
     }});
 
     servlet.doPost(request, response);
-    String actual = stream.toString();
-    assertThat(response.getStatus(), is(400));
-    assertThat(actual, is("Wrong password"));
   }
 }
