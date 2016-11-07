@@ -24,18 +24,10 @@ public class LoginPageServlet extends HttpServlet {
   private AccountRepository repository;
   private ServletPageRenderer servletResponseWriter;
 
-  @Override
-  public void init() throws ServletException {
-    ConnectionProvider provider = new ConnectionProvider();
-    DataStore dataStore = new DataStore(provider);
-    repository = new PersistentAccountRepository(dataStore);
-
-    servletResponseWriter = new HtmlServletPageRenderer();
-  }
-
   @Ignore
   @SuppressWarnings("unused")
   public LoginPageServlet() {
+    this(new PersistentAccountRepository(new DataStore(new ConnectionProvider())),new HtmlServletPageRenderer());
   }
 
   @VisibleForTesting

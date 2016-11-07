@@ -6,6 +6,7 @@ import com.clouway.core.ServletPageRenderer;
 import com.clouway.persistent.adapter.jdbc.ConnectionProvider;
 import com.clouway.persistent.adapter.jdbc.PersistentAccountRepository;
 import com.clouway.persistent.datastore.DataStore;
+import com.google.common.annotations.VisibleForTesting;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import javax.servlet.ServletException;
@@ -22,19 +23,13 @@ public class IndexPageServlet extends HttpServlet {
   private AccountRepository repository;
   private ServletPageRenderer servletResponseWriter;
 
-  @Override
-  public void init() throws ServletException {
-    ConnectionProvider provider = new ConnectionProvider();
-    DataStore dataStore = new DataStore(provider);
-    repository = new PersistentAccountRepository(dataStore);
-    servletResponseWriter = new HtmlServletPageRenderer();
-  }
-
   @Ignore
   @SuppressWarnings("unused")
   public IndexPageServlet() {
+    this(new PersistentAccountRepository(new DataStore(new ConnectionProvider())), new HtmlServletPageRenderer());
   }
 
+  @VisibleForTesting
   public IndexPageServlet(AccountRepository repository, ServletPageRenderer servletResponseWriter) {
     this.repository = repository;
     this.servletResponseWriter = servletResponseWriter;
