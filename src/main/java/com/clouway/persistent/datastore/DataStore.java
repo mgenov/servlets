@@ -25,7 +25,7 @@ public class DataStore {
       fillStatement(statement, objects);
       statement.execute();
     } catch (SQLException e) {
-      throw new IllegalStateException("Connection to the database wasn't established");
+      throw new IllegalStateException("Connection to the database wasn't established", e);
     } finally {
       close(connection);
     }

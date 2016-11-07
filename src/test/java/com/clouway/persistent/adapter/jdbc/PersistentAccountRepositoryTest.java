@@ -19,7 +19,7 @@ public class PersistentAccountRepositoryTest {
 
   @Before
   public void setUp() throws Exception {
-    ConnectionProvider provider = new ConnectionProvider("jdbc:mysql://localhost/myBank", "root", "123123");
+    ConnectionProvider provider = new ConnectionProvider();
     DataStore dataStore = new DataStore(provider);
     repo = new PersistentAccountRepository(dataStore);
     dataStore.update("truncate accounts");

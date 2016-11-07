@@ -29,7 +29,7 @@ public class LoginPageServlet extends HttpServlet {
 
   @Override
   public void init() throws ServletException {
-    ConnectionProvider provider = new ConnectionProvider("jdbc:mysql://localhost/myBank", "root", "123123");
+    ConnectionProvider provider = new ConnectionProvider();
     DataStore dataStore = new DataStore(provider);
     repository = new PersistentAccountRepository(dataStore);
     try {
