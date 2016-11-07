@@ -1,5 +1,6 @@
 package com.clouway.persistent.adapter.jdbc;
 
+import com.clouway.persistent.DatastoreCleaner;
 import com.clouway.core.Account;
 import com.clouway.persistent.datastore.DataStore;
 import org.junit.Before;
@@ -19,10 +20,9 @@ public class PersistentAccountRepositoryTest {
 
   @Before
   public void setUp() throws Exception {
-    ConnectionProvider provider = new ConnectionProvider();
-    DataStore dataStore = new DataStore(provider);
-    repo = new PersistentAccountRepository(dataStore);
-    dataStore.update("truncate accounts");
+    repo = new PersistentAccountRepository(new DataStore(new ConnectionProvider()));
+    DatastoreCleaner datastoreCleaner = new DatastoreCleaner("accounts");
+    datastoreCleaner.perform();
   }
 
   @Test
