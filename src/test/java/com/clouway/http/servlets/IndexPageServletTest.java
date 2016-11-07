@@ -4,8 +4,7 @@ import com.clouway.FakeHttpServletRequest;
 import com.clouway.FakeHttpServletResponse;
 import com.clouway.core.Account;
 import com.clouway.core.AccountRepository;
-import com.clouway.core.ServletResponseWriter;
-import com.clouway.core.Template;
+import com.clouway.core.ServletPageRenderer;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Before;
@@ -14,6 +13,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -34,12 +34,11 @@ public class IndexPageServletTest {
   private PrintWriter writer;
 
   private AccountRepository repo = context.mock(AccountRepository.class);
-  private Template template = context.mock(Template.class);
-  private ServletResponseWriter servletResponseWriter = context.mock(ServletResponseWriter.class);
+  private ServletPageRenderer servletResponseWriter = context.mock(ServletPageRenderer.class);
 
   @Before
   public void setUp() throws Exception {
-    servlet = new IndexPageServlet(repo, template, servletResponseWriter);
+    servlet = new IndexPageServlet(repo, servletResponseWriter);
     stream = new ByteArrayOutputStream();
     writer = new PrintWriter(stream);
   }
@@ -49,10 +48,7 @@ public class IndexPageServletTest {
     response.setWriter(writer);
 
     context.checking(new Expectations() {{
-      oneOf(template).evaluate();
-      will(returnValue("page"));
-
-      oneOf(servletResponseWriter).writeResponse(response, "page");
+      oneOf(servletResponseWriter).renderPage("index.html", Collections.emptyMap(), response);
     }});
 
     servlet.doGet(request, response);
@@ -60,18 +56,14 @@ public class IndexPageServletTest {
 
   @Test
   public void takenUsername() throws Exception {
-    String errorResponse = "<p style=\"color:red;\">Username is taken.</p>";
     request.setParameter("name", "John");
     response.setWriter(writer);
 
     context.checking(new Expectations() {{
       oneOf(repo).getByName("John");
-      will(returnValue(Optional.of(new Account("John","pwd",0))));
-      oneOf(template).put("error", "Username is taken");
-      oneOf(template).evaluate();
-      will(returnValue(errorResponse));
+      will(returnValue(Optional.of(new Account("John", "pwd", 0))));
 
-      oneOf(servletResponseWriter).writeResponse(response, errorResponse);
+      oneOf(servletResponseWriter).renderPage("index.html", Collections.singletonMap("error", "Username is taken"), response);
     }});
 
     servlet.doPost(request, response);
