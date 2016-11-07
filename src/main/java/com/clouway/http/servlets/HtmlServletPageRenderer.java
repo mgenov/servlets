@@ -18,18 +18,21 @@ class HtmlServletPageRenderer implements ServletPageRenderer {
   @Override
   public void renderPage(String pageName, Map<String, Object> params, HttpServletResponse response) throws IOException {
     try {
-      String page = new String(ByteStreams.toByteArray(HtmlServletPageRenderer.class.getResourceAsStream(pageName)));
-      HtmlTemplate template = new HtmlTemplate(page);
+      HtmlTemplate template = new HtmlTemplate(loadTemplate(pageName));
       for (String each : params.keySet()) {
         template.put(each, params.get(each).toString());
       }
-      writeResponse(response, template.evaluate());
+      renderTemplate(response, template.evaluate());
     } catch (IOException e) {
       throw new IllegalStateException("Could not write response to the outputstream of servlet", e);
     }
   }
 
-  private void writeResponse(HttpServletResponse response, String htmlContent) throws IOException {
+  private String loadTemplate(String pageName) throws IOException {
+    return new String(ByteStreams.toByteArray(HtmlServletPageRenderer.class.getResourceAsStream(pageName)));
+  }
+
+  private void renderTemplate(HttpServletResponse response, String htmlContent) throws IOException {
     response.setContentType("text/html");
     response.setStatus(HttpURLConnection.HTTP_OK);
     PrintWriter writer = response.getWriter();
