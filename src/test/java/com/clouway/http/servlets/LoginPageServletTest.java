@@ -4,16 +4,18 @@ import com.clouway.FakeHttpServletRequest;
 import com.clouway.FakeHttpServletResponse;
 import com.clouway.core.Account;
 import com.clouway.core.AccountRepository;
-import com.clouway.core.ServletResponseWriter;
-import com.clouway.core.Template;
+import com.clouway.core.ServletPageRenderer;
+import com.google.common.collect.ImmutableMap;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -27,32 +29,18 @@ public class LoginPageServletTest {
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
-  private FakeHttpServletRequest request = new FakeHttpServletRequest();
-  private FakeHttpServletResponse response = new FakeHttpServletResponse();
-  private ByteArrayOutputStream stream;
-  private LoginPageServlet servlet;
-  private PrintWriter writer;
-
   private AccountRepository repo = context.mock(AccountRepository.class);
-  private Template template = context.mock(Template.class);
-  private ServletResponseWriter servletResponseWriter = context.mock(ServletResponseWriter.class);
+  private ServletPageRenderer servletResponseWriter = context.mock(ServletPageRenderer.class);
 
-  @Before
-  public void setUp() throws Exception {
-    servlet = new LoginPageServlet(repo, template, servletResponseWriter);
-    stream = new ByteArrayOutputStream();
-    writer = new PrintWriter(stream);
-  }
+  private LoginPageServlet servlet = new LoginPageServlet(repo, servletResponseWriter);
 
   @Test
   public void happyPath() throws Exception {
-    response.setWriter(writer);
+    FakeHttpServletRequest request = createRequest(Collections.emptyMap());
+    FakeHttpServletResponse response = createResponse();
 
     context.checking(new Expectations() {{
-      oneOf(template).evaluate();
-      will(returnValue("page"));
-
-      oneOf(servletResponseWriter).writeResponse(response, "page");
+      oneOf(servletResponseWriter).renderPage("login.html", Collections.emptyMap(), response);
     }});
 
     servlet.doGet(request, response);
@@ -60,9 +48,13 @@ public class LoginPageServletTest {
 
   @Test
   public void login() throws Exception {
-    request.setParameter("name", "John");
-    request.setParameter("password", "pwd");
-    response.setWriter(writer);
+    FakeHttpServletRequest request = createRequest(
+            ImmutableMap.of(
+                    "name", "John",
+                    "password", "pwd"
+            )
+    );
+    FakeHttpServletResponse response = createResponse();
 
     context.checking(new Expectations() {{
       oneOf(repo).getByName("John");
@@ -76,18 +68,19 @@ public class LoginPageServletTest {
 
   @Test
   public void wrongUsername() throws Exception {
-    request.setParameter("name", "John");
-    request.setParameter("password", "pwd");
-    response.setWriter(writer);
+    FakeHttpServletRequest request = createRequest(
+            ImmutableMap.of(
+                    "name", "John",
+                    "password", "pwd"
+            )
+    );
+    final HttpServletResponse response = createResponse();
 
     context.checking(new Expectations() {{
       oneOf(repo).getByName("John");
       will(returnValue(Optional.empty()));
-      oneOf(template).put("error", "Wrong username");
-      oneOf(template).evaluate();
-      will(returnValue("Wrong username"));
 
-      oneOf(servletResponseWriter).writeResponse(response, "Wrong username");
+      oneOf(servletResponseWriter).renderPage("login.html", Collections.singletonMap("error", "Wrong username"), response);
     }});
 
     servlet.doPost(request, response);
@@ -95,20 +88,35 @@ public class LoginPageServletTest {
 
   @Test
   public void wrongPassword() throws Exception {
-    request.setParameter("name", "John");
-    request.setParameter("password", "pwd");
-    response.setWriter(writer);
+    FakeHttpServletRequest request = createRequest(
+            ImmutableMap.of(
+                    "name", "John",
+                    "password", "pwd"
+            )
+    );
+    HttpServletResponse response = createResponse();
 
     context.checking(new Expectations() {{
       oneOf(repo).getByName("John");
       will(returnValue(Optional.of(new Account("John", "wrong", 0))));
-      oneOf(template).put("error", "Wrong password");
-      oneOf(template).evaluate();
-      will(returnValue("Wrong password"));
 
-      oneOf(servletResponseWriter).writeResponse(response, "Wrong password");
+      oneOf(servletResponseWriter).renderPage("login.html", Collections.singletonMap("error", "Wrong password"), response);
     }});
 
     servlet.doPost(request, response);
+  }
+
+  private FakeHttpServletRequest createRequest(Map<String, String> params) {
+    FakeHttpServletRequest request = new FakeHttpServletRequest();
+    for (String each : params.keySet()) {
+      request.setParameter(each, params.get(each));
+    }
+    return request;
+  }
+
+  private FakeHttpServletResponse createResponse() {
+    FakeHttpServletResponse response = new FakeHttpServletResponse();
+    response.setWriter(new PrintWriter(new ByteArrayOutputStream()));
+    return response;
   }
 }

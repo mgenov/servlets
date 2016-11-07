@@ -2,13 +2,11 @@ package com.clouway.http.servlets;
 
 import com.clouway.core.Account;
 import com.clouway.core.AccountRepository;
-import com.clouway.core.HtmlTemplate;
-import com.clouway.core.ServletResponseWriter;
-import com.clouway.core.Template;
+import com.clouway.core.ServletPageRenderer;
 import com.clouway.persistent.adapter.jdbc.ConnectionProvider;
 import com.clouway.persistent.adapter.jdbc.PersistentAccountRepository;
 import com.clouway.persistent.datastore.DataStore;
-import com.google.common.io.ByteStreams;
+import com.google.common.annotations.VisibleForTesting;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import javax.servlet.ServletException;
@@ -16,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Optional;
 
 /**
@@ -23,8 +22,7 @@ import java.util.Optional;
  */
 public class LoginPageServlet extends HttpServlet {
   private AccountRepository repository;
-  private Template template;
-  private ServletResponseWriter servletResponseWriter;
+  private ServletPageRenderer servletResponseWriter;
 
   @Override
   public void init() throws ServletException {
@@ -32,14 +30,7 @@ public class LoginPageServlet extends HttpServlet {
     DataStore dataStore = new DataStore(provider);
     repository = new PersistentAccountRepository(dataStore);
 
-    try {
-      String page = new String(ByteStreams.toByteArray(IndexPageServlet.class.getResourceAsStream("login.html")));
-      template = new HtmlTemplate(page);
-      template.put("error", "");
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    servletResponseWriter = new HtmlServletResponseWriter();
+    servletResponseWriter = new HtmlServletPageRenderer();
   }
 
   @Ignore
@@ -47,15 +38,15 @@ public class LoginPageServlet extends HttpServlet {
   public LoginPageServlet() {
   }
 
-  public LoginPageServlet(AccountRepository repository, Template template, ServletResponseWriter servletResponseWriter) {
+  @VisibleForTesting
+  public LoginPageServlet(AccountRepository repository, ServletPageRenderer servletResponseWriter) {
     this.repository = repository;
-    this.template = template;
     this.servletResponseWriter = servletResponseWriter;
   }
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    servletResponseWriter.writeResponse(resp, template.evaluate());
+    servletResponseWriter.renderPage("login.html", Collections.emptyMap(), resp);
   }
 
   @Override
@@ -65,8 +56,7 @@ public class LoginPageServlet extends HttpServlet {
     Optional<Account> possibleAccount = repository.getByName(name);
 
     if (!possibleAccount.isPresent()) {
-      template.put("error", "Wrong username");
-      servletResponseWriter.writeResponse(resp, template.evaluate());
+      servletResponseWriter.renderPage("login.html", Collections.singletonMap("error", "Wrong username"), resp);
       return;
     }
 
@@ -74,12 +64,9 @@ public class LoginPageServlet extends HttpServlet {
 
     if (pswd.equals(account.password)) {
       resp.sendRedirect("/account");
-      return;
     } else {
-      template.put("error", "Wrong password");
+      servletResponseWriter.renderPage("login.html", Collections.singletonMap("error", "Wrong password"), resp);
     }
-
-    servletResponseWriter.writeResponse(resp, template.evaluate());
   }
 
 }
