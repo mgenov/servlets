@@ -4,6 +4,7 @@ import com.clouway.FakeHttpServletRequest;
 import com.clouway.FakeHttpServletResponse;
 import com.clouway.core.Account;
 import com.clouway.core.AccountRepository;
+import com.clouway.core.ServletResponseWriter;
 import com.clouway.core.Template;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -34,10 +35,11 @@ public class IndexPageServletTest {
 
   private AccountRepository repo = context.mock(AccountRepository.class);
   private Template template = context.mock(Template.class);
+  private ServletResponseWriter servletResponseWriter = context.mock(ServletResponseWriter.class);
 
   @Before
   public void setUp() throws Exception {
-    servlet = new IndexPageServlet(repo, template);
+    servlet = new IndexPageServlet(repo, template, servletResponseWriter);
     stream = new ByteArrayOutputStream();
     writer = new PrintWriter(stream);
   }
@@ -49,17 +51,16 @@ public class IndexPageServletTest {
     context.checking(new Expectations() {{
       oneOf(template).evaluate();
       will(returnValue("page"));
+
+      oneOf(servletResponseWriter).writeResponse(response, "page");
     }});
 
     servlet.doGet(request, response);
-    String actual = stream.toString();
-    assertThat(response.getStatus(), is(200));
-    assertThat(actual, is("page"));
   }
 
   @Test
   public void takenUsername() throws Exception {
-    String expected = "<p style=\"color:red;\">Username is taken.</p>";
+    String errorResponse = "<p style=\"color:red;\">Username is taken.</p>";
     request.setParameter("name", "John");
     response.setWriter(writer);
 
@@ -68,13 +69,12 @@ public class IndexPageServletTest {
       will(returnValue(Optional.of(new Account("John","pwd",0))));
       oneOf(template).put("error", "Username is taken");
       oneOf(template).evaluate();
-      will(returnValue(expected));
+      will(returnValue(errorResponse));
+
+      oneOf(servletResponseWriter).writeResponse(response, errorResponse);
     }});
 
     servlet.doPost(request, response);
-    String actual = stream.toString();
-    assertThat(response.getStatus(), is(400));
-    assertThat(actual, is(expected));
   }
 
   @Test

@@ -3,6 +3,7 @@ package com.clouway.http.servlets;
 import com.clouway.core.Account;
 import com.clouway.core.AccountRepository;
 import com.clouway.core.HtmlTemplate;
+import com.clouway.core.ServletResponseWriter;
 import com.clouway.core.Template;
 import com.clouway.persistent.adapter.jdbc.ConnectionProvider;
 import com.clouway.persistent.adapter.jdbc.PersistentAccountRepository;
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Optional;
 
 /**
@@ -24,6 +24,7 @@ import java.util.Optional;
 public class LoginPageServlet extends HttpServlet {
   private AccountRepository repository;
   private Template template;
+  private ServletResponseWriter servletResponseWriter;
 
   @Override
   public void init() throws ServletException {
@@ -38,6 +39,7 @@ public class LoginPageServlet extends HttpServlet {
     } catch (IOException e) {
       e.printStackTrace();
     }
+    servletResponseWriter = new HtmlServletResponseWriter();
   }
 
   @Ignore
@@ -45,41 +47,39 @@ public class LoginPageServlet extends HttpServlet {
   public LoginPageServlet() {
   }
 
-  public LoginPageServlet(AccountRepository repository, Template template) {
+  public LoginPageServlet(AccountRepository repository, Template template, ServletResponseWriter servletResponseWriter) {
     this.repository = repository;
     this.template = template;
+    this.servletResponseWriter = servletResponseWriter;
   }
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    getInnerHtml(resp, HttpServletResponse.SC_OK, template.evaluate());
+    servletResponseWriter.writeResponse(resp, template.evaluate());
   }
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String name = req.getParameter("name");
     String pswd = req.getParameter("password");
-    Optional<Account> optional = repository.getByName(name);
+    Optional<Account> possibleAccount = repository.getByName(name);
 
-    if (optional.isPresent()) {
-      Account account = optional.get();
-      if (pswd.equals(account.password)) {
-        resp.sendRedirect("/account");
-      } else {
-        template.put("error", "Wrong password");
-        getInnerHtml(resp, HttpServletResponse.SC_BAD_REQUEST, template.evaluate());
-      }
-    } else {
+    if (!possibleAccount.isPresent()) {
       template.put("error", "Wrong username");
-      getInnerHtml(resp, HttpServletResponse.SC_BAD_REQUEST, template.evaluate());
+      servletResponseWriter.writeResponse(resp, template.evaluate());
+      return;
     }
+
+    Account account = possibleAccount.get();
+
+    if (pswd.equals(account.password)) {
+      resp.sendRedirect("/account");
+      return;
+    } else {
+      template.put("error", "Wrong password");
+    }
+
+    servletResponseWriter.writeResponse(resp, template.evaluate());
   }
 
-  private void getInnerHtml(HttpServletResponse resp, Integer statusCode, String html) throws IOException {
-    resp.setContentType("text/html");
-    resp.setStatus(statusCode);
-    PrintWriter writer = resp.getWriter();
-    writer.print(html);
-    writer.flush();
-  }
 }
