@@ -14,6 +14,7 @@ public class App {
       System.setProperty("BANK_DB_HOST", "localhost");
       System.setProperty("BANK_DB_USER", "root");
       System.setProperty("BANK_DB_PASS", "123123");
+      System.setProperty("BANK_DB_NAME", "myBank");
     }
     JettyServer server = new JettyServer(8080);
     server.start();
