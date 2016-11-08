@@ -19,25 +19,25 @@ import java.util.Collections;
 /**
  * @author Martin Milev <martinmariusmilev@gmail.com>
  */
-public class IndexPageServlet extends HttpServlet {
+public class RegistrationPageServlet extends HttpServlet {
   private AccountRepository repository;
   private ServletPageRenderer servletResponseWriter;
 
   @Ignore
   @SuppressWarnings("unused")
-  public IndexPageServlet() {
+  public RegistrationPageServlet() {
     this(new PersistentAccountRepository(new DataStore(new ConnectionProvider())), new HtmlServletPageRenderer());
   }
 
   @VisibleForTesting
-  public IndexPageServlet(AccountRepository repository, ServletPageRenderer servletResponseWriter) {
+  public RegistrationPageServlet(AccountRepository repository, ServletPageRenderer servletResponseWriter) {
     this.repository = repository;
     this.servletResponseWriter = servletResponseWriter;
   }
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    servletResponseWriter.renderPage("index.html", Collections.emptyMap(), resp);
+    servletResponseWriter.renderPage("register.html", Collections.singletonMap("error", ""), resp);
   }
 
   @Override
@@ -52,7 +52,7 @@ public class IndexPageServlet extends HttpServlet {
 
       resp.sendRedirect("/login");
     } else {
-      servletResponseWriter.renderPage("index.html", Collections.singletonMap("error", "Username is taken"), resp);
+      servletResponseWriter.renderPage("register.html", Collections.singletonMap("error", "Username is taken"), resp);
     }
   }
 }

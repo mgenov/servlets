@@ -38,7 +38,7 @@ public class LoginPageServlet extends HttpServlet {
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    servletResponseWriter.renderPage("login.html", Collections.emptyMap(), resp);
+    servletResponseWriter.renderPage("login.html", Collections.singletonMap("error", ""), resp);
   }
 
   @Override
