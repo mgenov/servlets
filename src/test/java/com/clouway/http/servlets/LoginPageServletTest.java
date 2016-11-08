@@ -40,7 +40,7 @@ public class LoginPageServletTest {
     FakeHttpServletResponse response = createResponse();
 
     context.checking(new Expectations() {{
-      oneOf(servletResponseWriter).renderPage("login.html", Collections.emptyMap(), response);
+      oneOf(servletResponseWriter).renderPage("login.html", Collections.singletonMap("error", ""), response);
     }});
 
     servlet.doGet(request, response);

@@ -22,7 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * @author Martin Milev <martinmariusmilev@gmail.com>
  */
-public class IndexPageServletTest {
+public class RegistrationPageServletTest {
 
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
@@ -30,7 +30,7 @@ public class IndexPageServletTest {
   private FakeHttpServletRequest request = new FakeHttpServletRequest();
   private FakeHttpServletResponse response = new FakeHttpServletResponse();
   private ByteArrayOutputStream stream;
-  private IndexPageServlet servlet;
+  private RegistrationPageServlet servlet;
   private PrintWriter writer;
 
   private AccountRepository repo = context.mock(AccountRepository.class);
@@ -38,7 +38,7 @@ public class IndexPageServletTest {
 
   @Before
   public void setUp() throws Exception {
-    servlet = new IndexPageServlet(repo, servletResponseWriter);
+    servlet = new RegistrationPageServlet(repo, servletResponseWriter);
     stream = new ByteArrayOutputStream();
     writer = new PrintWriter(stream);
   }
@@ -48,7 +48,7 @@ public class IndexPageServletTest {
     response.setWriter(writer);
 
     context.checking(new Expectations() {{
-      oneOf(servletResponseWriter).renderPage("index.html", Collections.emptyMap(), response);
+      oneOf(servletResponseWriter).renderPage("register.html", Collections.singletonMap("error", ""), response);
     }});
 
     servlet.doGet(request, response);
@@ -63,7 +63,7 @@ public class IndexPageServletTest {
       oneOf(repo).getByName("John");
       will(returnValue(Optional.of(new Account("John", "pwd", 0))));
 
-      oneOf(servletResponseWriter).renderPage("index.html", Collections.singletonMap("error", "Username is taken"), response);
+      oneOf(servletResponseWriter).renderPage("register.html", Collections.singletonMap("error", "Username is taken"), response);
     }});
 
     servlet.doPost(request, response);
