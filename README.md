@@ -1,4 +1,4 @@
-# Milev's Bank
+# Bank
 My Personal Bank Application used for learning of new Java Related Stuff
 
 ## Development Environment
