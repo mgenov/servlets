@@ -1,9 +1,6 @@
 language: java
 jdk:
   - oraclejdk8
-notifications:
-  email:
-    on_pull_requests: true
 services:
   - mysql
 before_script:
