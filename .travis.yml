@@ -1,0 +1,11 @@
+language: java
+jdk:
+  - oraclejdk8
+  - oraclejdk7
+services:
+  - mysql
+before_script:
+  - mysql -e 'create database bank_testdb;'
+  - mysql -u travis -db bank_testdb < schemas/Account_dll.sql
+after_script:
+  - mysql -e 'drop database bank_testdb;'
