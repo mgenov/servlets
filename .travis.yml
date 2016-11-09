@@ -5,6 +5,6 @@ services:
   - mysql
 before_script:
   - mysql -e 'create database bank_testdb;'
-  - mysql -u travis bank_testdb < schemas/Account_dll.sql
+  - mysql -u travis bank_testdb < schemas/bank_ddl.sql
 after_script:
   - mysql -e 'drop database bank_testdb;'
