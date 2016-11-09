@@ -1,6 +1,7 @@
 package com.clouway.http.server;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
@@ -9,8 +10,6 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class JettyServer {
   private final int port;
 
-  private WebAppContext context = new WebAppContext();
-
   public JettyServer(int port) {
     this.port = port;
   }
@@ -18,11 +17,11 @@ public class JettyServer {
   public void start() {
     Server server = new Server(port);
 
-    context.setResourceBase(".");
-    context.setDescriptor("src/main/webapp/WEB-INF/web.xml");
-    context.setResourceBase("../test-jetty-webapp/src/main/webapp");
+    WebAppContext context = new WebAppContext();
+    context.setResourceBase("src/main/webapp");
+    context.setWar("src/main/webapp");
     context.setContextPath("/");
-
+    context.setParentLoaderPriority(true);
     server.setHandler(context);
     try {
       server.start();
