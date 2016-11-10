@@ -14,7 +14,7 @@ import java.util.Locale;
 public class FakeHttpServletResponse implements HttpServletResponse {
   private PrintWriter writer = null;
   private Integer status = 0;
-  private String redirectTo="";
+  private String redirectTo = "";
 
   public String getRedirect() {
     return redirectTo;
@@ -46,7 +46,6 @@ public class FakeHttpServletResponse implements HttpServletResponse {
 
   @Override
   public void addCookie(Cookie cookie) {
-
   }
 
   @Override

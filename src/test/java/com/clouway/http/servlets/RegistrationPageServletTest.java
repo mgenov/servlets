@@ -5,6 +5,7 @@ import com.clouway.FakeHttpServletResponse;
 import com.clouway.core.Account;
 import com.clouway.core.AccountRepository;
 import com.clouway.core.ServletPageRenderer;
+import com.clouway.core.Validator;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Before;
@@ -33,6 +34,7 @@ public class RegistrationPageServletTest {
   private RegistrationPageServlet servlet;
   private PrintWriter writer;
 
+  private Validator validator = context.mock(Validator.class);
   private AccountRepository repo = context.mock(AccountRepository.class);
   private ServletPageRenderer servletResponseWriter = context.mock(ServletPageRenderer.class);
 
@@ -72,13 +74,13 @@ public class RegistrationPageServletTest {
   @Test
   public void register() throws Exception {
     request.setParameter("name", "John");
-    request.setParameter("password", "Johny");
-    response.setWriter(writer);
+    request.setParameter("password", "password");
 
     context.checking(new Expectations() {{
       oneOf(repo).getByName("John");
       will(returnValue(Optional.empty()));
-      oneOf(repo).register(new Account("John", "Johny", 0));
+
+      oneOf(repo).register(new Account("John", "password", 0));
     }});
 
     servlet.doPost(request, response);

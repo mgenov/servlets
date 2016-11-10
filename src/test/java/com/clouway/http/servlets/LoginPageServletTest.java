@@ -59,11 +59,10 @@ public class LoginPageServletTest {
     context.checking(new Expectations() {{
       oneOf(repo).getByName("John");
       will(returnValue(Optional.of(new Account("John", "pwd", 0))));
-
     }});
 
     servlet.doPost(request, response);
-    assertThat(response.getRedirect(), is("/account"));
+    assertThat(response.getRedirect(), is("/"));
   }
 
   @Test
@@ -104,6 +103,26 @@ public class LoginPageServletTest {
     }});
 
     servlet.doPost(request, response);
+  }
+
+  @Test
+  public void anotherWrongPassword() throws Exception {
+    FakeHttpServletRequest request = createRequest(
+            ImmutableMap.of(
+                    "name", "John",
+                    "password", "123123"
+            )
+    );
+    FakeHttpServletResponse response = createResponse();
+
+    context.checking(new Expectations() {{
+      oneOf(repo).getByName("John");
+      will(returnValue(Optional.of(new Account("John", "123123", 0))));
+
+    }});
+
+    servlet.doPost(request, response);
+    assertThat(response.getRedirect(), is("/"));
   }
 
   private FakeHttpServletRequest createRequest(Map<String, String> params) {

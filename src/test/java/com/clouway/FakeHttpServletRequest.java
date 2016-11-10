@@ -10,35 +10,48 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Martin Milev <martinmariusmilev@gmail.com>
  */
 public class FakeHttpServletRequest implements HttpServletRequest {
   private Map<String, String> parameters = new HashMap<>();
+  private List<Cookie> cookies = new ArrayList<>();
+  private String uri;
+
+
+  public void addCookie(Cookie cookie) {
+    this.cookies.add(cookie);
+  }
+
+  @Override
+  public Cookie[] getCookies() {
+    return cookies.toArray(new Cookie[] {});
+  }
 
   public void setParameter(String key, String value) {
     parameters.put(key, value);
   }
 
   @Override
-  public String getParameter(String s) {
-    return parameters.get(s);
+  public String getParameter(String param) {
+    return parameters.get(param);
+  }
+
+
+  public void setRequestURI(String uri) {
+    this.uri = uri;
+  }
+
+  @Override
+  public String getRequestURI() {
+    return uri;
   }
 
   @Override
   public String getAuthType() {
     return null;
-  }
-
-  @Override
-  public Cookie[] getCookies() {
-    return new Cookie[0];
   }
 
   @Override
@@ -108,11 +121,6 @@ public class FakeHttpServletRequest implements HttpServletRequest {
 
   @Override
   public String getRequestedSessionId() {
-    return null;
-  }
-
-  @Override
-  public String getRequestURI() {
     return null;
   }
 

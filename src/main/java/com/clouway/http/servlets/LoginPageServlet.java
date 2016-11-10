@@ -2,6 +2,7 @@ package com.clouway.http.servlets;
 
 import com.clouway.core.Account;
 import com.clouway.core.AccountRepository;
+import com.clouway.core.RegexValidator;
 import com.clouway.core.ServletPageRenderer;
 import com.clouway.persistent.adapter.jdbc.ConnectionProvider;
 import com.clouway.persistent.adapter.jdbc.PersistentAccountRepository;
@@ -10,6 +11,7 @@ import com.google.common.annotations.VisibleForTesting;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +29,10 @@ public class LoginPageServlet extends HttpServlet {
   @Ignore
   @SuppressWarnings("unused")
   public LoginPageServlet() {
-    this(new PersistentAccountRepository(new DataStore(new ConnectionProvider())),new HtmlServletPageRenderer());
+    this(
+            new PersistentAccountRepository(new DataStore(new ConnectionProvider())),
+            new HtmlServletPageRenderer()
+    );
   }
 
   @VisibleForTesting
@@ -45,20 +50,26 @@ public class LoginPageServlet extends HttpServlet {
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String name = req.getParameter("name");
     String pswd = req.getParameter("password");
-    Optional<Account> possibleAccount = repository.getByName(name);
 
-    if (!possibleAccount.isPresent()) {
+
+    Optional<Account> possibleAccount = repository.getByName(name);
+    RegexValidator nameValidator = new RegexValidator("[a-zA-Z]{1,50}");
+
+    if (!possibleAccount.isPresent() || !nameValidator.check(name)) {
       servletResponseWriter.renderPage("login.html", Collections.singletonMap("error", "Wrong username"), resp);
       return;
     }
 
     Account account = possibleAccount.get();
 
-    if (pswd.equals(account.password)) {
-      resp.sendRedirect("/account");
-    } else {
+    RegexValidator pswdValidator = new RegexValidator("[a-zA-Z_0-9]{6,18}");
+
+
+    if (!pswd.equals(account.password) || !pswdValidator.check(pswd)) {
       servletResponseWriter.renderPage("login.html", Collections.singletonMap("error", "Wrong password"), resp);
+    } else {
+      resp.addCookie(new Cookie("SID", "123"));
+      resp.sendRedirect("/");
     }
   }
-
 }
